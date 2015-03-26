@@ -19,6 +19,9 @@ class Transformer(object):
 	def process(self):
 		raise ProcessorError('You need to implement process')
 
+	def done(self):
+		""" Done """
+
 	def transform(self):
 		self.block = []
 		self.processed = 0
@@ -42,6 +45,7 @@ class Transformer(object):
 			self.processed += len(block)
 			self.process()
 			self.block = []
+		self.done()
 
 class PrintTransfomer(Transformer):
 
