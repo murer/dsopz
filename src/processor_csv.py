@@ -31,7 +31,6 @@ class CSVProcessor(processor.Processor):
 					value = last.get('name') or last.get('id')
 				if value:
 					value = value.encode('UTF-8')
-				print 'x', t, value
 				line[name] = value
 			self.writer.writerow(line)
 
