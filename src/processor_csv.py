@@ -3,6 +3,7 @@ import processor
 import csv
 import sys
 import dsutil
+import locale
 
 class CSVProcessor(processor.Processor):
 
@@ -14,7 +15,7 @@ class CSVProcessor(processor.Processor):
 			if k == '__key__':
 				k = 'key'
 			l.append(k)
-		self.writer = csv.DictWriter(sys.stdout, l, dialect='excel')
+		self.writer = csv.DictWriter(sys.stdout, l ,delimiter=';', quoting=csv.QUOTE_ALL)
 		self.writer.writeheader()
 
 	def resolve(self):
@@ -28,7 +29,10 @@ class CSVProcessor(processor.Processor):
 					name = 'key'
 					last = value[len(value) - 1]
 					value = last.get('name') or last.get('id')
-				line[name] = value.encode('UTF-8')
+				if value:
+					value = value.encode('UTF-8')
+				print 'x', t, value
+				line[name] = value
 			self.writer.writerow(line)
 
 def __main():
