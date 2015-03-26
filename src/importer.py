@@ -5,7 +5,7 @@ import dsutil
 import argparse
 import processor
 
-def upload(dataset, block, namespace=None):
+def upsert(dataset, block, namespace=None):
 	for ent in block:
 		ent['key']['partitionId'] = {
 			'dataset': dataset,
@@ -21,40 +21,46 @@ def upload(dataset, block, namespace=None):
 		'https://www.googleapis.com/datastore/v1beta2/datasets/%s/commit' % (dataset), 
 		params)
 
-def process_data(dataset, op, kinds=[], namespace=None, chunkSize=500, parallel=10):
-	kinds = kinds or []
-	kinds = [k.lower() for k in kinds]
-	block = []
-	ups = []
-	count = 0
-	while True:
-		line = sys.stdin.readline()
-		if not line:
-			break
-		line = line.strip()
-		if not line or line.startswith('#'):
-			continue
-		obj = json.loads(line)
-		kind = dsutil.get_kind(obj)
-		if kinds and kind.lower() not in kinds:
-			continue
-		block.append(obj)
-		if len(block) >= chunkSize:
-			count += len(block)
-			print >> sys.stderr, 'Uploading', count
-			ups.append(op(dataset, block, namespace))
-			block = []
-			while len(ups) >= parallel:
-				ups.pop(0).resp()
-	if block:
-		count += len(block)
-		print >> sys.stderr, 'Uploading', count
-		ups.append(op(dataset, block, namespace))
-	while len(ups):
-		ups.pop(0).resp()
+def remove(dataset, block, namespace=None):
+	keys = []
+	for ent in block:
+		key = ent['key'].copy()
+		key['partitionId'] = {
+			'dataset': dataset,
+			'namespace': namespace
+		}
+		keys.append(key)
+	params = { 
+		'mode': 'NON_TRANSACTIONAL', 
+		'mutation': { 
+			'delete': keys
+		}
+	}
+	return oauth.oauth_async_req_json('POST', 
+		'https://www.googleapis.com/datastore/v1beta2/datasets/%s/commit' % (dataset), 
+		params)
 
-def import_data(dataset, kinds=[], namespace=None, chunkSize=500, parallel=10):
-	process_data(dataset, upload, kinds, namespace, chunkSize, parallel)
+class BatchProcessor(processor.Processor):
+
+	def __init__(self, dataset, kinds, namespace, operation, block_size = 500, parallel = 10):
+		super(BatchProcessor, self).__init__(kinds, block_size)
+		self.dataset = dataset
+		self.namespace = namespace
+		self.parallel = parallel
+		self.ups = []
+		self.operation = operation
+
+	def consume(self, n):
+		while len(self.ups) > n:
+			self.ups.pop(0).resp()
+
+	def resolve(self):
+		print >> sys.stderr, self.operation.__name__, self.processed
+		self.ups.append(self.operation(self.dataset, self.block, self.namespace))
+		self.consume(self.parallel)
+
+	def done(self):
+		self.consume(1)
 
 def __main():
 	parser = argparse.ArgumentParser(description='Importer')
@@ -62,8 +68,13 @@ def __main():
 	parser.add_argument('-n', '--namespace', required=True, help='namespace')
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	parser.add_argument('-p', '--parallel', type=int, help='parallel')
+	parser.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help='operation')
 	args = parser.parse_args()
-	import_data(args.dataset, args.kinds, args.namespace, parallel = args.parallel or 10)
+	op = upsert
+	if args.operation == 'remove':
+		op = remove
+	processor = BatchProcessor(args.dataset, args.kinds, args.namespace, op, parallel = args.parallel or 10)
+	processor.process()
 
 if __name__ == '__main__':
 	__main()
