@@ -1,6 +1,7 @@
 import oauth
 import json
 import sys
+import dsutil
 import argparse
 
 def upload(dataset, block, namespace=None):
@@ -19,12 +20,6 @@ def upload(dataset, block, namespace=None):
 		'https://www.googleapis.com/datastore/v1beta2/datasets/%s/commit' % (dataset), 
 		params)
 
-def get_kind(obj):
-	path = obj['key']['path']
-	i = len(path)
-	last = path[i - 1]
-	return last['kind']
-
 def process_data(dataset, op, kinds=[], namespace=None, chunkSize=500, parallel=10):
 	kinds = kinds or []
 	kinds = [k.lower() for k in kinds]
@@ -39,7 +34,7 @@ def process_data(dataset, op, kinds=[], namespace=None, chunkSize=500, parallel=
 		if not line or line.startswith('#'):
 			continue
 		obj = json.loads(line)
-		kind = get_kind(obj)
+		kind = dsutil.get_kind(obj)
 		if kinds and kind.lower() not in kinds:
 			continue
 		block.append(obj)
