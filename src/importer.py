@@ -3,6 +3,7 @@ import json
 import sys
 import dsutil
 import argparse
+import processor
 
 def upload(dataset, block, namespace=None):
 	for ent in block:

@@ -9,20 +9,20 @@ class Error(Exception):
 class ProcessorError(Error):
 	"""Exceptions"""
 
-class Transformer(object):
+class Processor(object):
 
 	def __init__(self, kinds = [], block_size=2):
 		self.kinds = kinds or []
 		self.kinds = [k.lower() for k in self.kinds]
 		self.block_size = block_size
 
-	def process(self):
+	def resolve(self):
 		raise ProcessorError('You need to implement process')
 
 	def done(self):
 		""" Done """
 
-	def transform(self):
+	def process(self):
 		self.block = []
 		self.processed = 0
 		while True:
@@ -39,25 +39,25 @@ class Transformer(object):
 			self.block.append(obj)
 			if len(self.block) >= self.block_size:
 				self.processed += len(self.block)
-				self.process()
+				self.resolve()
 				self.block = []
 		if self.block:
 			self.processed += len(self.block)
-			self.process()
+			self.resolve()
 			self.block = []
 		self.done()
 
-class PrintTransfomer(Transformer):
+class PrintProcessor(Processor):
 
 	def __init__(self, columns, kinds = [], separator = '\t'):
-		super(PrintTransfomer, self).__init__(kinds)
+		super(PrintProcessor, self).__init__(kinds)
 		self.columns = columns
 		if separator == None:
 			self.separator = '\t'
 		else:
 			self.separator = separator.decode('string_escape')
 
-	def process(self):
+	def resolve(self):
 		for ent in self.block:
 			line = ''
 			for i, column in enumerate(self.columns):
@@ -86,10 +86,10 @@ def __main():
 	parser.add_argument('-s', '--separator', help='separator')
 	parser.add_argument('-a', '--headers', help='headers')
 	args = parser.parse_args()
-	transformer = PrintTransfomer(args.columns, args.kinds, args.separator)
+	processor = PrintProcessor(args.columns, args.kinds, args.separator)
 	if args.headers:
-		transformer.headers()
-	transformer.transform()
+		processor.headers()
+	processor.process()
 
 if __name__ == '__main__':
 	__main()
