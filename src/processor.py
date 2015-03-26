@@ -11,7 +11,7 @@ class ProcessorError(Error):
 
 class Processor(object):
 
-	def __init__(self, kinds = [], block_size=2):
+	def __init__(self, kinds = [], block_size=500):
 		self.kinds = kinds or []
 		self.kinds = [k.lower() for k in self.kinds]
 		self.block_size = block_size

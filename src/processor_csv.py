@@ -18,6 +18,7 @@ class CSVProcessor(processor.Processor):
 		self.writer.writeheader()
 
 	def resolve(self):
+		print >> sys.stderr, 'process', self.processed
 		for ent in self.block:
 			line = {}
 			for column in self.columns:
@@ -28,7 +29,6 @@ class CSVProcessor(processor.Processor):
 					last = value[len(value) - 1]
 					value = last.get('name') or last.get('id')
 				line[name] = value.encode('UTF-8')
-			print line
 			self.writer.writerow(line)
 
 def __main():
