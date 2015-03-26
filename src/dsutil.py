@@ -9,7 +9,7 @@ def get_kind(obj):
 def prop(entity, name):
 	if name == '__key__':
 		return entity['key']['path']
-	return entity['properties'][name]
+	return entity['properties'].get(name)
 
 def prop_value(entity, name):
 	p = prop(entity, name)

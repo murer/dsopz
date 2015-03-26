@@ -67,13 +67,24 @@ class PrintTransfomer(Transformer):
 					line += self.separator
 			print line
 
+	def headers(self):
+		line = ''
+		for i, column in enumerate(self.columns):
+			line += column
+			if i < len(self.columns) - 1:
+				line += self.separator
+		print line
+
 def __main():
 	parser = argparse.ArgumentParser(description='Transformer')
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	parser.add_argument('-c', '--columns', required=True, nargs='+', help='columns')
 	parser.add_argument('-s', '--separator', help='separator')
+	parser.add_argument('-a', '--headers', help='headers')
 	args = parser.parse_args()
 	transformer = PrintTransfomer(args.columns, args.kinds, args.separator)
+	if args.headers:
+		transformer.headers()
 	transformer.transform()
 
 if __name__ == '__main__':
