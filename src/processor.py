@@ -80,7 +80,7 @@ class PrintProcessor(Processor):
 		print line
 
 def __main():
-	parser = argparse.ArgumentParser(description='Transformer')
+	parser = argparse.ArgumentParser(description='Processor')
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	parser.add_argument('-c', '--columns', required=True, nargs='+', help='columns')
 	parser.add_argument('-s', '--separator', help='separator')
