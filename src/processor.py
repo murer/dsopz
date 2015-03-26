@@ -41,8 +41,8 @@ class Transformer(object):
 				self.processed += len(self.block)
 				self.process()
 				self.block = []
-		if block:
-			self.processed += len(block)
+		if self.block:
+			self.processed += len(self.block)
 			self.process()
 			self.block = []
 		self.done()
