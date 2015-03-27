@@ -4,6 +4,7 @@ import urllib
 import sys
 import datetime
 import json
+import util
 
 class Error(Exception):
 	"""Exceptions"""
@@ -33,7 +34,9 @@ def __delete_file():
 
 def __write_file(content):
 	c = json.dumps(content, indent=True)
-	with open(__auth_file(), 'w') as f:
+	name = __auth_file()
+	util.makedirs(os.path.dirname(name))
+	with open(name, 'w') as f:
 		f.write(c + '\n')
 
 def __read_file():
@@ -100,7 +103,7 @@ def get_token():
 	return auth['access_token']
 
 def __main():
-	print login()
+	login()
 
 if __name__ == '__main__':
 	__main()
