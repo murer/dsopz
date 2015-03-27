@@ -23,13 +23,13 @@ def __config():
 		]
 	}
 
-def get_first_token(code):
+def get_first_token(port, code):
 	config = __config()
 	content = http.req_json('POST', 'https://www.googleapis.com/oauth2/v3/token', urllib.urlencode({
 		'code': code,
 		'client_id': config['client_id'],
 		'client_secret': config['client_secret'],
-		'redirect_uri': 'http://localhost:8080/redirect_uri',
+		'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
 		'grant_type': 'authorization_code'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
 	now = int(datetime.datetime.now().strftime("%s"))
@@ -42,12 +42,13 @@ def get_first_token(code):
 class OAuthHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
 		parsed = urlparse.urlparse(self.path)
+		_, port = self.server.socket.getsockname()
 		params = urlparse.parse_qs(parsed.query)
 		if not params.get('code'):
 			print 'Error'
 			print json.dumps(params, indent=True)
 		else:
-			get_first_token(params['code'][0])
+			get_first_token(port, params['code'][0])
 		self.send_response(302)
 		self.send_header('Location', 'http://github.com/murer/dsopz')
 		self.send_header('Content-type','text/plain')
@@ -83,15 +84,16 @@ def __read_file():
 def login():
 	__delete_file()
 	config = __config()
+	server = HTTPServer(('localhost', 0), OAuthHandler)
+	_, port = server.socket.getsockname()
 	url = 'https://accounts.google.com/o/oauth2/auth?' + urllib.urlencode({
 		'client_id': config['client_id'],
-		'redirect_uri': 'http://localhost:8080/redirect_uri',
+		'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
 		'response_type': 'code',
 		'scope': ' '.join(config['scopes']),
 		'approval_prompt': 'force',
 		'access_type': 'offline'
 	})
-	server = HTTPServer(('', 8080), OAuthHandler)
 	try:
 		webbrowser.open(url, new=1, autoraise=True)
 		server.handle_request()
