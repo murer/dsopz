@@ -41,9 +41,13 @@ You can import entities to another project or namespace.
 
 Delete data
 
-  You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
+You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
 
     cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o delete
+
+Extract CSV from entities file
+
+    cat entities.bak | python src/processor_csv.py -k kind1 kind2 -c col1 col2 > entities.csv
 
 As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You will want to use ` | gzip` and `| gunzip` to manage large amount of entities.
 
