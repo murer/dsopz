@@ -35,12 +35,26 @@ GQL exporter
 
 Import data
 
-    cat entities.bak | pyhton src/importer.py -d gae-project -d namespace
+    cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o upsert
+
+You can import entities to another project or namespace.
+
+Delete data
+
+  You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
+
+    cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o delete
 
 As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You will want to use ` | gzip` and `| gunzip` to manage large amount of entities.
 
 ## Processors
 
+Processors is what you can do to manage your entities file before import (or delete) it back do datastore. Just like this sample command:
+
+    cat entities.bak | python src/processor.py -k kind1 kind2 -c col1 col2 > processed.bak
+    cat processed.bak | python src/importer.py -d gae-project -n namespace -o upsert 
+
+You can process a entity file to generate another file
 
 Processors are the way you manage entities, one by one (or block by block). It always is appli
 
