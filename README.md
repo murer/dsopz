@@ -49,12 +49,14 @@ As you can see, all commands use stdin or stdout to read/write entities. The fil
 
 ## Processors
 
-Processors is what you can do to manage your entities file before import (or delete) it back do datastore. Just like this sample command:
+Processors is what you can do to manage your entities file before import (or delete) it back do datastore. You can actually write a processor to do whatever you want with a entities file, for example: send entities to somewhere, parse them into a csv, etc.
 
-    cat entities.bak | python src/processor.py -k kind1 kind2 -c col1 col2 > processed.bak
+
+
+    cat entities.bak | python src/your_processor.py -k kind1 kind2 -c col1 col2 > processed.bak
     cat processed.bak | python src/importer.py -d gae-project -n namespace -o upsert 
 
-You can process a entity file to generate another file
+This is how you implement a processor
 
 Processors are the way you manage entities, one by one (or block by block). It always is appli
 
