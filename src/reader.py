@@ -74,7 +74,7 @@ def print_iterate(dataset, gql, namespace=None, msg=''):
 def __main():
 	parser = argparse.ArgumentParser(description='Reader')
 	parser.add_argument('-d', '--dataset', required=True, help='dataset')
-	parser.add_argument('-n', '--namespace', required=True, help='namespace')
+	parser.add_argument('-n', '--namespace', help='namespace')
 	parser.add_argument('-q', '--gql', required=True, help='gql')
 	args = parser.parse_args()
 	print_iterate(args.dataset, args.gql, args.namespace)
