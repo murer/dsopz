@@ -1,85 +1,132 @@
-from oauth2client import client
-import util
+import http
 import os
+import urllib
+import urlparse
+import sys
+import datetime
+import json
 import webbrowser
-from oauth2client import tools
-try:
-  # pylint:disable=g-import-not-at-top
-  from urlparse import parse_qsl
-except ImportError:
-  # pylint:disable=g-import-not-at-top
-  from cgi import parse_qsl
+import util
+from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 
 class Error(Exception):
-	"""Exceptions for the flow module."""
+	"""Exceptions"""
 
-class AuthRequestRejectedException(Error):
-	"""Exception for when the authentication request was rejected."""
+def __config():
+	return { 
+		'client_id': '765762103246-g936peorj64mgveoqhai6ohv4t5qc5qb.apps.googleusercontent.com',
+		'client_secret': 'ayQpUnTqvIxgV1XY9e-ItyC8',
+		'scopes': [
+			'https://www.googleapis.com/auth/cloud-platform',
+			'https://www.googleapis.com/auth/datastore',
+			'https://www.googleapis.com/auth/userinfo.email'
+		]
+	}
 
-class Token():
-	token = None
+def get_first_token(code):
+	config = __config()
+	content = http.req_json('POST', 'https://www.googleapis.com/oauth2/v3/token', urllib.urlencode({
+		'code': code,
+		'client_id': config['client_id'],
+		'client_secret': config['client_secret'],
+		'redirect_uri': 'http://localhost:8080/redirect_uri',
+		'grant_type': 'authorization_code'
+	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
+	now = int(datetime.datetime.now().strftime("%s"))
+	expires_in = content['expires_in']
+	content['created'] = now
+	content['expires'] = now + expires_in
+	__write_file(content)
+	print 'Done'
 
-class ClientRedirectHandler(tools.ClientRedirectHandler):
+class OAuthHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
-		query = self.path.split('?', 1)[-1]
-		query = dict(parse_qsl(query))
-		self.server.query_params = query
-		if 'code' in query:
-			msg = 'Done'
+		parsed = urlparse.urlparse(self.path)
+		params = urlparse.parse_qs(parsed.query)
+		if not params.get('code'):
+			print 'Error'
+			print json.dumps(params, indent=True)
 		else:
-			msg = 'Access Denied'
-		self.send_response(200)
-		self.send_header('Content-type', 'text/plain')
+			get_first_token(params['code'][0])
+		self.send_response(302)
+		self.send_header('Location', 'http://github.com/murer/dsopz')
+		self.send_header('Content-type','text/plain')
 		self.end_headers()
-		self.wfile.write(msg)
+		self.wfile.write("Ok")
 
-def __retrieve_local():
-	httpd = tools.ClientRedirectServer(('localhost', 7005), ClientRedirectHandler)
-	flow = client.flow_from_clientsecrets('conf/client.json.secret',
-    								  	  scope='https://www.googleapis.com/auth/taskqueue.consumer',
-	   									  redirect_uri='http://localhost:7005/redirect_uri')
-	auth_uri = flow.step1_get_authorize_url()
-	webbrowser.open(auth_uri, new=1, autoraise=True)
-	httpd.handle_request()
-	if 'error' in httpd.query_params:
-		raise AuthRequestRejectedException('Unable to authenticate.')
-	code = httpd.query_params['code']
-	credential = flow.step2_exchange(code)
-	return credential.access_token
+def __auth_file():
+	directory = os.path.expanduser('~')
+	if directory == '/':
+		directory = '.'
+	return directory + '/.dsopz/auth.json'
 
-def __retrieve_file():
-	f = None
+def __delete_file():
 	try:
-		f = open('tmp/cloudz_local_token.tmp', 'r')
-		return f.readline()
-	except IOError:
-		return None
-	finally:
-		util.close(f)
+		os.remove(__auth_file())
+	except OSError:
+		pass
 
-def __write_file():
-	f = None
+def __write_file(content):
+	c = json.dumps(content, indent=True)
+	name = __auth_file()
+	util.makedirs(os.path.dirname(name))
+	with open(name, 'w') as f:
+		f.write(c + '\n')
+
+def __read_file():
+	if not os.path.isfile(__auth_file()):
+		return None 
+	with open(__auth_file(), 'r') as f:
+		c = f.read()
+	return json.loads(c)
+
+def login():
+	__delete_file()
+	config = __config()
+	url = 'https://accounts.google.com/o/oauth2/auth?' + urllib.urlencode({
+		'client_id': config['client_id'],
+		'redirect_uri': 'http://localhost:8080/redirect_uri',
+		'response_type': 'code',
+		'scope': ' '.join(config['scopes']),
+		'approval_prompt': 'force',
+		'access_type': 'offline'
+	})
+	server = HTTPServer(('', 8080), OAuthHandler)
 	try:
-		os.makedirs('tmp')
-		f = open('tmp/cloudz_local_token.tmp', 'w')
-		f.truncate()
-		f.write(Token.token)
+		webbrowser.open(url, new=1, autoraise=True)
+		server.handle_request()
 	finally:
-		util.close(f)
+		util.close(server.socket)
+
+def __refesh_token(auth):
+	config = __config()
+	content = http.req_json('POST', 'https://www.googleapis.com/oauth2/v3/token', urllib.urlencode({
+		'refresh_token': auth['refresh_token'],
+		'client_id': config['client_id'],
+		'client_secret': config['client_secret'],
+		'grant_type': 'refresh_token'
+	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
+	now = int(datetime.datetime.now().strftime("%s"))
+	expires_in = content['expires_in']
+	content['created'] = now
+	content['expires'] = now + expires_in
+	content['refresh_token'] = auth['refresh_token']
+	__write_file(content)
 
 def get_token():
-	if(Token.token == None):
-		Token.token = __retrieve_file()
-	if(Token.token == None):
-		Token.token = __retrieve_local()
-		__write_file()
-	return Token.token
+	auth = __read_file()
+	if not auth:
+		raise Error('You need to login')
+	now = int(datetime.datetime.now().strftime("%s"))
+	if now > auth['expires'] - 60:
+		__refesh_token(auth)
+	auth = __read_file()
+	if not auth:
+		raise Error('You need to login')
+	return auth['access_token']
 
-def main():
-	token = get_token();
-	print 'access_token: ' + token
-	token = get_token();
-	print 'access_token: ' + token
+def __main():
+	login()
 
 if __name__ == '__main__':
-	main()
+	__main()
