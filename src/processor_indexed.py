@@ -24,8 +24,13 @@ class IndexedProcessor(processor.Processor):
 				column = ent['properties'].get(name)
 				if not column:
 					continue
-				if self.__setIndexed(column, self.indexed):
-					changed = True
+				if column.get('listValue'):
+					for k in column['listValue']:
+						if self.__setIndexed(k, self.indexed):
+							changed = True
+				else:		
+					if self.__setIndexed(column, self.indexed):
+						changed = True
 			if changed:
 				print json.dumps(ent)
 

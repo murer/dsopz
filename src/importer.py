@@ -52,7 +52,7 @@ class BatchProcessor(processor.Processor):
 
 	def consume(self, n):
 		while len(self.ups) > n:
-			self.ups.pop(0).resp()
+			print json.dumps(self.ups.pop(0).resp())
 
 	def resolve(self):
 		print >> sys.stderr, self.operation.__name__, self.processed
@@ -60,7 +60,7 @@ class BatchProcessor(processor.Processor):
 		self.consume(self.parallel)
 
 	def done(self):
-		self.consume(1)
+		self.consume(0)
 
 def __main():
 	parser = argparse.ArgumentParser(description='Importer')
