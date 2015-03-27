@@ -1,10 +1,10 @@
-import oauth_installed
+import oauth_local
 import sys
 import http
 import json
 
 def get_token():
-	return oauth_installed.get_token()
+	return oauth_local.get_token()
 
 def oauth_req_json(method, url, params = None, headers = {}, expects = [200]):
 	return oauth_async_req_json(method, url, params, headers, expects).resp()
