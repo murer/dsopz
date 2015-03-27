@@ -21,31 +21,38 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from y
  * If `namespace` was not given, we will access your default one.
  * If `kinds` was not given, we will use all of them
 
-Login
+### Login
 
     python src/oauth_installed.py
 
-Export data
+### Export data
 
     python src/exporter.py -d gae-project -n namespace -k kind1 kind2 > entities.bak
 
-GQL exporter
+### GQL exporter
 
     python src/reader.py -d gae-project -n namespace -q 'select * from kind1' > entities.bak
 
-Import data
+### Import data
 
     cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o upsert
 
 You can import entities to another project or namespace.
 
-Delete data
+### Delete data
 
 You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
 
     cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o delete
 
-Extract CSV from entities file
+### Set indexed true or false
+
+    cat entities.bak | python src/processor_indexed.py -c col1 col2 -k kind2 kind2 -i true > processed.bak
+    cat processed.bak | python src/importer.py -d gae-project -n namespace -o upsert
+
+This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And you you want to upload it back to datastore
+
+### Extract CSV from entities file
 
     cat entities.bak | python src/processor_csv.py -k kind1 kind2 -c col1 col2 > entities.csv
 
