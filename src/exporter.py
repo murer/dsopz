@@ -37,7 +37,7 @@ def __main():
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	parser.add_argument('-o', '--keys-only', help='keys only')
 	args = parser.parse_args()
-	print_iterate(args.dataset, args.kinds, args.namespace, args.keys_only)
+	print_iterate(args.dataset, args.kinds, args.namespace, args.keys_only == 'true')
 
 if __name__ == '__main__':
 	__main()
