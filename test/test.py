@@ -12,7 +12,7 @@ class TestCase(unittest.TestCase):
 class ReaderTest(TestCase):
 
   def test_query(self):
-    print reader
+    reader.query('cloudcontainerz', 'select *', namespace='dsopz_test', limit=2)
 
 
 if __name__ == '__main__':
