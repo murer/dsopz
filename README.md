@@ -5,6 +5,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from y
 ## Features
 
  * Python API and command line
+ * Uses [https://cloud.google.com/datastore/docs](Google Cloud Datastore) json API
  * Export, import and delete data
  * GQL query
  * CSV exporter
@@ -55,6 +56,10 @@ You need just a keys-only file to delete, and you can extract it using `-o true`
     cat processed.bak | python src/importer.py -d gae-project -n namespace -o upsert
 
 This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And you you want to upload it back to datastore
+
+### Entity File
+
+This entity file used to pipe in or out these python commands has one json per file. Each json is a datastore entity just like [https://cloud.google.com/datastore/docs](Google Cloud Datastore) returns. These entities does not have the partionId (namespace) information.
 
 ### Extract CSV from entities file
 
