@@ -1,18 +1,31 @@
 import unittest
 import src.reader as reader
+import src.importer as importer
+import src.exporter as exporter
+import os
+
+def config():
+	return {
+		"dataset": os.environ.get('DSOPZ_TEST_DATASET', 'cloudcontainerz'),
+		"namespace": os.environ.get('DSOPZ_TEST_NAMESPACE', 'dsopz_test')
+	}
+
+def clean():
+	config = config()
+	
 
 class TestCase(unittest.TestCase):
 
   def setUp(self):
-    """ setUp """
+    clean()
 
   def tearDown(self):
-    """ tearDown """
+    clean()
 
 class ReaderTest(TestCase):
 
   def test_query(self):
-    reader.query('cloudcontainerz', 'select *', namespace='dsopz_test', limit=2)
+  	print config()
 
 
 if __name__ == '__main__':
