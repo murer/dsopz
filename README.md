@@ -55,7 +55,7 @@ You need just a keys-only file to delete, and you can extract it using `-o true`
     cat entities.bak | python src/processor_indexed.py -c col1 col2 -k kind2 kind2 -i true > processed.bak
     cat processed.bak | python src/importer.py -d gae-project -n namespace -o upsert
 
-This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And you you want to upload it back to datastore
+This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And upload it back to datastore
 
 ### Entity File
 
