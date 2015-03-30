@@ -23,6 +23,10 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from y
 
 ### Login
 
+    python src/oauth_local.py
+    
+If you can't open a browser automatically to login you can use this command:
+
     python src/oauth_installed.py
 
 ### Export data
