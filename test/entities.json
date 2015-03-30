@@ -1,0 +1,2 @@
+{"properties": {"c2": {"indexed": false, "integerValue": "1"}, "c1": {"indexed": false, "stringValue": "v1"}}, "key": {"path": [{"kind": "dsopz_test", "name": "n1"}]}}
+{"properties": {"c2": {"indexed": false, "integerValue": "2"}, "c1": {"indexed": false, "stringValue": "v2"}}, "key": {"path": [{"kind": "dsopz_test", "name": "n2"}]}}
