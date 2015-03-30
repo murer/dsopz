@@ -5,7 +5,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from y
 ## Features
 
  * Python API and command line
- * Uses [Google Cloud Datastore](https://cloud.google.com/datastore/docsGoogle Cloud Datastore) json API
+ * Uses [Google Cloud Datastore](https://cloud.google.com/datastore/docs) json API
  * Export, import and delete data
  * GQL query
  * CSV exporter
@@ -59,7 +59,7 @@ This will generate `processe.bak` file with all entities from `entities.bak` whi
 
 ### Entity File
 
-This entity file used to pipe in or out these python commands has one json per file. Each json is a datastore entity just like [Google Cloud Datastore](https://cloud.google.com/datastore/docsGoogle Cloud Datastore) returns. These entities does not have the partionId (namespace) information.
+This entity file used to pipe in or out these python commands has one json per file. Each json is a datastore entity just like [Google Cloud Datastore](https://cloud.google.com/datastore/docs) returns. These entities does not have the partionId (namespace) information.
 
 ### Extract CSV from entities file
 
