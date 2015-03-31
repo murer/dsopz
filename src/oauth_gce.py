@@ -1,10 +1,8 @@
 import http
-import os
 import urllib
-import sys
 import datetime
-import json
 import util
+import oauth_base
 
 class Error(Exception):
 	"""Exceptions"""
@@ -20,34 +18,8 @@ def __config():
 		]
 	}
 
-def __auth_file():
-	directory = os.path.expanduser('~')
-	if directory == '/':
-		directory = '.'
-	return directory + '/.dsopz/auth.json'
-
-def __delete_file():
-	try:
-		os.remove(__auth_file())
-	except OSError:
-		pass
-
-def __write_file(content):
-	c = json.dumps(content, indent=True)
-	name = __auth_file()
-	util.makedirs(os.path.dirname(name))
-	with open(name, 'w') as f:
-		f.write(c + '\n')
-
-def __read_file():
-	if not os.path.isfile(__auth_file()):
-		return None 
-	with open(__auth_file(), 'r') as f:
-		c = f.read()
-	return json.loads(c)
-
 def login():
-	__delete_file()
+	oauth_base.delete_file()
 	config = __config()
 	url = 'https://accounts.google.com/o/oauth2/auth?' + urllib.urlencode({
 		'client_id': config['client_id'],
@@ -72,10 +44,11 @@ def login():
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in
-	__write_file(content)
+	content['handler'] = 'installed'
+	oauth_base.write_file(content)
 	print 'Done'
 
-def __refesh_token(auth):
+def refesh_token(auth):
 	config = __config()
 	content = http.req_json('POST', 'https://www.googleapis.com/oauth2/v3/token', urllib.urlencode({
 		'refresh_token': auth['refresh_token'],
@@ -88,22 +61,11 @@ def __refesh_token(auth):
 	content['created'] = now
 	content['expires'] = now + expires_in
 	content['refresh_token'] = auth['refresh_token']
-	__write_file(content)
-
-def get_token():
-	auth = __read_file()
-	if not auth:
-		raise Error('You need to login')
-	now = int(datetime.datetime.now().strftime("%s"))
-	if now > auth['expires'] - 60:
-		__refesh_token(auth)
-	auth = __read_file()
-	if not auth:
-		raise Error('You need to login')
-	return auth['access_token']
+	content['handler'] = 'installed'
+	oauth_base.write_file(content)
 
 def __main():
-	login()
+	return login()
 
 if __name__ == '__main__':
 	__main()
