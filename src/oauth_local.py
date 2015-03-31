@@ -74,7 +74,7 @@ def login():
 	finally:
 		util.close(server.socket)
 
-def refesh_token(auth):
+def refresh_token(auth):
 	config = __config()
 	content = http.req_json('POST', 'https://www.googleapis.com/oauth2/v3/token', urllib.urlencode({
 		'refresh_token': auth['refresh_token'],

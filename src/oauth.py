@@ -1,5 +1,6 @@
 import oauth_local
 import oauth_installed
+import oauth_gce
 import sys
 import datetime
 import http
@@ -14,6 +15,8 @@ def resolve(t):
 		return oauth_installed
 	elif t == 'local':
 		return oauth_local
+	elif t == 'gce':
+		return oauth_gce
 	raise Error('Unknown: %s' % (t))
 
 def get_token():
@@ -23,7 +26,7 @@ def get_token():
 	now = int(datetime.datetime.now().strftime("%s"))
 	handler = resolve(auth['handler'])
 	if now > auth['expires'] - 60:
-		handler.refesh_token(auth)
+		handler.refresh_token(auth)
 	auth = oauth_base.read_file()
 	if not auth:
 		raise Error('You need to login')

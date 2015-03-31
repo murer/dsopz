@@ -2,6 +2,7 @@ import http
 import urllib
 import datetime
 import util
+import sys
 import oauth_base
 
 class Error(Exception):
@@ -48,7 +49,7 @@ def login():
 	oauth_base.write_file(content)
 	print 'Done'
 
-def refesh_token(auth):
+def refresh_token(auth):
 	config = __config()
 	content = http.req_json('POST', 'https://www.googleapis.com/oauth2/v3/token', urllib.urlencode({
 		'refresh_token': auth['refresh_token'],
