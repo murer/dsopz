@@ -8,7 +8,7 @@ class Error(Exception):
 
 def login():
 	oauth_base.delete_file()
-	refresh_token()
+	refresh_token(None)
 
 def refresh_token(auth):
 	content = http.req_json('GET', 
