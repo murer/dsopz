@@ -30,6 +30,16 @@ If you can't open a browser automatically to login you can use this command:
 
     python src/oauth_installed.py
 
+You can use [GCE Service Account](https://cloud.google.com/compute/docs/authentication).
+
+    python src/oauth_gce.py
+    
+Scopes Required:
+
+    https://www.googleapis.com/auth/cloud-platform
+    https://www.googleapis.com/auth/datastore
+    https://www.googleapis.com/auth/userinfo.email
+
 ### Export data
 
     python src/exporter.py -d gae-project -n namespace -k kind1 kind2 > entities.bak
