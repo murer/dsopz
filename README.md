@@ -1,6 +1,6 @@
 # dsopz
 
-DSOpz (Datastore Operationz) is a project where you manage your datastore from your local machine.
+DSOpz (Datastore Operationz) is a project where you manage your datastore from command line.
 
 ## Features
 
