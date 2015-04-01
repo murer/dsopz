@@ -67,15 +67,15 @@ You need just a keys-only file to delete, and you can extract it using `-o true`
 
 This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And upload it back to datastore
 
-### Entity File
-
-This entity file used to pipe in or out these python commands has one json per file. Each json is a datastore entity just like [Google Cloud Datastore](https://cloud.google.com/datastore/docs) returns. These entities does not have the partionId (namespace) information.
-
 ### Extract CSV from entities file
 
     cat entities.bak | python src/processor_csv.py -k kind1 kind2 -c col1 col2 > entities.csv
 
 As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You will want to use ` | gzip` and `| gunzip` to manage large amount of entities.
+
+### Entity File
+
+This entity file used to pipe in or out these python commands has one json per file. Each json is a datastore entity just like [Google Cloud Datastore](https://cloud.google.com/datastore/docs) returns. These entities does not have the partionId (namespace) information.
 
 ## Processors
 
