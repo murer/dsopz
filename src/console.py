@@ -4,6 +4,7 @@ import reader
 import dsutil
 import json
 import cmd
+import re
 
 class Console(cmd.Cmd):
 
@@ -18,30 +19,32 @@ class Console(cmd.Cmd):
 		self.show_size = show_size
 		self.seperator = seperator
 
-	def show_entities(self, gql, result):
+	def show_entities(self, gql, result, fields):
 		for ent in result['entities']:
 			key = dsutil.human_key(ent['key'])
 			line = key
-			for p in ent['properties']:
+			if fields[0] == '*':
+				fields = []
+				for k in ent['properties'].iterkeys():
+					fields.append(k)
+			for p in fields:
 				v, t = dsutil.prop_value(ent, p)
 				i = ent['properties'][p].get('indexed')
 				t = t.replace('Value', '')
 				line += '\t%s/%s/%s/%s' % (p, t, i, json.dumps(v))
 			print >> self.stdout, line
 
-	def process(self, gql):
+	def process(self, gql, fields):
 		result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
-		self.show_entities(gql, result)
+		self.show_entities(gql, result, fields)
 		if self.show_size:
 			print >> self.stdout, 'Total:', len(result['entities']), result['endCursor']
 
 	def do_select(self, line):
-		try:
-			gql = 'select ' + line
-			self.process(gql)
-		except:
-			e = sys.exc_info()[0]
-			print >> self.stdout, e
+		fields = re.sub(r'^(.+)\sfrom.*$', r'\1', line)
+		fields = re.split(r'[\s,]+', fields)
+		gql = 'select * %s' % (re.sub(r'^.+\sfrom', 'from', line))
+		self.process(gql, fields)
 
 	def do_EOF(self, line):
 		return self.do_exit('exit')
