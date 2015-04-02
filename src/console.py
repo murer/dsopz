@@ -28,7 +28,6 @@ class Console(object):
 			print >> self.dest, line
 
 	def process(self, gql):
-		print >> self.dest, gql
 		result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
 		self.show_entities(gql, result)
 		if self.show_size:
@@ -36,15 +35,21 @@ class Console(object):
 
 	def handle(self):
 		while True:
-			if self.prompt:
-				self.dest.write('> ')
-			line = self.source.readline()
-			if not line:
-				return
-			line = line.strip()
-			if line.startswith('#') or line.startswith('--'):
-				continue
-			self.process(line)
+			try:
+				if self.prompt:
+					self.dest.write('> ')
+				line = self.source.readline()
+				if not line:
+					break
+				line = line.strip()
+				if not line or line.startswith('#') or line.startswith('--'):
+					continue
+				if line == 'exit':
+					break
+				self.process(line)
+			except:
+				e = sys.exc_info()[0]
+				print >> self.dest, e
 
 def __main():
 	parser = argparse.ArgumentParser(description='Reader')
