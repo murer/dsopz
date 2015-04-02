@@ -25,7 +25,7 @@ class Console(object):
 				i = ent['properties'][p].get('indexed')
 				t = t.replace('Value', '')
 				line += '\t%s/%s/%s/%s' % (p, t, i, json.dumps(v))
-			print line
+			print >> self.dest, line
 
 	def process(self, gql):
 		print >> self.dest, gql
