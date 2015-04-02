@@ -56,6 +56,9 @@ class Console(cmd.Cmd):
 	def do_exit(self, line):
 		return True
 
+	def emptyline(self):
+		""" ok """
+
 	def default(self, line):
 		if line:
 			line = line.strip()
