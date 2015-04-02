@@ -30,9 +30,12 @@ class Console(cmd.Cmd):
 					fields.append(k)
 			for p in fields:
 				v, t = dsutil.prop_value(ent, p)
-				i = ent['properties'][p].get('indexed')
-				t = t.replace('Value', '')
-				line += '\t%s/%s/%s/%s' % (p, t, i, json.dumps(v))
+				prop = ent['properties'].get(p)
+				line += '\t'
+				if prop:
+					i = prop.get('indexed')
+					t = t.replace('Value', '')
+					line += '%s/%s/%s/%s' % (p, t, i, json.dumps(v))
 			print >> self.stdout, line
 
 	def process(self, gql, fields):
@@ -41,10 +44,19 @@ class Console(cmd.Cmd):
 		if self.show_size:
 			print >> self.stdout, 'Total:', len(result['entities'])
 
+	def parse_gql(self, line):
+		temp = re.sub(r'\sfrom\s.*$', '', line)
+		temp = re.sub(r'\sgroup\s.*$', '', temp)
+		temp = re.sub(r'\slimit\s.*$', '', temp)
+		temp = re.sub(r'\soffset\s.*$', '', temp)
+		temp = re.sub(r'\sorder\s.*$', '', temp)
+		temp = re.sub(r'\swhere\s.*$', '', temp)
+		line = line.replace(temp, 'select *')
+		fields = re.split(r'[\s,]+', temp)
+		return fields, line 
+
 	def do_select(self, line):
-		fields = re.sub(r'^(.+)\sfrom.*$', r'\1', line)
-		fields = re.split(r'[\s,]+', fields)
-		gql = 'select * %s' % (re.sub(r'^.+\sfrom', 'from', line))
+		fields, gql = self.parse_gql(line)
 		try:
 			self.process(gql, fields)
 		except http.Error, e:
