@@ -6,6 +6,7 @@ import json
 import cmd
 import re
 import http
+import time
 
 class Console(cmd.Cmd):
 
@@ -39,10 +40,12 @@ class Console(cmd.Cmd):
 			print >> self.stdout, line
 
 	def process(self, gql, fields):
+		before = epoch_time = int(time.time())
 		result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
+		after = epoch_time = int(time.time())
 		self.show_entities(gql, result, fields)
 		if self.show_size:
-			print >> self.stdout, 'Total:', len(result['entities'])
+			print >> self.stdout, 'Total: %s (%s seconds)' % (len(result['entities']), (after - before))
 
 	def parse_gql(self, line):
 		temp = re.sub(r'\sfrom\s.*$', '', line)
