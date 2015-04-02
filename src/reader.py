@@ -26,7 +26,9 @@ def __parse_entity_results(resp):
 
 def query(dataset, gql, namespace=None, limit=1000, startCursor=None):
 	url = 'https://www.googleapis.com/datastore/v1beta2/datasets/%s/runQuery' % (dataset)
-	queryString = '%s limit %i' % (gql, limit)
+	queryString = gql
+	if limit:
+		queryString = '%s limit %i' % (gql, limit)
 	if startCursor:
 		queryString += ' offset @startCursor'
 	params = {

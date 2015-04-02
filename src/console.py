@@ -1,18 +1,38 @@
 import argparse
 import sys
+import reader
+import dsutil
+import json
 
 class Console(object):
 
-	def __init__(self, dataset, namespace=None, prompt=True, limit=20,source=sys.stdin, dest=sys.stdout):
+	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin, 
+			dest=sys.stdout, show_size=True, seperator='\t'):
 		self.dataset = dataset
 		self.namespace = namespace
 		self.prompt = prompt
-		self.limit = limit
 		self.source = source
 		self.dest = dest
+		self.show_size = show_size
+		self.seperator = seperator
 
-	def process(self, line):
-		print >> self.dest, line
+	def show_entities(self, gql, result):
+		for ent in result['entities']:
+			key = dsutil.human_key(ent['key'])
+			line = key
+			for p in ent['properties']:
+				v, t = dsutil.prop_value(ent, p)
+				i = ent['properties'][p].get('indexed')
+				t = t.replace('Value', '')
+				line += '\t%s/%s/%s/%s' % (p, t, i, json.dumps(v))
+			print line
+
+	def process(self, gql):
+		print >> self.dest, gql
+		result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
+		self.show_entities(gql, result)
+		if self.show_size:
+			print >> self.dest, 'Total:', len(result['entities']), result['endCursor']
 
 	def handle(self):
 		while True:
