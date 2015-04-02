@@ -11,7 +11,7 @@ import time
 class Console(cmd.Cmd):
 
 	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin, 
-			dest=sys.stdout, show_size=True, seperator='\t'):
+			dest=sys.stdout, show_size=True, seperator='\t', double_endline=True):
 		cmd.Cmd.__init__(self, stdin=source, stdout=dest)
 		self.dataset = dataset
 		self.namespace = namespace
@@ -20,6 +20,7 @@ class Console(cmd.Cmd):
 			self.prompt = '> '
 		self.show_size = show_size
 		self.seperator = seperator
+		self.double_endline = double_endline
 
 	def show_entities(self, gql, result, fields):
 		for ent in result['entities']:
@@ -38,6 +39,8 @@ class Console(cmd.Cmd):
 					t = t.replace('Value', '')
 					line += '%s/%s/%s/%s' % (p, t, i, json.dumps(v))
 			print >> self.stdout, line
+			if self.double_endline:
+				print >> self.stdout, ''
 
 	def process(self, gql, fields):
 		before = epoch_time = int(time.time())
