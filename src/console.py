@@ -5,6 +5,7 @@ import dsutil
 import json
 import cmd
 import re
+import http
 
 class Console(cmd.Cmd):
 
@@ -44,7 +45,10 @@ class Console(cmd.Cmd):
 		fields = re.sub(r'^(.+)\sfrom.*$', r'\1', line)
 		fields = re.split(r'[\s,]+', fields)
 		gql = 'select * %s' % (re.sub(r'^.+\sfrom', 'from', line))
-		self.process(gql, fields)
+		try:
+			self.process(gql, fields)
+		except http.Error, e:
+			print self.stdout, 'Error', e 
 
 	def do_EOF(self, line):
 		return self.do_exit('exit')
