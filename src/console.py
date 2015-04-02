@@ -59,8 +59,10 @@ class Console(cmd.Cmd):
 		fields, gql = self.parse_gql(line)
 		try:
 			self.process(gql, fields)
-		except http.Error, e:
-			print self.stdout, 'Error', e 
+		except KeyboardInterrupt:
+			print >> self.stdout, 'Interrupted'
+		except Exception, e:
+			print self.stdout, 'Error', e
 
 	def do_EOF(self, line):
 		return self.do_exit('exit')
