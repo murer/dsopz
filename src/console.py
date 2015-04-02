@@ -38,7 +38,7 @@ class Console(cmd.Cmd):
 		result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
 		self.show_entities(gql, result, fields)
 		if self.show_size:
-			print >> self.stdout, 'Total:', len(result['entities']), result['endCursor']
+			print >> self.stdout, 'Total:', len(result['entities'])
 
 	def do_select(self, line):
 		fields = re.sub(r'^(.+)\sfrom.*$', r'\1', line)
