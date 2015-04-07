@@ -44,6 +44,8 @@ Scopes Required:
 
     python src/console.py -d gae-projet -n namespace
 
+Here you can type your `gql` like `select *`. Results are limited to 10, you can do `-l 0` to turn it unlimited.
+
 ### Export data
 
     python src/exporter.py -d gae-project -n namespace -k kind1 kind2 > entities.bak
