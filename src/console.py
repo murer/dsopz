@@ -20,7 +20,9 @@ class Console(cmd.Cmd):
 		if prompt:
 			self.prompt = '> '
 		self.show_size = show_size
-		self.seperator = seperator
+		self.seperator = '\t'
+		if seperator != None:
+			self.seperator = seperator
 		self.double_endline = double_endline
 		self.limit = limit or 0
 
@@ -35,7 +37,7 @@ class Console(cmd.Cmd):
 			for p in fields:
 				v, t = dsutil.prop_value(ent, p)
 				prop = ent['properties'].get(p)
-				line += '\t'
+				line += self.seperator
 				if prop:
 					i = prop.get('indexed')
 					t = t.replace('Value', '')
@@ -109,10 +111,11 @@ def __main():
 	parser.add_argument('-sl', '--single-line', dest='single_line', action='store_true', help='single line')
 	parser.add_argument('-ns', '--no-summary', dest='no_summary', action='store_true', help='single line')
 	parser.add_argument('-l', '--limit', help='limit', type=int)
+	parser.add_argument('-s', '--seperator', help='seperator')
 	args = parser.parse_args()
 	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt, 
 		double_endline=not args.single_line, show_size=not args.no_summary,
-		limit=args.limit)
+		limit=args.limit, seperator=args.seperator)
 	try:
 		c.cmdloop()
 	except KeyboardInterrupt:
