@@ -53,7 +53,10 @@ class Console(cmd.Cmd):
 		#self.show_entities(gql, result['entities'], fields)
 		#if self.show_size:
 		#	print >> self.stdout, 'Total: %s (%s seconds)' % (len(result['entities']), (after - before))
-		it = reader.iterate(self.dataset, gql, namespace=self.namespace)
+		bulkSize = 1000
+		if self.limit > 0:
+			bulkSize = min(bulkSize, self.limit)
+		it = reader.iterate(self.dataset, gql, namespace=self.namespace, bulkSize=bulkSize)
 		loaded = 0
 		try:
 			while True:
@@ -113,9 +116,12 @@ def __main():
 	parser.add_argument('-l', '--limit', help='limit', type=int)
 	parser.add_argument('-s', '--seperator', help='seperator')
 	args = parser.parse_args()
+	limit = args.limit
+	if limit == None:
+		limit = 10
 	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt, 
 		double_endline=not args.single_line, show_size=not args.no_summary,
-		limit=args.limit, seperator=args.seperator)
+		limit=limit, seperator=args.seperator)
 	try:
 		c.cmdloop()
 	except KeyboardInterrupt:
