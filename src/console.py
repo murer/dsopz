@@ -11,7 +11,8 @@ import time
 class Console(cmd.Cmd):
 
 	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin, 
-			dest=sys.stdout, show_size=True, seperator='\t', double_endline=True):
+			dest=sys.stdout, show_size=True, seperator='\t', double_endline=True,
+			limit=None):
 		cmd.Cmd.__init__(self, stdin=source, stdout=dest)
 		self.dataset = dataset
 		self.namespace = namespace
@@ -21,9 +22,10 @@ class Console(cmd.Cmd):
 		self.show_size = show_size
 		self.seperator = seperator
 		self.double_endline = double_endline
+		self.limit = limit or 0
 
 	def show_entities(self, gql, result, fields):
-		for ent in result['entities']:
+		for ent in result:
 			key = dsutil.human_key(ent['key'])
 			line = key
 			if fields[0] == '*':
@@ -43,12 +45,26 @@ class Console(cmd.Cmd):
 				print >> self.stdout, ''
 
 	def process(self, gql, fields):
-		before = epoch_time = int(time.time())
-		result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
-		after = epoch_time = int(time.time())
-		self.show_entities(gql, result, fields)
+		before = int(time.time())
+		#result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
+		#after = int(time.time())
+		#self.show_entities(gql, result['entities'], fields)
+		#if self.show_size:
+		#	print >> self.stdout, 'Total: %s (%s seconds)' % (len(result['entities']), (after - before))
+		it = reader.iterate(self.dataset, gql, namespace=self.namespace)
+		loaded = 0
+		try:
+			while True:
+				ent = it.next()
+				self.show_entities(gql, [ent], fields)
+				loaded += 1
+				if self.limit and loaded >= self.limit:
+					break 
+		except StopIteration:
+			pass
+		after = int(time.time())
 		if self.show_size:
-			print >> self.stdout, 'Total: %s (%s seconds)' % (len(result['entities']), (after - before))
+			print >> self.stdout, 'Total: %s (%s seconds)' % (loaded, (after - before))
 
 	def parse_gql(self, line):
 		temp = re.sub(r'\sfrom\s.*$', '', line)
@@ -90,8 +106,13 @@ def __main():
 	parser.add_argument('-d', '--dataset', required=True, help='dataset')
 	parser.add_argument('-n', '--namespace', help='namespace')
 	parser.add_argument('-p', '--no-prompt', dest='prompt', action='store_false', help='no prompt')
+	parser.add_argument('-sl', '--single-line', dest='single_line', action='store_true', help='single line')
+	parser.add_argument('-ns', '--no-summary', dest='no_summary', action='store_true', help='single line')
+	parser.add_argument('-l', '--limit', help='limit', type=int)
 	args = parser.parse_args()
-	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt)
+	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt, 
+		double_endline=not args.single_line, show_size=not args.no_summary,
+		limit=args.limit)
 	try:
 		c.cmdloop()
 	except KeyboardInterrupt:
