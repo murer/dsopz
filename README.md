@@ -40,6 +40,10 @@ Scopes Required:
     https://www.googleapis.com/auth/datastore
     https://www.googleapis.com/auth/userinfo.email
 
+### Console
+
+    python src/console.py -d gae-projet -n namespace
+
 ### Export data
 
     python src/exporter.py -d gae-project -n namespace -k kind1 kind2 > entities.bak
