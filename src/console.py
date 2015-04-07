@@ -58,18 +58,20 @@ class Console(cmd.Cmd):
 			bulkSize = min(bulkSize, self.limit)
 		it = reader.iterate(self.dataset, gql, namespace=self.namespace, bulkSize=bulkSize)
 		loaded = 0
+		limited = ''
 		try:
 			while True:
 				ent = it.next()
 				self.show_entities(gql, [ent], fields)
 				loaded += 1
 				if self.limit and loaded >= self.limit:
+					limited = 'limited '
 					break 
 		except StopIteration:
 			pass
 		after = int(time.time())
 		if self.show_size:
-			print >> self.stdout, 'Total: %s (%s seconds)' % (loaded, (after - before))
+			print >> self.stdout, 'Total: %s %s(%s seconds)' % (loaded, limited, (after - before))
 
 	def parse_gql(self, line):
 		temp = re.sub(r'\sfrom\s.*$', '', line)
