@@ -56,7 +56,7 @@ Here you can type your `gql` like `select *`. Results are limited to 10, you can
 
 ### Import data
 
-    cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o upsert
+    cat entities.bak | pyhton src/importer.py -d gae-project -n namespace -o upsert
 
 You can import entities to another project or namespace.
 
@@ -64,7 +64,7 @@ You can import entities to another project or namespace.
 
 You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
 
-    cat entities.bak | pyhton src/importer.py -d gae-project -d namespace -o delete
+    cat entities.bak | pyhton src/importer.py -d gae-project -n namespace -o delete
 
 ### Set indexed true or false
 
