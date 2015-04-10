@@ -75,11 +75,18 @@ This will generate `processe.bak` file with all entities from `entities.bak` whi
 
 ### Updating, delete or create
 
-We can process a entity file into another, incluiding, updating or removing entities
+We can process a entity file into another, incluiding, updating or removing entities.
 
-    cat entities.bak | python src/processor_mapper.py > processed.bak <<-EOF
+    cat entities.bak | python src/processor_mapper.py > procesed.bak 3<mapper.py
+
+or
+
+    cat entities.bak | python src/processor_mapper.py > processed.bak 3<<-EOF
     ent['properties']['desc'] = {'indexed':False, 'stringValue': 'changed'}
     EOF
+
+`processor_mapper.py` reads entitie file from stdin, and python code from custom pipe input 3. This python code is called for every entity witch can be accessed via `ent` variable. This code must call `emit` function with entities to be printed to `processed.py`.
+
 
 ### Extract CSV from entities file
 
