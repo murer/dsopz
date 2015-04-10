@@ -73,6 +73,14 @@ You need just a keys-only file to delete, and you can extract it using `-o true`
 
 This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And upload it back to datastore
 
+### Updating, delete or create
+
+We can process a entity file into another, incluiding, updating or removing entities
+
+    cat entities.bak | python src/processor_mapper.py > processed.bak <<-EOF
+    ent['properties']['desc'] = {'indexed':False, 'stringValue': 'changed'}
+    EOF
+
 ### Extract CSV from entities file
 
     cat entities.bak | python src/processor_csv.py -k kind1 kind2 -c col1 col2 > entities.csv
