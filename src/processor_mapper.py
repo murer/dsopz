@@ -4,10 +4,10 @@ import sys
 import json
 import os
 
-class PythonProcessor(processor.Processor):
+class ProcessorMapper(processor.Processor):
 
 	def __init__(self, mapper, kinds = []):
-		super(PythonProcessor, self).__init__(kinds)
+		super(ProcessorMapper, self).__init__(kinds)
 		self.mapper = mapper
 
 	def resolve(self):
@@ -25,7 +25,7 @@ def __main():
 	parser = argparse.ArgumentParser(description='CSV')
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	args = parser.parse_args()
-	processor = PythonProcessor(mapper, args.kinds)
+	processor = ProcessorMapper(mapper, args.kinds)
 	processor.process()
 
 
