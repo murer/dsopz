@@ -83,9 +83,10 @@ or
 
     cat entities.bak | python src/processor_mapper.py > processed.bak 3<<-EOF
     ent['properties']['desc'] = {'indexed':False, 'stringValue': 'changed'}
+    emit(ent)
     EOF
 
-`processor_mapper.py` reads entitie file from stdin, and python code from custom pipe input 3. This python code is called for every entity witch can be accessed via `ent` variable. This code must call `emit` function with entities to be printed to `processed.py`.
+`processor_mapper.py` reads entities file from stdin, and python code from custom pipe input 3. This python code is called for every entity witch can be accessed via `ent` variable. This code can call `emit` function multiple times with one or more entities to be printed to `processed.bak`.
 
 
 ### Extract CSV from entities file
