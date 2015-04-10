@@ -7,6 +7,7 @@ import cmd
 import re
 import http
 import time
+import sys
 
 class Console(cmd.Cmd):
 
@@ -91,7 +92,7 @@ class Console(cmd.Cmd):
 		except KeyboardInterrupt:
 			print >> self.stdout, 'Interrupted'
 		except Exception, e:
-			print self.stdout, 'Error', e
+			print >> self.stdout, 'Error', e
 
 	def do_EOF(self, line):
 		return self.do_exit('exit')
