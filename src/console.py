@@ -90,8 +90,8 @@ class Console(cmd.Cmd):
 			self.process(gql, fields)
 		except KeyboardInterrupt:
 			print >> self.stdout, 'Interrupted'
-#		except Exception, e:
-#			print self.stdout, 'Error', e
+		except Exception, e:
+			print self.stdout, 'Error', e
 
 	def do_EOF(self, line):
 		return self.do_exit('exit')
