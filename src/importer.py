@@ -65,7 +65,7 @@ class BatchProcessor(processor.Processor):
 def __main():
 	parser = argparse.ArgumentParser(description='Importer')
 	parser.add_argument('-d', '--dataset', required=True, help='dataset')
-	parser.add_argument('-n', '--namespace', required=True, help='namespace')
+	parser.add_argument('-n', '--namespace', help='namespace')
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	parser.add_argument('-p', '--parallel', type=int, help='parallel')
 	parser.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help='operation')
