@@ -6,7 +6,7 @@ import json
 class UpdateProcessor(processor.Processor):
 
 	def __init__(self, props, kinds = []):
-		super(IndexedProcessor, self).__init__(kinds)
+		super(UpdateProcessor, self).__init__(kinds)
 		self.props = json.loads(props)
 
 	def resolve(self):
