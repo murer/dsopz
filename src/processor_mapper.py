@@ -4,6 +4,13 @@ import sys
 import json
 import os
 
+def emit(*ents):
+	for ent in ents:
+		if type(ent) != type([]):
+			ent = [ent]
+		for k in ent:
+			print json.dumps(k)
+
 class ProcessorMapper(processor.Processor):
 
 	def __init__(self, mapper, kinds = []):
