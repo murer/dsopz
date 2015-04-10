@@ -3,10 +3,10 @@ import processor
 import sys
 import json
 
-class IndexedProcessor(processor.Processor):
+class UpdateProcessor(processor.Processor):
 
 	def __init__(self, props, kinds = []):
-		super(IndexedProcessor, self).__init__(kinds)
+		super(UpdateProcessor, self).__init__(kinds)
 		self.props = json.loads(props)
 
 	def resolve(self):
@@ -25,7 +25,7 @@ def __main():
 	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
 	parser.add_argument('-p', '--properties', required=True,  help='properties')
 	args = parser.parse_args()
-	processor = IndexedProcessor(args.properties ,args.kinds)
+	processor = UpdateProcessor(args.properties ,args.kinds)
 	processor.process()
 
 if __name__ == '__main__':

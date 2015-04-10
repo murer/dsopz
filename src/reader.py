@@ -16,7 +16,7 @@ def __parse_entity_results(resp):
 		}
 		for k, v in ent.get('properties', {}).iteritems():
 			prop = v.copy()
-			prop['indexed'] = v.pop('indexed', False)
+			prop['indexed'] = v.pop('indexed', True)
 			if prop.get('listValue'):
 				prop.pop('indexed')
 			if v:
