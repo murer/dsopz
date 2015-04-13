@@ -1,0 +1,13 @@
+from distutils.core import setup
+setup(
+  name = 'dsopz',
+  packages = ['dsopz'],
+  version = '1.0.5',
+  description = 'Google Datastore Operations',
+  author = 'Paulo Henrique Murer',
+  author_email = 'fuweweu@gmail.com',
+  url = 'https://github.com/murer/dsopz', 
+  download_url = 'https://github.com/murer/dsopz/tarball/dsopz-1.0.5', # I'll explain this in a second
+  keywords = ['gae', 'datastore', 'appengine'],
+  classifiers = [],
+)
