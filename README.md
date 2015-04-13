@@ -26,7 +26,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
     pip install dsopz
   
-or
+or [stable.tar.gz](https://github.com/murer/dsopz/archive/stable.tar.gz)
 
     wget https://github.com/murer/dsopz/archive/stable.tar.gz
     tar xzf dsopz-stable.tar.gz
