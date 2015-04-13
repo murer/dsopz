@@ -18,14 +18,14 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
 ## Gettings Started
 
- * Every command has `--help`. 
+ * Try: `python src/dsopz.py --help`
  * If `namespace` was not given, we will access your default one.
- * If `kinds` was not given, we will use all of them
+ * If `kinds` was not given, we will use all of them.
 
 ### Login
 
-    python src/oauth_local.py
-    
+    python dsopz.py login
+
 If you can't open a browser automatically to login you can use this command:
 
     python src/oauth_installed.py
