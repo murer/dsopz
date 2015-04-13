@@ -8,7 +8,7 @@ setup(
       "console_scripts": [
           "dsopz = dsopz/dsopz",
       ]
-  }
+  },
   author = 'Paulo Henrique Murer',
   author_email = 'fuweweu@gmail.com',
   url = 'https://github.com/murer/dsopz', 
