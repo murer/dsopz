@@ -16,7 +16,7 @@ class Parser(object):
 
 	def __init__(self):
 		self.parser = argparse.ArgumentParser(description='DSOpz')
-		self.subparsers = self.parser.add_subparsers(dest="subparsers")
+		self.subparsers = self.parser.add_subparsers(dest="subparsers", title="Command")
 		self.mods = {}
 
 	def prepare(self, name, mod):
