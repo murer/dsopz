@@ -28,22 +28,19 @@ class IndexedProcessor(processor.Processor):
 					for k in column['listValue']:
 						if self.__setIndexed(k, self.indexed):
 							changed = True
-				else:		
+				else:
 					if self.__setIndexed(column, self.indexed):
 						changed = True
 			if changed:
 				print json.dumps(ent)
 
+def argparse_prepare(sub):
+	sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
+	sub.add_argument('-c', '--columns', required=True, nargs='+', help='columns')
+	sub.add_argument('-i', '--indexed', required=True, choices=('false', 'true'), help='indexed')
 
-def __main():
-	parser = argparse.ArgumentParser(description='CSV')
-	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
-	parser.add_argument('-c', '--columns', required=True, nargs='+', help='columns')
-	parser.add_argument('-i', '--indexed', required=True, choices=('false', 'true'), help='indexed')
-	args = parser.parse_args()
+def argparse_exec(args):
 	processor = IndexedProcessor(args.columns, args.indexed == 'true', args.kinds)
 	processor.process()
 
-if __name__ == '__main__':
-	__main()
 

@@ -19,15 +19,12 @@ class UpdateProcessor(processor.Processor):
 				ent['properties'][name] = value
 			print json.dumps(ent)
 
+def argparse_prepare(sub):
+	sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
+	sub.add_argument('-p', '--properties', required=True,  help='properties')
 
-def __main():
-	parser = argparse.ArgumentParser(description='CSV')
-	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
-	parser.add_argument('-p', '--properties', required=True,  help='properties')
-	args = parser.parse_args()
+def argparse_exec(args):
 	processor = UpdateProcessor(args.properties ,args.kinds)
 	processor.process()
 
-if __name__ == '__main__':
-	__main()
 

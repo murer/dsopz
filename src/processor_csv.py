@@ -34,13 +34,11 @@ class CSVProcessor(processor.Processor):
 				line[name] = value
 			self.writer.writerow(line)
 
-def __main():
-	parser = argparse.ArgumentParser(description='CSV')
-	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
-	parser.add_argument('-c', '--columns', required=True, nargs='+', help='columns')
-	args = parser.parse_args()
+def argparse_prepare(sub):
+	sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
+	sub.add_argument('-c', '--columns', required=True, nargs='+', help='columns')
+
+def argparse_exec(args):
 	processor = CSVProcessor(args.columns, args.kinds)
 	processor.process()
 
-if __name__ == '__main__':
-	__main()

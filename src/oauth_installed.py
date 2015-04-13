@@ -65,8 +65,9 @@ def refresh_token(auth):
 	content['handler'] = 'installed'
 	oauth_base.write_file(content)
 
-def __main():
-	return login()
-
-if __name__ == '__main__':
-	__main()
+def argparse_prepare(sub):
+	""" ok """
+	
+def argparse_exec(args):
+	login()
+	

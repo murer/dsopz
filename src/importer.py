@@ -62,19 +62,17 @@ class BatchProcessor(processor.Processor):
 	def done(self):
 		self.consume(0)
 
-def __main():
-	parser = argparse.ArgumentParser(description='Importer')
-	parser.add_argument('-d', '--dataset', required=True, help='dataset')
-	parser.add_argument('-n', '--namespace', help='namespace')
-	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
-	parser.add_argument('-p', '--parallel', type=int, help='parallel')
-	parser.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help='operation')
-	args = parser.parse_args()
+def argparse_prepare(sub):
+	sub.add_argument('-d', '--dataset', required=True, help='dataset')
+	sub.add_argument('-n', '--namespace', help='namespace')
+	sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
+	sub.add_argument('-p', '--parallel', type=int, help='parallel')
+	sub.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help='operation')
+
+def argparse_exec(args):
 	op = upsert
 	if args.operation == 'remove':
 		op = remove
 	processor = BatchProcessor(args.dataset, args.kinds, args.namespace, op, parallel = args.parallel or 10)
 	processor.process()
 
-if __name__ == '__main__':
-	__main()

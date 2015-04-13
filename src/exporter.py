@@ -30,14 +30,12 @@ def print_iterate(dataset, kinds=[], namespace=None, keys_only=False):
 			'select %s from %s order by __key__' % (field, kind), 
 			namespace=namespace, msg=kind)
 
-def __main():
-	parser = argparse.ArgumentParser(description='Exporter')
-	parser.add_argument('-d', '--dataset', required=True, help='dataset')
-	parser.add_argument('-n', '--namespace', help='namespace')
-	parser.add_argument('-k', '--kinds', nargs='+', help='kinds')
-	parser.add_argument('-o', '--keys-only', help='keys only')
-	args = parser.parse_args()
+def argparse_prepare(sub):
+	sub.add_argument('-d', '--dataset', required=True, help='dataset')
+	sub.add_argument('-n', '--namespace', help='namespace')
+	sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
+	sub.add_argument('-o', '--keys-only', help='keys only')
+
+def argparse_exec(args):
 	print_iterate(args.dataset, args.kinds, args.namespace, args.keys_only == 'true')
 
-if __name__ == '__main__':
-	__main()

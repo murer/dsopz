@@ -42,6 +42,13 @@ def oauth_async_req_json(method, url, params = None, headers = {}, expects = [20
 		headers['Content-type'] = 'application/json; charset=UTF-8'	
 	return http.async_req_json(method, url, params, headers, expects)
 
+
+def argparse_prepare(sub):
+	""" ok """
+	
+def argparse_exec(args):
+	print get_token()
+
 def __main():
 	print get_token()
 

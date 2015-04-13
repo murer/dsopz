@@ -49,11 +49,6 @@ class Console(cmd.Cmd):
 
 	def process(self, gql, fields):
 		before = int(time.time())
-		#result = reader.query(self.dataset, gql, namespace=self.namespace, limit=0)
-		#after = int(time.time())
-		#self.show_entities(gql, result['entities'], fields)
-		#if self.show_size:
-		#	print >> self.stdout, 'Total: %s (%s seconds)' % (len(result['entities']), (after - before))
 		bulkSize = 1000
 		if self.limit > 0:
 			bulkSize = min(bulkSize, self.limit)
@@ -109,16 +104,16 @@ class Console(cmd.Cmd):
 		if not line.startswith('#') and not line.startswith('--'):
 			cmd.Cmd.default(self, line)
 
-def __main():
-	parser = argparse.ArgumentParser(description='Reader')
-	parser.add_argument('-d', '--dataset', required=True, help='dataset')
-	parser.add_argument('-n', '--namespace', help='namespace')
-	parser.add_argument('-p', '--no-prompt', dest='prompt', action='store_false', help='no prompt')
-	parser.add_argument('-sl', '--single-line', dest='single_line', action='store_true', help='single line')
-	parser.add_argument('-ns', '--no-summary', dest='no_summary', action='store_true', help='single line')
-	parser.add_argument('-l', '--limit', help='limit', type=int)
-	parser.add_argument('-s', '--seperator', help='seperator')
-	args = parser.parse_args()
+def argparse_prepare(sub):
+	sub.add_argument('-d', '--dataset', required=True, help='dataset')
+	sub.add_argument('-n', '--namespace', help='namespace')
+	sub.add_argument('-p', '--no-prompt', dest='prompt', action='store_false', help='no prompt')
+	sub.add_argument('-sl', '--single-line', dest='single_line', action='store_true', help='single line')
+	sub.add_argument('-ns', '--no-summary', dest='no_summary', action='store_true', help='single line')
+	sub.add_argument('-l', '--limit', help='limit', type=int)
+	sub.add_argument('-s', '--seperator', help='seperator')
+
+def argparse_exec(args):
 	limit = args.limit
 	if limit == None:
 		limit = 10
@@ -130,6 +125,3 @@ def __main():
 	except KeyboardInterrupt:
 		return
 
-
-if __name__ == '__main__':
-	__main()
