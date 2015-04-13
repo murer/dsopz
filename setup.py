@@ -1,9 +1,11 @@
 from distutils.core import setup
+import dsopz.config as config
+
 
 setup(
   name = 'dsopz',
   packages = ['dsopz'],
-  version = '1.0.5.6',
+  version = config.version,
   description = 'Google Datastore Operations',
   entry_points = {
       "console_scripts": [
@@ -13,8 +15,10 @@ setup(
   author = 'Paulo Henrique Murer',
   author_email = 'fuweweu@gmail.com',
   url = 'https://github.com/murer/dsopz', 
-  download_url = 'https://github.com/murer/dsopz/tarball/dsopz-1.0.5', # I'll explain this in a second
+  download_url = 'https://github.com/murer/dsopz/tarball/dsopz-%s' % (config.version),
   keywords = ['gae', 'datastore', 'appengine'],
   classifiers = [],
+)
+
 
 
