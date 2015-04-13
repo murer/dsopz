@@ -1,4 +1,4 @@
 #!/bin/bash -xe
 
-#python setup.py register -r pypi
-python setup.py upload -r pypi
+#python setup.py sdist register -r pypi
+python setup.py sdist upload -r pypi
