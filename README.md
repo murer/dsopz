@@ -22,6 +22,12 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
  * If `namespace` was not given, we will access your default one.
  * If `kinds` was not given, we will use all of them.
 
+    pip install dsopz
+  
+or
+
+    https://github.com/murer/dsopz/archive/stable.tar.gz
+
 ### Login
 
     python dsopz/dsopz.py login
