@@ -1,7 +1,6 @@
 from distutils.core import setup
 import dsopz.config as config
 
-
 setup(
   name = 'dsopz',
   packages = ['dsopz'],
