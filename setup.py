@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name = 'dsopz',
   packages = ['dsopz'],
-  version = '1.0.5',
+  version = '1.0.5.1',
   description = 'Google Datastore Operations',
   entry_points = {
       "console_scripts": [
