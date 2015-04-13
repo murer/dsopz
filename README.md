@@ -18,7 +18,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
 ## Gettings Started
 
- * Try: `python src/dsopz.py --help`
+ * Every command has `--help`
  * If `namespace` was not given, we will access your default one.
  * If `kinds` was not given, we will use all of them.
 
@@ -28,11 +28,11 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
 If you can't open a browser automatically to login you can use this command:
 
-    python src/oauth_installed.py
+    python dsopz.py login-text
 
 You can use [GCE Service Account](https://cloud.google.com/compute/docs/authentication).
 
-    python src/oauth_gce.py
+    python dsopz.py login-gce
     
 Scopes Required:
 
