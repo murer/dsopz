@@ -11,6 +11,15 @@ import oauth
 import oauth_gce
 import oauth_installed
 import oauth_local
+import config
+
+class Version(object):
+
+	def argparse_prepare(self, sub):
+		""" ok """
+
+	def argparse_exec(self, args):
+		print config.version
 
 class Parser(object):
 
@@ -31,6 +40,7 @@ class Parser(object):
 
 def main():
 	parser = Parser()
+	parser.prepare('version', Version())
 	parser.prepare('console', console)
 	parser.prepare('export', exporter)
 	parser.prepare('import', importer)
