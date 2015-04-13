@@ -2,11 +2,11 @@ from distutils.core import setup
 setup(
   name = 'dsopz',
   packages = ['dsopz'],
-  version = '1.0.5.1',
+  version = '1.0.5.4',
   description = 'Google Datastore Operations',
   entry_points = {
       "console_scripts": [
-          "dsopz = dsopz.dsopz",
+          "dsopz = dsopz:main",
       ]
   },
   author = 'Paulo Henrique Murer',
