@@ -29,7 +29,7 @@ class Parser(object):
 		mod = self.mods[args.subparsers]
 		mod.argparse_exec(args)
 
-def __main():
+def main():
 	parser = Parser()
 	parser.prepare('console', console)
 	parser.prepare('export', exporter)
@@ -46,6 +46,6 @@ def __main():
 	parser.handle_args()
 
 if __name__ == '__main__':
-	__main()
+	main()
 
 
