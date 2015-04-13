@@ -4,6 +4,11 @@ setup(
   packages = ['dsopz'],
   version = '1.0.5',
   description = 'Google Datastore Operations',
+  entry_points = {
+      "console_scripts": [
+          "dsopz = dsopz/dsopz",
+      ]
+  }
   author = 'Paulo Henrique Murer',
   author_email = 'fuweweu@gmail.com',
   url = 'https://github.com/murer/dsopz', 
