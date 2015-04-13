@@ -24,15 +24,15 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
 ### Login
 
-    python src/dsopz.py login
+    python dsopz/dsopz.py login
 
 If you can't open a browser automatically to login you can use this command:
 
-    python src/dsopz.py login-text
+    python dsopz/dsopz.py login-text
 
 You can use [GCE Service Account](https://cloud.google.com/compute/docs/authentication).
 
-    python src/dsopz.py login-gce
+    python dsopz/dsopz.py login-gce
     
 Scopes Required:
 
@@ -42,21 +42,21 @@ Scopes Required:
 
 ### Console
 
-    python src/dsopz.py console -d gae-projet -n namespace
+    python dsopz/dsopz.py console -d gae-projet -n namespace
 
 Here you can type your `gql` like `select *`. Results are limited to 10, you can do `-l 0` to turn it unlimited.
 
 ### Export data
 
-    python src/dsopz.py export -d gae-project -n namespace -k kind1 kind2 > entities.bak
+    python dsopz/dsopz.py export -d gae-project -n namespace -k kind1 kind2 > entities.bak
 
 ### GQL exporter
 
-    python src/dsopz.py gql -d gae-project -n namespace -q 'select * from kind1' > entities.bak
+    python dsopz/dsopz.py gql -d gae-project -n namespace -q 'select * from kind1' > entities.bak
 
 ### Import data
 
-    cat entities.bak | pyhton src/dsopz.py import -d gae-project -n namespace -o upsert
+    cat entities.bak | pyhton dsopz/dsopz.py import -d gae-project -n namespace -o upsert
 
 You can import entities to another project or namespace.
 
@@ -64,12 +64,12 @@ You can import entities to another project or namespace.
 
 You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
 
-    cat entities.bak | pyhton src/dsopz.py import -d gae-project -n namespace -o delete
+    cat entities.bak | pyhton dsopz/dsopz.py import -d gae-project -n namespace -o delete
 
 ### Set indexed true or false
 
-    cat entities.bak | python src/dsopz.py index -c col1 col2 -k kind2 kind2 -i true > processed.bak
-    cat processed.bak | python src/dsopz.py import -d gae-project -n namespace -o upsert
+    cat entities.bak | python dsopz/dsopz.py index -c col1 col2 -k kind2 kind2 -i true > processed.bak
+    cat processed.bak | python dsopz/dsopz.py import -d gae-project -n namespace -o upsert
 
 This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And upload it back to datastore
 
@@ -77,21 +77,21 @@ This will generate `processe.bak` file with all entities from `entities.bak` whi
 
 We can process a entity file into another, incluiding, updating or removing entities.
 
-    cat entities.bak | python src/dsopz.py map > procesed.bak 3<mapper.py
+    cat entities.bak | python dsopz/dsopz.py map > procesed.bak 3<mapper.py
 
 or
 
-    cat entities.bak | python src/dsopz.py map > processed.bak 3<<-EOF
+    cat entities.bak | python dsopz/dsopz.py map > processed.bak 3<<-EOF
     ent['properties']['desc'] = {'indexed':False, 'stringValue': 'changed'}
     emit(ent)
     EOF
 
-`src/dsopz.py map` reads entities file from stdin, and python code from custom pipe input 3. This python code is called for every entity witch can be accessed via `ent` variable. This code can call `emit` function multiple times with one or more entities to be printed to `processed.bak`.
+`dsopz/dsopz.py map` reads entities file from stdin, and python code from custom pipe input 3. This python code is called for every entity witch can be accessed via `ent` variable. This code can call `emit` function multiple times with one or more entities to be printed to `processed.bak`.
 
 
 ### Extract CSV from entities file
 
-    cat entities.bak | python src/dsopz.py csv -k kind1 kind2 -c col1 col2 > entities.csv
+    cat entities.bak | python dsopz/dsopz.py csv -k kind1 kind2 -c col1 col2 > entities.csv
 
 As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You will want to use ` | gzip` and `| gunzip` to manage large amount of entities.
 
@@ -103,7 +103,7 @@ This entity file used to pipe in or out these python commands has one json per f
 
 Processors is what you can do to manage your entities file before import (or delete) it back do datastore. You can actually write a processor to do whatever you want with a entities file, for example: send entities to somewhere, parse them into a csv, etc.
 
-To write a processor, you will `import processor` and extend `processor.Processor`. Override `resolve` method to process `self.block` array of entities. Sample: [processor_csv.py](./src/processor_csv.py), [processor_indexed.py](./src/processor_indexed.py)  
+To write a processor, you will `import processor` and extend `processor.Processor`. Override `resolve` method to process `self.block` array of entities. Sample: [processor_csv.py](./dsopz/processor_csv.py), [processor_indexed.py](./dsopz/processor_indexed.py)  
 
 
 
