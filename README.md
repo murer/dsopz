@@ -25,6 +25,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 ### Install
 
     pip install dsopz
+    dsopz version
   
 or [stable.tar.gz](https://github.com/murer/dsopz/archive/stable.tar.gz)
 
@@ -34,16 +35,16 @@ or [stable.tar.gz](https://github.com/murer/dsopz/archive/stable.tar.gz)
 
 ### Login
 
-    python dsopz/dsopz.py login
+    dsopz login
 
 If you can't open a browser automatically to login you can use this command:
 
-    python dsopz/dsopz.py login-text
+    dsopz login-text
 
 You can use [GCE Service Account](https://cloud.google.com/compute/docs/authentication).
 
-    python dsopz/dsopz.py login-gce
-    
+    dsopz login-gce
+  
 Scopes Required:
 
     https://www.googleapis.com/auth/cloud-platform
@@ -52,21 +53,21 @@ Scopes Required:
 
 ### Console
 
-    python dsopz/dsopz.py console -d gae-projet -n namespace
+    dsopz console -d gae-projet -n namespace
 
 Here you can type your `gql` like `select *`. Results are limited to 10, you can do `-l 0` to turn it unlimited.
 
 ### Export data
 
-    python dsopz/dsopz.py export -d gae-project -n namespace -k kind1 kind2 > entities.bak
+    dsopz export -d gae-project -n namespace -k kind1 kind2 > entities.bak
 
 ### GQL exporter
 
-    python dsopz/dsopz.py gql -d gae-project -n namespace -q 'select * from kind1' > entities.bak
+    dsopz gql -d gae-project -n namespace -q 'select * from kind1' > entities.bak
 
 ### Import data
 
-    cat entities.bak | pyhton dsopz/dsopz.py import -d gae-project -n namespace -o upsert
+    cat entities.bak | dsopz import -d gae-project -n namespace -o upsert
 
 You can import entities to another project or namespace.
 
@@ -74,12 +75,12 @@ You can import entities to another project or namespace.
 
 You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
 
-    cat entities.bak | pyhton dsopz/dsopz.py import -d gae-project -n namespace -o delete
+    cat entities.bak | dsopz import -d gae-project -n namespace -o delete
 
 ### Set indexed true or false
 
-    cat entities.bak | python dsopz/dsopz.py index -c col1 col2 -k kind2 kind2 -i true > processed.bak
-    cat processed.bak | python dsopz/dsopz.py import -d gae-project -n namespace -o upsert
+    cat entities.bak | dsopz index -c col1 col2 -k kind2 kind2 -i true > processed.bak
+    cat processed.bak | dsopz import -d gae-project -n namespace -o upsert
 
 This will generate `processe.bak` file with all entities from `entities.bak` which have changed `col1` or `col2` to indexed `true`. And upload it back to datastore
 
@@ -87,11 +88,11 @@ This will generate `processe.bak` file with all entities from `entities.bak` whi
 
 We can process a entity file into another, incluiding, updating or removing entities.
 
-    cat entities.bak | python dsopz/dsopz.py map > procesed.bak 3<mapper.py
+    cat entities.bak | dsopz map > procesed.bak 3<mapper.py
 
 or
 
-    cat entities.bak | python dsopz/dsopz.py map > processed.bak 3<<-EOF
+    cat entities.bak | dsopz map > processed.bak 3<<-EOF
     ent['properties']['desc'] = {'indexed':False, 'stringValue': 'changed'}
     emit(ent)
     EOF
@@ -101,7 +102,7 @@ or
 
 ### Extract CSV from entities file
 
-    cat entities.bak | python dsopz/dsopz.py csv -k kind1 kind2 -c col1 col2 > entities.csv
+    cat entities.bak | dsopz csv -k kind1 kind2 -c col1 col2 > entities.csv
 
 As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You will want to use ` | gzip` and `| gunzip` to manage large amount of entities.
 
