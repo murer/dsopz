@@ -10,8 +10,8 @@ class Error(Exception):
 
 def __config():
 	return { 
-		'client_id': '765762103246-g936peorj64mgveoqhai6ohv4t5qc5qb.apps.googleusercontent.com',
-		'client_secret': 'ayQpUnTqvIxgV1XY9e-ItyC8',
+		'client_id': '570403801115-fik4r8kkcf89d7c46mepm5keekker8jl.apps.googleusercontent.com',
+		'client_secret': 'luZsJXmEfBr4iP0WoruMbZz1',
 		'scopes': [
 			'https://www.googleapis.com/auth/cloud-platform',
 			'https://www.googleapis.com/auth/datastore',
