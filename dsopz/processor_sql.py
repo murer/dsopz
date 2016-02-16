@@ -11,12 +11,11 @@ class SQLProcessor(processor.Processor):
 	def __init__(self, columns, kinds = []):
 		super(SQLProcessor, self).__init__(kinds)
 		self.columns = columns
-		self.sql = 'insert into %s values (';
+		self.sql = 'insert into %s (';
 		self.sql += ', '.join(['id' if str(x) == '__key__' else str(x) for x in columns])
 		self.sql += ') values ('
 		self.sql += ', '.join(['%s' for x in columns])
-		self.sql += ')'
-		print self.sql
+		self.sql += ');'
 
 	def resolve(self):
 		print >> sys.stderr, 'process', self.processed
