@@ -5,6 +5,7 @@ import reader
 import console
 import processor_indexed
 import processor_csv
+import processor_sql
 import processor_update
 import processor_mapper
 import oauth
@@ -47,15 +48,14 @@ def main():
 	parser.prepare('gql', reader)
 	parser.prepare('index', processor_indexed)
 	parser.prepare('csv', processor_csv)
+	parser.prepare('sql', processor_sql)
 	parser.prepare('update', processor_update)
 	parser.prepare('map', processor_mapper)
 	parser.prepare('token', oauth)
-	parser.prepare('login', oauth_local)	
-	parser.prepare('login-text', oauth_installed)	
-	parser.prepare('login-gce', oauth_gce)	
+	parser.prepare('login', oauth_local)
+	parser.prepare('login-text', oauth_installed)
+	parser.prepare('login-gce', oauth_gce)
 	parser.handle_args()
 
 if __name__ == '__main__':
 	main()
-
-
