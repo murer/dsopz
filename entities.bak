@@ -1,1 +1,0 @@
-{"properties": {"__title": {"stringValue": "javascript is ???", "excludeFromIndexes": false}, "likes": {"excludeFromIndexes": true, "integerValue": "212034"}, "title": {"stringValue": "Javascript is ???", "excludeFromIndexes": true}}, "key": {"path": [{"kind": "posts", "name": "javascript"}]}}
