@@ -23,7 +23,7 @@ def get_token():
 	auth = oauth_base.read_file()
 	if not auth:
 		raise Error('You need to login')
-	now = int(datetime.datetime.now().strftime("%s"))
+	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
 	handler = resolve(auth['handler'])
 	if now > auth['expires'] - 60:
 		handler.refresh_token(auth)
@@ -39,13 +39,13 @@ def oauth_async_req_json(method, url, params = None, headers = {}, expects = [20
 	headers['Authorization'] = 'Bearer %s' % get_token()
 	if params:
 		params = json.dumps(params)
-		headers['Content-type'] = 'application/json; charset=UTF-8'	
+		headers['Content-type'] = 'application/json; charset=UTF-8'
 	return http.async_req_json(method, url, params, headers, expects)
 
 
 def argparse_prepare(sub):
 	""" ok """
-	
+
 def argparse_exec(args):
 	print get_token()
 
@@ -54,4 +54,3 @@ def __main():
 
 if __name__ == '__main__':
 	__main()
-

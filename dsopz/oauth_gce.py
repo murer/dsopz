@@ -11,10 +11,10 @@ def login():
 	refresh_token(None)
 
 def refresh_token(auth):
-	content = http.req_json('GET', 
-		'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', 
+	content = http.req_json('GET',
+		'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
 		headers = { 'Metadata-Flavor': 'Google' })
-	now = int(datetime.datetime.now().strftime("%s"))
+	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in
@@ -23,6 +23,6 @@ def refresh_token(auth):
 
 def argparse_prepare(sub):
 	""" ok """
-	
+
 def argparse_exec(args):
 	login()

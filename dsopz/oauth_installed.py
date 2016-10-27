@@ -9,7 +9,7 @@ class Error(Exception):
 	"""Exceptions"""
 
 def __config():
-	return { 
+	return {
 		'client_id': '570403801115-fik4r8kkcf89d7c46mepm5keekker8jl.apps.googleusercontent.com',
 		'client_secret': 'luZsJXmEfBr4iP0WoruMbZz1',
 		'scopes': [
@@ -41,7 +41,7 @@ def login():
 		'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
 		'grant_type': 'authorization_code'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-	now = int(datetime.datetime.now().strftime("%s"))
+	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in
@@ -57,7 +57,7 @@ def refresh_token(auth):
 		'client_secret': config['client_secret'],
 		'grant_type': 'refresh_token'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-	now = int(datetime.datetime.now().strftime("%s"))
+	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in
@@ -67,7 +67,6 @@ def refresh_token(auth):
 
 def argparse_prepare(sub):
 	""" ok """
-	
+
 def argparse_exec(args):
 	login()
-	
