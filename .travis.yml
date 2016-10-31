@@ -9,4 +9,6 @@ python:
 #  - "nightly"
 before_script:
   - "./cmds/decrypt.sh"
-script: "./test/test.sh"
+script:
+  - "python dsopz/dsopz.py login-serviceaccount -f test/dsopzit.secret.json"
+  - "./test/test.sh"
