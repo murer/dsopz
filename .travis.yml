@@ -9,6 +9,8 @@ python:
 #  - "nightly"
 before_script:
   - "./cmds/decrypt.sh"
+install:
+  - "pip install pycrypto"
 script:
   - "python dsopz/dsopz.py login-serviceaccount -f test/dsopzit.secret.json"
   - "./test/test.sh"
