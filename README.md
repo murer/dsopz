@@ -2,6 +2,8 @@
 
 DSOpz (Datastore Operationz) is a project where you manage your datastore from command line.
 
+[![Build Status](https://travis-ci.org/murer/dsopz.svg?branch=master)](https://travis-ci.org/murer/dsopz)
+
 ## Features
 
  * Python API and command line
