@@ -8,10 +8,8 @@ python:
 #  - "3.5"
 #  - "nightly"
 before_script:
-  - "./cmds/decrypt.sh"
-  - env
+  - "./cmds/before_script.sh"
 install:
-  - "pip install pycrypto"
+  - "./cmds/install.sh"
 script:
-  - "python dsopz/dsopz.py login-serviceaccount -f test/dsopzit.secret.json"
-  - "./test/test.sh"
+  - "./cmds/script.sh"
