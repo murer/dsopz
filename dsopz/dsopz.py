@@ -12,6 +12,7 @@ import oauth
 import oauth_gce
 import oauth_installed
 import oauth_local
+import oauth_serviceaccount
 import config
 
 class Version(object):
@@ -55,6 +56,7 @@ def main():
     parser.prepare('login', oauth_local)
     parser.prepare('login-text', oauth_installed)
     parser.prepare('login-gce', oauth_gce)
+    parser.prepare('login-serviceaccount', oauth_serviceaccount)
     parser.handle_args()
 
 if __name__ == '__main__':
