@@ -10,5 +10,7 @@ python:
 before_script:
   - "pwd"
   - "ls -lart"
+  - "ls -lart cmds"
+  - "./cmds/decrypt.sh"
 install: "echo aaa"
 script: "echo bbb"
