@@ -1,6 +1,6 @@
 import http
 import urllib
-import datetime
+import time
 import util
 import sys
 import oauth_base
@@ -41,13 +41,13 @@ def login():
 		'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
 		'grant_type': 'authorization_code'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
+	now = now = int(time.time())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in
 	content['handler'] = 'installed'
 	oauth_base.write_file(content)
-	print 'Done'
+	print 'Logged in'
 
 def refresh_token(auth):
 	config = __config()
@@ -57,7 +57,7 @@ def refresh_token(auth):
 		'client_secret': config['client_secret'],
 		'grant_type': 'refresh_token'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
+	now = now = int(time.time())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in

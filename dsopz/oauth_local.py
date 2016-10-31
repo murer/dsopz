@@ -1,7 +1,7 @@
 import http
 import urllib
 import urlparse
-import datetime
+import time
 import json
 import webbrowser
 import oauth_base
@@ -31,13 +31,13 @@ def get_first_token(port, code):
 		'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
 		'grant_type': 'authorization_code'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
+	now = now = int(time.time())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in
 	content['handler'] = 'local'
 	oauth_base.write_file(content)
-	print 'Done'
+	print 'Logged in'
 
 class OAuthHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -82,7 +82,7 @@ def refresh_token(auth):
 		'client_secret': config['client_secret'],
 		'grant_type': 'refresh_token'
 	}), { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
+	now = now = int(time.time())
 	expires_in = content['expires_in']
 	content['created'] = now
 	content['expires'] = now + expires_in

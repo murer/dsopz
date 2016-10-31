@@ -19,7 +19,6 @@ def __config():
 	}
 
 def login(credential):
-	print json.dumps(credential, indent=True)
 	oauth_base.delete_file()
 
 	try:
@@ -49,13 +48,13 @@ def login(credential):
 	sign = PKCS1_v1_5.new(privatekey).sign(SHA256.new(sign))
 	sign = base64.urlsafe_b64encode(sign)
 	assertion = '%s.%s' % (token, sign)
-	print assertion
 	auth = {
 		'handler': 'serviceaccount',
 		'assertion': assertion,
 		'token_uri': credential['token_uri']
 	}
 	refresh_token(auth)
+	print 'Logged in'
 
 def refresh_token(auth):
 	content = http.req_json('POST', auth['token_uri'], urllib.urlencode({

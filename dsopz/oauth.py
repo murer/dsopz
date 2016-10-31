@@ -3,7 +3,7 @@ import oauth_installed
 import oauth_gce
 import oauth_serviceaccount
 import sys
-import datetime
+import time
 import http
 import json
 import oauth_base
@@ -26,7 +26,7 @@ def get_token():
 	auth = oauth_base.read_file()
 	if not auth:
 		raise Error('You need to login')
-	now = int((datetime.datetime.now() - datetime.datetime(1970,1,1)).total_seconds())
+	now = now = int(time.time())
 	handler = resolve(auth['handler'])
 	if now > auth['expires'] - 60:
 		handler.refresh_token(auth)
