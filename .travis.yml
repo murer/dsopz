@@ -8,8 +8,8 @@ python:
 #  - "3.5"
 #  - "nightly"
 before_script:
-  - "./cmds/before_script.sh"
+  - "./ci/before_script.sh"
 install:
-  - "./cmds/install.sh"
+  - "./ci/install.sh"
 script:
-  - "./cmds/script.sh"
+  - "./ci/script.sh"
