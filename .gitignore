@@ -3,3 +3,4 @@ target
 dist
 *~
 dsopz.egg-info
+*.secret.json
