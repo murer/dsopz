@@ -46,6 +46,10 @@ If you can't open a browser automatically to login you can use this command:
 You can use [GCE Service Account](https://cloud.google.com/compute/docs/authentication).
 
     dsopz login-gce
+    
+Or regular [Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
+
+    dsopz login-serviceaccount -f <json-file>
   
 Scopes Required:
 
