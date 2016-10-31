@@ -13,7 +13,7 @@ fi
 
 python dsopz/dsopz.py version
 
-echo "config=$CLOSE_VERSION" > dsopz/config.py
+echo "version=$CLOSE_VERSION" > dsopz/config.py
 git commit -am "releasing $CLOSE_VERSION"
 git tag "dsopz-$CLOSE_VERSION"
 git push origin "dsopz-$CLOSE_VERSION"
