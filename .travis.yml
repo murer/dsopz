@@ -14,3 +14,4 @@ deploy:
     secure: EkX9hjnp7Oev1AGSRvklMwUuComSFgHDVmv7JLfWXjgO2tDXt086oGcwnxoC5e2by+ne7NraEdKzLoaPNURfQa4qLpwt2oBJ6yEUg+184yzb50E1AYPzMGrVIZ2gfelJrApzcjJesbUu03vIN0e05aEIVCn0WyjaCd5B5jAKJo4=
   on:
     branch: release
+    tags: false
