@@ -19,3 +19,5 @@ git tag "dsopz-$CLOSE_VERSION"
 git push origin "dsopz-$CLOSE_VERSION"
 
 python dsopz/dsopz.py version
+
+git push
