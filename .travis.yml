@@ -8,7 +8,7 @@ python:
 #  - "3.5"
 #  - "nightly"
 before_script:
-  - "ls -lart cmds"
-  - "./cmds/decrypt.sh"
+  - "pwd"
+  - "ls -lart"
 install: "echo aaa"
 script: "echo bbb"
