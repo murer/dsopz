@@ -36,7 +36,7 @@ def async_req_json(method, url, params = '', headers = {}, expects = [200]):
 	conn = None
 	if(parsed.scheme == 'https'):
 		conn = httplib.HTTPSConnection(parsed.hostname, parsed.port or 443)
-	else: 
+	else:
 		conn = httplib.HTTPConnection(parsed.hostname, parsed.port or 80)
 	if parsed.username != None:
 		token = parsed.username + ':' + (parsed.password or '')

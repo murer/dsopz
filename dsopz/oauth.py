@@ -1,6 +1,7 @@
 import oauth_local
 import oauth_installed
 import oauth_gce
+import oauth_serviceaccount
 import sys
 import datetime
 import http
@@ -17,6 +18,8 @@ def resolve(t):
 		return oauth_local
 	elif t == 'gce':
 		return oauth_gce
+	elif t == 'serviceaccount':
+		return oauth_serviceaccount
 	raise Error('Unknown: %s' % (t))
 
 def get_token():
