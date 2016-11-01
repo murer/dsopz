@@ -127,5 +127,5 @@ To write a processor, you will `import processor` and extend `processor.Processo
 
  * It is pure python
  * It does not need any dependency
-   * Except by ```login-serviceaccount``` which requires (pycryto)[https://pypi.python.org/pypi/pycrypto] to sign (JWT)[https://developers.google.com/identity/protocols/OAuth2ServiceAccount]
+   * Except by ```login-serviceaccount``` which requires [pycryto](https://pypi.python.org/pypi/pycrypto) to sign [JWT](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
  
