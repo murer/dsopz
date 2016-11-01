@@ -5,7 +5,6 @@ import sys
 import dsutil
 import locale
 import sqlite3
-import util
 
 class SQLProcessor(processor.Processor):
 
@@ -19,7 +18,7 @@ class SQLProcessor(processor.Processor):
 		self.sql += ');'
 
 	def resolve(self):
-		util.prn(sys.stderr, 'process', self.processed)
+		print >> sys.stderr, 'process', self.processed
 		for ent in self.block:
 			kind = dsutil.get_kind(ent)
 			line = [ ]
@@ -35,7 +34,7 @@ class SQLProcessor(processor.Processor):
 				line.append(value)
 			values = [ ("'%s'" % (str(x).replace("'", "''"))) for x in line]
 			values = [ kind ] + values
-			util.prn(self.sql % tuple(values))
+			print self.sql % tuple(values)
 
 def argparse_prepare(sub):
 	sub.add_argument('-k', '--kinds', nargs='+', help='kinds')

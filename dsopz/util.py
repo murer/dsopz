@@ -1,12 +1,6 @@
-from __future__ import print_function
 import os
 import errno
 import json
-import sys
-
-
-def prn(dest, *args):
-	print(*args, file=dest)
 
 def close(obj):
 	try:
@@ -22,3 +16,4 @@ def makedirs(directory):
 			pass
 		else:
 			raise
+

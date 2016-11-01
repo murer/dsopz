@@ -30,9 +30,9 @@ def login():
 		'approval_prompt': 'force',
 		'access_type': 'offline'
 	})
-	util.prn(sys.stdout, 'Browser:')
-	util.prn(sys.stdout, url)
-	util.prn(sys.stdout, 'Code:')
+	print 'Browser:'
+	print url
+	print 'Code:'
 	code = sys.stdin.readline().strip()
 	content = http.req_json('POST', 'https://www.googleapis.com:443/oauth2/v3/token', urllib.urlencode({
 		'code': code,
@@ -47,7 +47,7 @@ def login():
 	content['expires'] = now + expires_in
 	content['handler'] = 'installed'
 	oauth_base.write_file(content)
-	util.prn(sys.stdout, 'Logged in')
+	print 'Logged in'
 
 def refresh_token(auth):
 	config = __config()

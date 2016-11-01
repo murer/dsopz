@@ -2,7 +2,6 @@ import http
 import time
 import util
 import oauth_base
-import sys
 
 class Error(Exception):
 	"""Exceptions"""
@@ -21,7 +20,7 @@ def refresh_token(auth):
 	content['expires'] = now + expires_in
 	content['handler'] = 'gce'
 	oauth_base.write_file(content)
-	util.prn(sys.stdout, 'Logged in')
+	print 'Logged in'
 
 def argparse_prepare(sub):
 	""" ok """

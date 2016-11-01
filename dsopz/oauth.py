@@ -50,10 +50,10 @@ def argparse_prepare(sub):
 	""" ok """
 
 def argparse_exec(args):
-	util.prn(sys.stdout, get_token())
+	print get_token()
 
 def __main():
-	util.prn(sys.stdout, get_token())
+	print get_token()
 
 if __name__ == '__main__':
 	__main()

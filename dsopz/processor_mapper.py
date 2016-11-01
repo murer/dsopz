@@ -2,7 +2,6 @@ import argparse
 import processor
 import sys
 import json
-import util
 import os
 
 def emit(*ents):
@@ -10,7 +9,7 @@ def emit(*ents):
 		if type(ent) != type([]):
 			ent = [ent]
 		for k in ent:
-			util.prn(sys.stdout, json.dumps(k))
+			print json.dumps(k)
 
 class ProcessorMapper(processor.Processor):
 
@@ -19,7 +18,7 @@ class ProcessorMapper(processor.Processor):
 		self.mapper = mapper
 
 	def resolve(self):
-		util.prn(sys.stderr, 'process', self.processed)
+		print >> sys.stderr, 'process', self.processed
 		for ent in self.block:
 			exec(self.mapper)
 
@@ -31,7 +30,9 @@ def argparse_exec(args):
 		with os.fdopen(3, 'r') as f:
 			mapper = f.read()
 	except OSError as e:
-		util.prn(sys.stderr, 'Try 3<map.py')
+		print >> sys.stderr, 'Try 3<map.py'
 		return sys.exit(1)
 	processor = ProcessorMapper(mapper, args.kinds)
 	processor.process()
+
+

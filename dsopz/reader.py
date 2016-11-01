@@ -2,7 +2,6 @@ import oauth
 import json
 import sys
 import argparse
-import util
 
 def __parse_entity_results(resp):
     ents = resp['batch'].get('entityResults') or []
@@ -70,12 +69,12 @@ def print_iterate(dataset, gql, namespace=None, msg=''):
         while True:
             loaded += 1
             if loaded % 1000 == 0:
-                util.prn(sys.stderr, 'loaded', msg, loaded)
+                print >> sys.stderr, 'loaded', msg, loaded
             string = json.dumps(it.next(), sort_keys=True)
-            util.prn(sys.stdout, string)
+            print string
     except StopIteration:
         pass
-    util.prn(sys.stderr, 'Done', msg, loaded-1)
+    print >> sys.stderr, 'Done', msg, loaded-1
 
 def argparse_prepare(sub):
     sub.add_argument('-d', '--dataset', required=True, help='dataset')

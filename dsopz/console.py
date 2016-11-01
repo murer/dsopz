@@ -8,11 +8,10 @@ import re
 import http
 import time
 import sys
-import util
 
 class Console(cmd.Cmd):
 
-	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin,
+	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin, 
 			dest=sys.stdout, show_size=True, seperator='\t', double_endline=True,
 			limit=None):
 		cmd.Cmd.__init__(self, stdin=source, stdout=dest)
@@ -44,9 +43,9 @@ class Console(cmd.Cmd):
 					i = prop.get('indexed')
 					t = t.replace('Value', '')
 					line += '%s/%s/%s/%s' % (p, t, i, json.dumps(v))
-			util.prn(self.stdout, line)
+			print >> self.stdout, line
 			if self.double_endline:
-				util.prn(self.stdout, '')
+				print >> self.stdout, ''
 
 	def process(self, gql, fields):
 		before = int(time.time())
@@ -63,12 +62,12 @@ class Console(cmd.Cmd):
 				loaded += 1
 				if self.limit and loaded >= self.limit:
 					limited = 'limited '
-					break
+					break 
 		except StopIteration:
 			pass
 		after = int(time.time())
 		if self.show_size:
-			util.prn(self.stdout, 'Total: %s %s(%s seconds)' % (loaded, limited, (after - before)))
+			print >> self.stdout, 'Total: %s %s(%s seconds)' % (loaded, limited, (after - before))
 
 	def parse_gql(self, line):
 		temp = re.sub(r'\sfrom\s.*$', '', line)
@@ -79,16 +78,16 @@ class Console(cmd.Cmd):
 		temp = re.sub(r'\swhere\s.*$', '', temp)
 		line = line.replace(temp, 'select *')
 		fields = re.split(r'[\s,]+', temp)
-		return fields, line
+		return fields, line 
 
 	def do_select(self, line):
 		fields, gql = self.parse_gql(line)
 		try:
 			self.process(gql, fields)
 		except KeyboardInterrupt:
-			util.prn(self.stdout, 'Interrupted')
+			print >> self.stdout, 'Interrupted'
 		except Exception, e:
-			util.prn(self.stdout, 'Error', e)
+			print >> self.stdout, 'Error', e
 
 	def do_EOF(self, line):
 		return self.do_exit('exit')
@@ -118,10 +117,11 @@ def argparse_exec(args):
 	limit = args.limit
 	if limit == None:
 		limit = 10
-	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt,
+	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt, 
 		double_endline=not args.single_line, show_size=not args.no_summary,
 		limit=limit, seperator=args.seperator)
 	try:
 		c.cmdloop()
 	except KeyboardInterrupt:
 		return
+

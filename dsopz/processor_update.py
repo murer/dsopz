@@ -2,7 +2,6 @@ import argparse
 import processor
 import sys
 import json
-import util
 
 class UpdateProcessor(processor.Processor):
 
@@ -11,14 +10,14 @@ class UpdateProcessor(processor.Processor):
         self.props = json.loads(props)
 
     def resolve(self):
-        util.prn(sys.stderr, 'process', self.processed)
+        print >> sys.stderr, 'process', self.processed
         for ent in self.block:
             for name,value in self.props.iteritems():
                 if value.get('excludeFromIndexes') == None:
                     value['excludeFromIndexes'] = True
 
                 ent['properties'][name] = value
-            util.prn(sys.stdout, json.dumps(ent))
+            print json.dumps(ent)
 
 def argparse_prepare(sub):
     sub.add_argument('-k', '--kinds', nargs='+', help='kinds')

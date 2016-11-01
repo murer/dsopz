@@ -5,7 +5,6 @@ except ImportError:
 import json
 import util
 from urlparse import urlparse
-import sys
 
 class Error(Exception):
 	"""Exceptions"""
@@ -60,7 +59,7 @@ def req_json(method, url, params = '', headers = {}, expects = [200]):
 
 def __main():
 	obj = req_json('GET', 'http://graph.facebook.com/phmurer')
-	util.prn(sys.stdout, obj)
+	print obj
 
 if __name__ == '__main__':
 	__main()
