@@ -1,4 +1,7 @@
-import httplib
+try:
+	import http.client as httplib
+except ImportError:
+	import httplib
 import json
 import util
 from urlparse import urlparse
