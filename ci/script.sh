@@ -2,4 +2,6 @@
 
 python dsopz/dsopz.py login-serviceaccount -f test/dsopzit.secret.json
 
-./test/test.sh
+
+
+./test/test.sh cloudcontainerz "dsopz-it-$(($RANDOM % 100))"
