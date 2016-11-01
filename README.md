@@ -110,7 +110,7 @@ or
 
     cat entities.bak | dsopz csv -k kind1 kind2 -c col1 col2 > entities.csv
 
-As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You will want to use ` | gzip` and `| gunzip` to manage large amount of entities.
+As you can see, all commands use stdin or stdout to read/write entities. The file has one entity json per line. You can use ` | gzip` and `| gunzip` to manage large amount of entities.
 
 ### Entity File
 
