@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-python dsopz/dsopz.py login-serviceaccount -f test/dsopzit.secret.json
+python -m dsopz.dsopz login-serviceaccount -f test/dsopzit.secret.json
 
 
 
