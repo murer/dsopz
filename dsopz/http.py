@@ -1,5 +1,5 @@
 try:
-	import http.client as httplib
+	import client from http as httplib
 except ImportError:
 	import httplib
 import json
