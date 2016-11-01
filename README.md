@@ -7,7 +7,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 ## Features
 
  * Python API and command line
- * No dependencies (see [bellow](#dependencies))
+ * No dependencies (see [bellow](#devel))
  * Uses [Google Cloud Datastore](https://cloud.google.com/datastore/docs) json API
  * Export, import and delete data
  * GQL query
@@ -123,5 +123,9 @@ Processors is what you can do to manage your entities file before import (or del
 
 To write a processor, you will `import processor` and extend `processor.Processor`. Override `resolve` method to process `self.block` array of entities. Sample: [processor_csv.py](./dsopz/processor_csv.py), [processor_indexed.py](./dsopz/processor_indexed.py)  
 
+## Devel
 
-
+ * It is pure python
+ * It does not need any dependency
+   * Except by ```login-serviceaccount``` which requires (pycryto)[https://pypi.python.org/pypi/pycrypto] to sign (JWT)[https://developers.google.com/identity/protocols/OAuth2ServiceAccount]
+ 
