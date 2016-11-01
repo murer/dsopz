@@ -21,7 +21,7 @@ class Version(object):
         """ ok """
 
     def argparse_exec(self, args):
-        print config.version
+        print(config.version)
 
 class Parser(object):
 
