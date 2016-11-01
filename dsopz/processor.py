@@ -69,7 +69,7 @@ class PrintProcessor(Processor):
 				line += value
 				if i < len(self.columns) - 1:
 					line += self.separator
-			print line
+			util.prn(sys.stdout, line)
 
 	def headers(self):
 		line = ''
@@ -77,7 +77,7 @@ class PrintProcessor(Processor):
 			line += column
 			if i < len(self.columns) - 1:
 				line += self.separator
-		print line
+		util.prn(sys.stdout, line)
 
 def __main():
 	parser = argparse.ArgumentParser(description='Processor')

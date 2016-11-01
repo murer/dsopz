@@ -1,4 +1,5 @@
 import argparse
+import util
 import importer
 import exporter
 import reader
@@ -14,6 +15,7 @@ import oauth_installed
 import oauth_local
 import oauth_serviceaccount
 import config
+import sys
 
 class Version(object):
 
@@ -21,7 +23,7 @@ class Version(object):
         """ ok """
 
     def argparse_exec(self, args):
-        print(config.version)
+        util.prn(sys.stdout, config.version)
 
 class Parser(object):
 

@@ -4,6 +4,7 @@ import csv
 import sys
 import dsutil
 import locale
+import util
 
 class CSVProcessor(processor.Processor):
 
@@ -19,7 +20,7 @@ class CSVProcessor(processor.Processor):
 		self.writer.writeheader()
 
 	def resolve(self):
-		print >> sys.stderr, 'process', self.processed
+		util.prn(sys.stderr, 'process', self.processed)
 		for ent in self.block:
 			line = {}
 			for column in self.columns:
@@ -41,4 +42,3 @@ def argparse_prepare(sub):
 def argparse_exec(args):
 	processor = CSVProcessor(args.columns, args.kinds)
 	processor.process()
-

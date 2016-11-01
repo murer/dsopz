@@ -4,6 +4,7 @@ import urlparse
 import time
 import json
 import webbrowser
+import sys
 import oauth_base
 import util
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
@@ -37,7 +38,7 @@ def get_first_token(port, code):
 	content['expires'] = now + expires_in
 	content['handler'] = 'local'
 	oauth_base.write_file(content)
-	print 'Logged in'
+	util.prn(sys.stdout, 'Logged in')
 
 class OAuthHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -45,8 +46,8 @@ class OAuthHandler(BaseHTTPRequestHandler):
 		_, port = self.server.socket.getsockname()
 		params = urlparse.parse_qs(parsed.query)
 		if not params.get('code'):
-			print 'Error'
-			print json.dumps(params, indent=True)
+			util.prn(sys.stdout, 'Error')
+			util.prn(sys.stdout, json.dumps(params, indent=True))
 		else:
 			get_first_token(port, params['code'][0])
 		self.send_response(302)

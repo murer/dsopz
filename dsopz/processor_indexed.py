@@ -2,6 +2,7 @@ import argparse
 import processor
 import sys
 import json
+import util
 
 class IndexedProcessor(processor.Processor):
 
@@ -17,7 +18,7 @@ class IndexedProcessor(processor.Processor):
         return True
 
     def resolve(self):
-        print >> sys.stderr, 'process', self.processed
+        util.prn(sys.stderr, 'process', self.processed)
         for ent in self.block:
             changed = False
             for name in self.columns:
@@ -32,7 +33,7 @@ class IndexedProcessor(processor.Processor):
                     if self.__setExcludeFromIndexes(column, self.excludeFromIndexes):
                         changed = True
             if changed:
-                print json.dumps(ent)
+                util.prn(sys.stdout, json.dumps(ent))
 
 def argparse_prepare(sub):
     sub.add_argument('-k', '--kinds', nargs='+', help='kinds')

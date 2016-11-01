@@ -5,6 +5,7 @@ import oauth_base
 import base64
 import json
 import urllib
+import sys
 
 class Error(Exception):
 	"""Exceptions"""
@@ -54,7 +55,7 @@ def login(credential):
 		'token_uri': credential['token_uri']
 	}
 	refresh_token(auth)
-	print 'Logged in'
+	util.prn(sys.stdout, 'Logged in')
 
 def refresh_token(auth):
 	content = http.req_json('POST', auth['token_uri'], urllib.urlencode({
@@ -66,6 +67,7 @@ def refresh_token(auth):
 	content['created'] = now
 	content['expires'] = now + expires_in
 	content['assertion'] = auth['assertion']
+	content['token_uri'] = auth['token_uri']
 	content['handler'] = 'serviceaccount'
 	oauth_base.write_file(content)
 

@@ -1,1 +1,1 @@
-print ent
+print(ent)

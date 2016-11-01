@@ -4,6 +4,7 @@ import sys
 import dsutil
 import argparse
 import processor
+import util
 
 def upsert(dataset, block, namespace=None):
     for ent in block:
@@ -48,10 +49,10 @@ class BatchProcessor(processor.Processor):
 
     def consume(self, n):
         while len(self.ups) > n:
-            print json.dumps(self.ups.pop(0).resp())
+            util.prn(sys.stdout, json.dumps(self.ups.pop(0).resp()))
 
     def resolve(self):
-        print >> sys.stderr, self.operation.__name__, self.processed
+        util.prn(sys.stderr, self.operation.__name__, self.processed)
         self.ups.append(self.operation(self.dataset, self.block, self.namespace))
         self.consume(self.parallel)
 

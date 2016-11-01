@@ -2,6 +2,7 @@ import httplib
 import json
 import util
 from urlparse import urlparse
+import sys
 
 class Error(Exception):
 	"""Exceptions"""
@@ -56,7 +57,7 @@ def req_json(method, url, params = '', headers = {}, expects = [200]):
 
 def __main():
 	obj = req_json('GET', 'http://graph.facebook.com/phmurer')
-	print obj
+	util.prn(sys.stdout, obj)
 
 if __name__ == '__main__':
 	__main()
