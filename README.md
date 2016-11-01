@@ -29,12 +29,13 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
     pip install dsopz
     dsopz version
-  
-or [stable.tar.gz](https://github.com/murer/dsopz/archive/stable.tar.gz)
 
-    wget https://github.com/murer/dsopz/archive/stable.tar.gz
-    tar xzf stable.tar.gz
-    python dsopz-stable/dsopz/dsopz.py version
+or download [here](https://pypi.python.org/pypi/dsopz)
+
+    tar xzf dsopz.tar.gz
+    python dsopz/dsopz/dsopz.py version
+    cd dsopz
+    python -m dsopz.dsopz version
 
 ### Login
 
@@ -47,11 +48,11 @@ If you can't open a browser automatically to login you can use this command:
 You can use [GCE Service Account](https://cloud.google.com/compute/docs/authentication).
 
     dsopz login-gce
-    
+
 Or regular [Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
 
     dsopz login-serviceaccount -f <json-file>
-  
+
 Scopes Required:
 
     https://www.googleapis.com/auth/cloud-platform
@@ -128,4 +129,3 @@ To write a processor, you will `import processor` and extend `processor.Processo
  * It is pure python 2.7
  * It does not need any dependency
    * Except by ```login-serviceaccount``` which requires [pycryto](https://pypi.python.org/pypi/pycrypto) to sign [JWT](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
- 
