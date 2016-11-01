@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 DS=${1:-cloudcontainerz}
-NS=dsopz_test
+NS=${2:-dsopz_test}
 
 EF=target/dsopz_test
 
