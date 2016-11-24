@@ -2,6 +2,7 @@
 setup.cfg
 setup.py
 dsopz/__init__.py
+dsopz/__main__.py
 dsopz/config.py
 dsopz/console.py
 dsopz/dsopz.py
@@ -15,6 +16,7 @@ dsopz/oauth_base.py
 dsopz/oauth_gce.py
 dsopz/oauth_installed.py
 dsopz/oauth_local.py
+dsopz/oauth_serviceaccount.py
 dsopz/processor.py
 dsopz/processor_csv.py
 dsopz/processor_indexed.py
