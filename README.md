@@ -32,10 +32,20 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
 or download [here](https://pypi.python.org/pypi/dsopz)
 
-    tar xzf dsopz.tar.gz
-    python dsopz/dsopz/dsopz.py version
-    cd dsopz
-    python -m dsopz.dsopz version
+```shell
+tar xzf dsopz.tar.gz
+
+# simple method
+python dsopz/dsopz/dsopz.py version
+
+# module method
+cd dsopz
+python -m dsopz.dsopz version
+
+# runnable zip
+zip -r dsopz.zip dsopz
+python dsopz.zip version
+```
 
 ### Login
 
