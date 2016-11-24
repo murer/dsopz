@@ -1,4 +1,4 @@
-from dsopz import dsopz
+import dsopz
 
 def __main():
 	dsopz.main()
