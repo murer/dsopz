@@ -24,8 +24,13 @@ class IndexedProcessor(processor.Processor):
                 column = ent['properties'].get(name)
                 if not column:
                     continue
-                if column.get('listValue'):
-                    for k in column['listValue']:
+                # ----- wtf is listValue? ----
+                #if column.get('listValue'):
+                #    for k in column['listValue']:
+                #        if self.__setExcludeFromIndexes(k, self.excludeFromIndexes):
+                #            changed = True
+                if column.get('arrayValue'):
+                    for k in column['arrayValue'].get('values') or []:
                         if self.__setExcludeFromIndexes(k, self.excludeFromIndexes):
                             changed = True
                 else:
