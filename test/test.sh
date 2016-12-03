@@ -36,4 +36,10 @@ python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where
 
 cat "test/entities.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 | diff - "test/entities.csv"
 
+cat "test/entities.json" | python -m dsopz.dsopz map > "$EF/mapped.json" 3<<-EOF
+ent['properties']['c2'] = {'excludeFromIndexes':True, 'stringValue':'changed'}
+emit(ent)
+EOF
+cat "$EF/mapped.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 | grep ';"changed"$' | wc -l | grep '^2$'
+
 echo "SUCCESS"
