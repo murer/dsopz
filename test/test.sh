@@ -7,7 +7,13 @@ EF=target/dsopz_test
 
 rm -rf "$EF" || true
 mkdir -p "$EF"
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o remove
+
+cleanup() {
+    python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o remove
+}
+trap cleanup EXIT
+
+cleanup
 
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | wc -l | grep '^0$'
 
@@ -28,5 +34,3 @@ python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a3'" | wc -l | grep '^1$'
 
 echo "SUCCESS"
-
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o remove
