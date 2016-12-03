@@ -12,7 +12,6 @@ cleanup() {
     python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o remove
 }
 trap cleanup EXIT
-
 cleanup
 
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | wc -l | grep '^0$'
