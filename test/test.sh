@@ -19,6 +19,8 @@ python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | wc -l | grep '^0$'
 python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "test/entities.json"
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o false | diff - "test/entities.json"
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | diff - "test/entities.json"
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | diff - "test/keys.json"
+
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order by c2" | wc -l | grep '^0$'
 
 python -m dsopz.dsopz 'index' -k "dsopz_test" -c c2 -i true > "$EF/processed.json" < "test/entities.json"
