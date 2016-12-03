@@ -111,7 +111,7 @@ We can process a entity file into another, incluiding, updating or removing enti
 or
 
     cat entities.bak | dsopz map > processed.bak 3<<-EOF
-    ent['properties']['desc'] = {'indexed':False, 'stringValue': 'changed'}
+    ent['properties']['desc'] = {'excludeFromIndexes': True, 'stringValue': 'changed'}
     emit(ent)
     EOF
 
