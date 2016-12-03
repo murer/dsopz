@@ -34,4 +34,6 @@ python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a2'" | wc -l | grep '^1$'
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a3'" | wc -l | grep '^1$'
 
+cat "test/entities.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 | diff - "test/entities.csv"
+
 echo "SUCCESS"
