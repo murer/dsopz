@@ -1,6 +1,6 @@
 # dsopz
 
-DSOpz (Datastore Operationz) is a project where you manage your datastore from command line.
+DSOpz (Datastore Operationz) lets you manage your Google Cloud Datastore from command line.
 
 [![Build Status](https://travis-ci.org/murer/dsopz.svg?branch=master)](https://travis-ci.org/murer/dsopz)
 
@@ -8,7 +8,7 @@ DSOpz (Datastore Operationz) is a project where you manage your datastore from c
 
  * Python API and command line
  * No dependencies (see [bellow](#devel))
- * Uses [Google Cloud Datastore](https://cloud.google.com/datastore/docs) json API
+ * Uses [Google Cloud Datastore](https://cloud.google.com/datastore/docs) JSON API 
  * Export, import and delete data
  * GQL query
  * CSV exporter
