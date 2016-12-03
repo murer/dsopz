@@ -130,7 +130,7 @@ This entity file used to pipe in or out these python commands has one json per f
 
 ## Processors
 
-Processors is what you can do to manage your entities file before import (or delete) it back do datastore. You can actually write a processor to do whatever you want with a entities file, for example: send entities to somewhere, parse them into a csv, etc.
+Processors is what you can do to manage your entities file before import (or delete) it back to datastore. You can actually write a processor to do whatever you want with a entities file, for example: send entities to somewhere, parse them into a csv, etc.
 
 To write a processor, you will `import processor` and extend `processor.Processor`. Override `resolve` method to process `self.block` array of entities. Sample: [processor_csv.py](./dsopz/processor_csv.py), [processor_indexed.py](./dsopz/processor_indexed.py)  
 
