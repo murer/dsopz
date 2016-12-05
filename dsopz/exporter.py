@@ -27,7 +27,7 @@ def print_iterate(dataset, kinds=[], namespace=None, keys_only=False):
 		field = '__key__'
 	for kind in kinds:
 		reader.print_iterate(dataset, 
-			'select %s from %s order by __key__' % (field, kind), 
+			'select %s from `%s` order by __key__' % (field, kind), 
 			namespace=namespace, msg=kind)
 
 def argparse_prepare(sub):
