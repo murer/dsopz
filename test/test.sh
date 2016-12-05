@@ -49,6 +49,7 @@ if [ "x$(wc -l < $EF/other.json | tr -d ' ')" != "x1" ]; then
     exit 1
 fi
 
+for k in $(seq 1 10); do cat test/template.json | sed "s/COUNTER/n$k/g"; done | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert 
 
 echo "SUCCESS"
 
