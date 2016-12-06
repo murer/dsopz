@@ -48,7 +48,7 @@ class BatchProcessor(processor.Processor):
 
     def consume(self, n):
         while len(self.ups) > n:
-            print json.dumps(self.ups.pop(0).resp())
+            self.ups.pop(0).resp()
 
     def resolve(self):
         print >> sys.stderr, self.operation.__name__, self.processed
