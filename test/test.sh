@@ -43,6 +43,7 @@ EOF
 cat "$EF/mapped.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 | grep 'changed' | wc -l | grep '^2$'
 
 cleanup
-for k in $(seq 1 22); do cat test/template.json | sed "s/COUNTER/n$k/g"; done | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert
+for k in $(seq 1 7); do cat test/template.json | sed "s/COUNTER/n$k/g"; done | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -p 2 -b 2 -o upsert
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | wc -l | grep '^7$'
 
 echo "SUCCESS"

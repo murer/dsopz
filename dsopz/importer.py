@@ -62,6 +62,7 @@ def argparse_prepare(sub):
     sub.add_argument('-d', '--dataset', required=True, help='dataset')
     sub.add_argument('-n', '--namespace', help='namespace')
     sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
+    sub.add_argument('-b', '--block', type=int, help='block size')
     sub.add_argument('-p', '--parallel', type=int, help='parallel')
     sub.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help='operation')
 
@@ -69,5 +70,5 @@ def argparse_exec(args):
     op = upsert
     if args.operation == 'remove':
         op = remove
-    processor = BatchProcessor(args.dataset, args.kinds, args.namespace, op, parallel = args.parallel or 10)
+    processor = BatchProcessor(args.dataset, args.kinds, args.namespace, op, block_size = args.block or 500, parallel = args.parallel or 10)
     processor.process()
