@@ -2,5 +2,6 @@
 target
 dist
 *~
+*.class
 dsopz.egg-info
 *.secret.json

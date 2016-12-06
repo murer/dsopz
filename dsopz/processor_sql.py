@@ -4,7 +4,6 @@ import csv
 import sys
 import dsutil
 import locale
-import sqlite3
 
 class SQLProcessor(processor.Processor):
 
