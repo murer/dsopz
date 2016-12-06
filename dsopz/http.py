@@ -51,12 +51,17 @@ def async_req_json(method, url, params = '', headers = {}, expects = [200]):
 		if not success:
 			util.close(conn)
 
+def poc_req_json(method, url, params = '', headers = {}, expects = [200]):
+	"""aaaa"""
+
 def req_json(method, url, params = '', headers = {}, expects = [200]):
 	return async_req_json(method, url, params, headers, expects).resp()
 
 def __main():
-	obj = req_json('GET', 'http://graph.facebook.com/phmurer')
-	print obj
+	obj = req_json('GET', 'https://api.github.com/users/murer', headers = {
+		'User-Agent': 'dsopz'
+	})
+	print json.dumps(obj, indent=True)
 
 if __name__ == '__main__':
 	__main()
