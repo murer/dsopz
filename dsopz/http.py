@@ -1,6 +1,7 @@
 import httplib
 import json
 import util
+import threading
 from urlparse import urlparse
 
 class Error(Exception):
@@ -9,25 +10,7 @@ class Error(Exception):
 class HttpError(Error):
 	"""Exception"""
 
-class FutureResponse():
-	def __init__(self, conn, expects):
-		self.conn = conn
-		self.expects = expects
-
-	def resp(self):
-		try:
-			response = self.conn.getresponse()
-			if response.status not in self.expects:
-				raise Error('Status: %d %s %sri' % (response.status, response.reason, response.read()))
-			string = response.read()
-			if not string:
-				return None
-			ret = json.loads(string)
-			return ret
-		finally:
-			util.close(self.conn)
-
-def async_req_json(method, url, params = '', headers = {}, expects = [200]):
+def req_json(method, url, params = '', headers = {}, expects = [200]):
 	parsed = urlparse(url)
 	host = parsed.netloc
 	uri = parsed.path
@@ -45,22 +28,55 @@ def async_req_json(method, url, params = '', headers = {}, expects = [200]):
 	success = False
 	try:
 		conn.request(method, uri, params, headers)
+		response = conn.getresponse()
+		if response.status not in expects:
+			raise Error('Status: %d %s %sri' % (response.status, response.reason, response.read()))
+		string = response.read()
+		if not string:
+			return None
+		ret = json.loads(string)
 		success = True
-		return FutureResponse(conn, expects)
+		return ret
 	finally:
-		if not success:
-			util.close(conn)
+		util.close(conn)
 
-def poc_req_json(method, url, params = '', headers = {}, expects = [200]):
-	"""aaaa"""
+class HttpThread(threading.Thread):
 
-def req_json(method, url, params = '', headers = {}, expects = [200]):
-	return async_req_json(method, url, params, headers, expects).resp()
+	def __init__(self, method, url, params, headers, expects):
+		threading.Thread.__init__(self)
+		self.method = method
+		self.url = url
+		self.params = params
+		self.headers = headers
+		self.expects = expects
+		self.response = None
+		self.status = 'CREATED'
+
+	def run(self):
+		try:
+			self.status = 'REQUESTING'
+			self.response = req_json(self.method, self.url, self.params, self.headers, self.expects)
+			self.status = 'DONE'
+		finally:
+			if self.status != 'DONE':
+				self.status = 'ERROR'
+
+	def resp(self):
+		while self.status != 'DONE' and self.status != 'ERROR':
+			self.join()
+		if self.status == 'DONE':
+			return self.response
+		raise Error('Error on http thread, status: %s' % (self.status))
+
+def async_req_json(method, url, params = '', headers = {}, expects = [200]):
+	thread = HttpThread(method, url, params, headers, expects)
+	thread.start()
+	return thread
 
 def __main():
-	obj = req_json('GET', 'https://api.github.com/users/murer', headers = {
+	obj = async_req_json('GET', 'https://api.github.com/users/murer', headers = {
 		'User-Agent': 'dsopz'
-	})
+	}, expects = [200]).resp()
 	print json.dumps(obj, indent=True)
 
 if __name__ == '__main__':
