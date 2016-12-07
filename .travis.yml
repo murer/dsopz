@@ -15,3 +15,4 @@ deploy:
   on:
     branch: release
     tags: false
+
