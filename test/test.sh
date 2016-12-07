@@ -4,6 +4,8 @@ DS=${1:-cloudcontainerz}
 NS=${2:-dsopz_test}
 
 EF=target/dsopz_test
+rm -rf "$EF" || true
+mkdir -p "$EF"
 
 cleanup() {
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS$1" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o remove
