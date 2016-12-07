@@ -25,11 +25,13 @@ python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order
 
 python -m dsopz.dsopz 'index' -k "dsopz_test" -c c2 -i true > "$EF/processed.json" < "test/entities.json"
 python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "$EF/processed.json"
+sleep 1
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order by c2" | wc -l | grep '^2$'
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order by c3" | wc -l | grep '^0$'
 
 python -m dsopz.dsopz 'index' -k "dsopz_test" -c c3 -i true > "$EF/processed.json" < "test/entities.json"
 python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "$EF/processed.json"
+sleep 1
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a1'" | wc -l | grep '^2$'
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a2'" | wc -l | grep '^1$'
 python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a3'" | wc -l | grep '^1$'
