@@ -148,7 +148,7 @@ You need to login
 python -m dsopz.dsopz login
 ```
 
-Now, you can start test on your project (required) and namespace (optional).
+Now, you can start the tests on your project (required) and namespace (optional).
 
 ```shell
 ./test/test.sh your-project your-namespace
