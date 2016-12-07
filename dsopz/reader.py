@@ -18,9 +18,6 @@ def __parse_entity_results(resp):
             prop = v.copy()
             excludeFromIndexes = prop.pop('excludeFromIndexes', False)
             prop['excludeFromIndexes'] = excludeFromIndexes
-            # prop['excludeFromIndexes'] = prop.pop('excludeFromIndexes', False)
-            # if prop.get('listValue'):
-            #     prop.pop('indexed')
             if v:
                 copy['properties'][k] = prop
         ret.append(copy)
