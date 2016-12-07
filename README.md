@@ -139,3 +139,19 @@ To write a processor, you will `import processor` and extend `processor.Processo
  * It is pure python 2.7
  * It does not need any dependency
    * Except by ```login-serviceaccount``` which requires [pycryto](https://pypi.python.org/pypi/pycrypto) to sign [JWT](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
+   
+### Running tests
+
+You need to login
+
+```shell
+python -m dsopz.dsopz login
+```
+
+Now, you can start test on your project (required) and namespace (optional).
+
+```shell
+./test/test.sh your-project your-namespace
+```
+
+This test tries to clean up in the end.
