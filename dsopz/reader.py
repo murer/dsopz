@@ -48,27 +48,30 @@ def query(dataset, gql, namespace=None, limit=1000, startCursor=None):
     ret['endCursor'] = resp['batch'].get('endCursor')
     return ret
 
-def iterate(dataset, gql, namespace=None, bulkSize=1000):
-    startCursor = None
+def iterate(dataset, gql, namespace=None, bulkSize=1000, startCursor=None):
     while True:
+        yield { 'type': 'cursor', 'cursor': startCursor }
         page = query(dataset, gql, namespace, bulkSize, startCursor)
         if not page['entities']:
             return
         startCursor = page.get('endCursor')
         for ent in page['entities']:
-            yield ent
+            yield { 'type': 'entity', 'entity': ent }
 
 
-def print_iterate(dataset, gql, namespace=None, msg=''):
-    it = iterate(dataset, gql, namespace)
+def print_iterate(dataset, gql, namespace=None, msg='', startCursor=None):
+    it = iterate(dataset, gql, namespace, startCursor=startCursor)
     loaded = 0
     try:
         while True:
             loaded += 1
             if loaded % 1000 == 0:
                 print >> sys.stderr, 'loaded', msg, loaded
-            string = json.dumps(it.next(), sort_keys=True)
-            print string
+            entry = it.next();
+            if entry['type'] == 'entity':
+                print '%s' % (json.dumps(entry['entity'], sort_keys=True))
+            else:
+                print '# dsopz: %s' % (json.dumps(entry, sort_keys=True))
     except StopIteration:
         pass
     print >> sys.stderr, 'Done', msg, loaded-1
@@ -77,6 +80,7 @@ def argparse_prepare(sub):
     sub.add_argument('-d', '--dataset', required=True, help='dataset')
     sub.add_argument('-n', '--namespace', help='namespace')
     sub.add_argument('-q', '--gql', required=True, help='gql')
+    sub.add_argument('-c', '--cursor', help='cursor')
 
 def argparse_exec(args):
-    print_iterate(args.dataset, args.gql, args.namespace)
+    print_iterate(args.dataset, args.gql, args.namespace, startCursor=args.cursor)
