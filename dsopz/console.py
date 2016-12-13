@@ -11,7 +11,7 @@ import sys
 
 class Console(cmd.Cmd):
 
-	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin, 
+	def __init__(self, dataset, namespace=None, prompt=True,source=sys.stdin,
 			dest=sys.stdout, show_size=True, seperator='\t', double_endline=True,
 			limit=None):
 		cmd.Cmd.__init__(self, stdin=source, stdout=dest)
@@ -47,6 +47,9 @@ class Console(cmd.Cmd):
 			if self.double_endline:
 				print >> self.stdout, ''
 
+	def show_control(self, gql, control):
+		""" ignore """
+
 	def process(self, gql, fields):
 		before = int(time.time())
 		bulkSize = 1000
@@ -58,11 +61,14 @@ class Console(cmd.Cmd):
 		try:
 			while True:
 				ent = it.next()
-				self.show_entities(gql, [ent], fields)
+				if ent['type'] == 'entity':
+					self.show_entities(gql, [ent['entity']], fields)
+				else:
+					self.show_control(gql, [ent])
 				loaded += 1
 				if self.limit and loaded >= self.limit:
 					limited = 'limited '
-					break 
+					break
 		except StopIteration:
 			pass
 		after = int(time.time())
@@ -78,7 +84,7 @@ class Console(cmd.Cmd):
 		temp = re.sub(r'\swhere\s.*$', '', temp)
 		line = line.replace(temp, 'select *')
 		fields = re.split(r'[\s,]+', temp)
-		return fields, line 
+		return fields, line
 
 	def do_select(self, line):
 		fields, gql = self.parse_gql(line)
@@ -117,11 +123,10 @@ def argparse_exec(args):
 	limit = args.limit
 	if limit == None:
 		limit = 10
-	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt, 
+	c = Console(args.dataset, namespace=args.namespace, prompt=args.prompt,
 		double_endline=not args.single_line, show_size=not args.no_summary,
 		limit=limit, seperator=args.seperator)
 	try:
 		c.cmdloop()
 	except KeyboardInterrupt:
 		return
-

@@ -50,7 +50,7 @@ def query(dataset, gql, namespace=None, limit=1000, startCursor=None):
 
 def iterate(dataset, gql, namespace=None, bulkSize=1000, startCursor=None):
     while True:
-        yield { 'type': 'cursor', 'cursor': startCursor }
+        yield { 'type': 'cursor', 'cursor': startCursor, 'gql': gql }
         page = query(dataset, gql, namespace, bulkSize, startCursor)
         if not page['entities']:
             return
@@ -59,8 +59,8 @@ def iterate(dataset, gql, namespace=None, bulkSize=1000, startCursor=None):
             yield { 'type': 'entity', 'entity': ent }
 
 
-def print_iterate(dataset, gql, namespace=None, msg='', startCursor=None):
-    it = iterate(dataset, gql, namespace, startCursor=startCursor)
+def print_iterate(dataset, gql, namespace=None, msg='', startCursor=None, bulkSize=None):
+    it = iterate(dataset, gql, namespace, startCursor=startCursor, bulkSize=bulkSize)
     loaded = 0
     try:
         while True:
@@ -71,7 +71,7 @@ def print_iterate(dataset, gql, namespace=None, msg='', startCursor=None):
             if entry['type'] == 'entity':
                 print '%s' % (json.dumps(entry['entity'], sort_keys=True))
             else:
-                print '# dsopz: %s' % (json.dumps(entry, sort_keys=True))
+                print '### dsopz: %s' % (json.dumps(entry, sort_keys=True))
     except StopIteration:
         pass
     print >> sys.stderr, 'Done', msg, loaded-1
@@ -81,6 +81,7 @@ def argparse_prepare(sub):
     sub.add_argument('-n', '--namespace', help='namespace')
     sub.add_argument('-q', '--gql', required=True, help='gql')
     sub.add_argument('-c', '--cursor', help='cursor')
+    sub.add_argument('-b', '--bulk',  type=int, help='bulk')
 
 def argparse_exec(args):
-    print_iterate(args.dataset, args.gql, args.namespace, startCursor=args.cursor)
+    print_iterate(args.dataset, args.gql, args.namespace, startCursor=args.cursor, bulkSize=args.bulk)
