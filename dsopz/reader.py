@@ -2,6 +2,7 @@ import oauth
 import json
 import sys
 import argparse
+import processor
 
 def __parse_entity_results(resp):
     ents = resp['batch'].get('entityResults') or []
@@ -68,13 +69,19 @@ def print_iterate(dataset, gql, namespace=None, msg='', startCursor=None, bulkSi
             if loaded % 1000 == 0:
                 print >> sys.stderr, 'loaded', msg, loaded
             entry = it.next();
-            if entry['type'] == 'entity':
-                print '%s' % (json.dumps(entry['entity'], sort_keys=True))
-            else:
-                print '### dsopz: %s' % (json.dumps(entry, sort_keys=True))
+            print '%s' % (json.dumps(entry, sort_keys=True))
     except StopIteration:
         pass
     print >> sys.stderr, 'Done', msg, loaded-1
+
+class ReaderResumeProcessor(processor.Processor):
+
+    def __init__(self):
+        super(ReaderResumeProcessor, self).__init__()
+
+    def resolve(self):
+        print >> sys.stderr, 'process', self.processed
+        print 'xxxx %s' % (self.block)
 
 def argparse_prepare(sub):
     sub.add_argument('-d', '--dataset', required=True, help='dataset')
@@ -84,4 +91,5 @@ def argparse_prepare(sub):
     sub.add_argument('-b', '--bulk',  type=int, help='bulk')
 
 def argparse_exec(args):
-    print_iterate(args.dataset, args.gql, args.namespace, startCursor=args.cursor, bulkSize=args.bulk)
+	ReaderResumeProcessor().process()
+    #print_iterate(args.dataset, args.gql, args.namespace, startCursor=args.cursor, bulkSize=args.bulk)
