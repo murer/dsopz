@@ -29,7 +29,7 @@ class CSVProcessor(processor.Processor):
 					name = 'key'
 					last = value[len(value) - 1]
 					value = last.get('name') or last.get('id')
-				if value:
+				if value and type(value) != type(True):
 					value = value.encode('UTF-8')
 				line[name] = value
 			self.writer.writerow(line)
