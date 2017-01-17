@@ -41,4 +41,3 @@ def argparse_prepare(sub):
 def argparse_exec(args):
 	processor = CSVProcessor(args.columns, args.kinds)
 	processor.process()
-

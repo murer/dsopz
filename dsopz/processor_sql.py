@@ -28,11 +28,13 @@ class SQLProcessor(processor.Processor):
 					name = 'id'
 					last = value[len(value) - 1]
 					value = last.get('name') or last.get('id')
-				if value:
-					value = value.encode('UTF-8')
+				if t == 'booleanValue':
+					value = 'TRUE' if value else 'FALSE'
+				elif value:
+					value = value.encode('UTF-8').replace("'", "''")
+					value = "'%s'" % (value)
 				line.append(value)
-			values = [ ("'%s'" % (str(x).replace("'", "''"))) for x in line]
-			values = [ kind ] + values
+			values = [ kind ] + line
 			print self.sql % tuple(values)
 
 def argparse_prepare(sub):
