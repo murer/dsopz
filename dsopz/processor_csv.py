@@ -29,7 +29,7 @@ class CSVProcessor(processor.Processor):
 					name = 'key'
 					last = value[len(value) - 1]
 					value = last.get('name') or last.get('id')
-				if t == 'booleanValue':
+				if type(value) == bool:
 					value = str(value)
 				elif value:
 					value = value.encode('UTF-8')
