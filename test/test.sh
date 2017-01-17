@@ -77,20 +77,20 @@ EOF
 cat "$EF/mapped.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 c4 | grep 'changed' | wc -l | grep '^2$'
 }
 
-#import_export_test 1 &
-#import_export_keys_test 2 &
-#gql_test 3 &
-#index_test 4 &
-#index_list_test 5 &
-#import_block_test 6 &
+import_export_test 1 &
+import_export_keys_test 2 &
+gql_test 3 &
+index_test 4 &
+index_list_test 5 &
+import_block_test 6 &
 
 offline_test
 
-#wait %1
-#wait %2
-#wait %3
-#wait %4
-#wait %5
-#wait %6
+wait %1
+wait %2
+wait %3
+wait %4
+wait %5
+wait %6
 
 echo "SUCCESS"
