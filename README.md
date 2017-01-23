@@ -111,10 +111,12 @@ We can process a entity file into another, incluiding, updating or removing enti
 
 or
 
-    cat entities.bak | dsopz map > processed.bak 3<<-EOF
-    ent['properties']['desc'] = {'excludeFromIndexes': True, 'stringValue': 'changed'}
-    emit(ent)
-    EOF
+```python
+cat entities.bak | dsopz map > processed.bak 3<<-EOF
+ent['properties']['desc'] = {'excludeFromIndexes': True, 'stringValue': 'changed'}
+emit(ent)
+EOF
+```
 
 `dsopz/dsopz.py map` reads entities file from stdin, and python code from custom pipe input 3. This python code is called for every entity witch can be accessed via `ent` variable. This code can call `emit` function multiple times with one or more entities to be printed to `processed.bak`.
 
