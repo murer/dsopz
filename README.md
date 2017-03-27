@@ -8,7 +8,7 @@ DSOpz (Datastore Operationz) lets you manage your Google Cloud Datastore from co
 ## Features
 
  * Python API and command line
- * No dependencies (see [bellow](#devel))
+ * No dependencies (see [below](#devel))
  * Uses [Google Cloud Datastore](https://cloud.google.com/datastore/docs) JSON API 
  * Export, import and delete data
  * GQL query
