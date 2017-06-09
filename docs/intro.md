@@ -14,18 +14,19 @@ Basically speaking, DSOpz does two things on the datastore:
 
 The most basic way is exporting all entities from all kinds from default namespace:
 
-```bash
-dsopz export -d projectname
+```shell
+dsopz export -d projectname > all_my_entities.bak
 ```
 
-This command will export all the entities, 
-one per line ```\n``` into the ```stdout```. 
-So, usually, you want to gzip and write it into a file:
+That is important (and simple) to understand how the data is stored into the ```all_my_entities.bak``` file.
 
-```bash
-dsopz export -d projectname | gzip > all_my_entities.gz
+Basically, we have entity per line (```\n```). So, if you want to see the first entity retrieved you can:
+
+```shell
+head -n 1 all_my_entities.bak
 ```
 
+This entity is the exactly the same JSON we read from (Datastore API)[https://cloud.google.com/datastore/docs/apis]
 
 
  
