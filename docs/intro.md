@@ -17,4 +17,15 @@ The most basic way is exporting all entities from all kinds from default namespa
 ```bash
 dsopz export -d projectname
 ```
+
+This command will export all the entities, 
+one per line ```\n``` into the ```stdout```. 
+So, usually, you want to gzip and write it into a file:
+
+```bash
+dsopz export -d projectname | gzip > all_my_entities.gz
+```
+
+
+
  
