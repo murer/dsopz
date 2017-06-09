@@ -26,7 +26,7 @@ Basically, we have entity per line (```\n```). So, if you want to see the first 
 head -n 1 all_my_entities.bak
 ```
 
-This entity is the exactly the same JSON we read from (Datastore API)[https://cloud.google.com/datastore/docs/apis]
+This entity is the exactly the same JSON we read from [Datastore API](https://cloud.google.com/datastore/docs/apis)
 
 
  
