@@ -1,0 +1,12 @@
+# Intro
+
+DSOpz is a command line (and Python module) to manage entities into the 
+[Google Cloud Datastore](https://cloud.google.com/datastore/) (from [Google Cloud Platform](https://cloud.google.com/)).
+
+
+
+Basically speaking, DSOpz does two things on the datastore:
+
+ 1. Download entities and
+ 2. Upload data
+ 
