@@ -36,7 +36,7 @@ $ head -n 1 all_my_entities.bak
    },
    "properties" : {
       "name" : { "stringValue" : "Murer", "excludeFromIndexes" : false },
-      "hasChildren" : { "booleanValue" : true, "excludeFromIndexes" : true },
+      "hasChildren" : { "booleanValue" : true, "excludeFromIndexes" : true }
    }
 }
 ```
