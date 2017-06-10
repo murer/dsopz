@@ -30,19 +30,11 @@ head -n 1 all_my_entities.bak
 
 ```json
 {
-   "key" : {
-      "path" : [
-         {
-            "kind" : "dsopz_test",
-            "name" : "n1"
-         }
-      ]
+   "key" : { 
+       "path" : [ { "kind" : "product",  "name" : "chair"  } ] 
    },
    "properties" : {
-      "c1" : {
-         "stringValue" : "v1",
-         "excludeFromIndexes" : true
-      },
+      "name" : { "stringValue" : "Murer", "excludeFromIndexes" : true },
       "c4" : {
          "booleanValue" : true,
          "excludeFromIndexes" : true
