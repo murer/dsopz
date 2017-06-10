@@ -15,7 +15,7 @@ Basically speaking, DSOpz does two things on the datastore:
 The most basic way is exporting all entities from all kinds from default namespace:
 
 ```shell
-dsopz export -d projectname > all_my_entities.bak
+$ dsopz export -d projectname > all_my_entities.bak
 ```
 
 That is important (and simple) to understand how the data is stored into the ```all_my_entities.bak``` file.
@@ -23,7 +23,7 @@ That is important (and simple) to understand how the data is stored into the ```
 Basically, we have a entity per line (```\n```). So, if you want to see the first entity retrieved you can:
 
 ```shell
-head -n 1 all_my_entities.bak
+$ head -n 1 all_my_entities.bak
 ```
 
 ***This entity is the exactly the same JSON we read from [Datastore API](https://cloud.google.com/datastore/docs/apis)***
