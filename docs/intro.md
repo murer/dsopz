@@ -28,6 +28,48 @@ head -n 1 all_my_entities.bak
 
 ***This entity is the exactly the same JSON we read from [Datastore API](https://cloud.google.com/datastore/docs/apis)***
 
+```json
+{
+   "key" : {
+      "path" : [
+         {
+            "kind" : "dsopz_test",
+            "name" : "n1"
+         }
+      ]
+   },
+   "properties" : {
+      "c1" : {
+         "stringValue" : "v1",
+         "excludeFromIndexes" : true
+      },
+      "c4" : {
+         "booleanValue" : true,
+         "excludeFromIndexes" : true
+      },
+      "c3" : {
+         "arrayValue" : {
+            "values" : [
+               {
+                  "stringValue" : "a1",
+                  "excludeFromIndexes" : true
+               },
+               {
+                  "stringValue" : "a2",
+                  "excludeFromIndexes" : true
+               }
+            ]
+         },
+         "excludeFromIndexes" : false
+      },
+      "c2" : {
+         "excludeFromIndexes" : true,
+         "stringValue" : "changed"
+      }
+   }
+}
+```
+
 
 
 
