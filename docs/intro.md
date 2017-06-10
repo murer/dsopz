@@ -20,7 +20,7 @@ dsopz export -d projectname > all_my_entities.bak
 
 That is important (and simple) to understand how the data is stored into the ```all_my_entities.bak``` file.
 
-Basically, we have entity per line (```\n```). So, if you want to see the first entity retrieved you can:
+Basically, we have a entity per line (```\n```). So, if you want to see the first entity retrieved you can:
 
 ```shell
 head -n 1 all_my_entities.bak
