@@ -27,9 +27,7 @@ head -n 1 all_my_entities.bak
 ```
 
 ***This entity is the exactly the same JSON we read from [Datastore API](https://cloud.google.com/datastore/docs/apis)***
-(Without the namespace information)
-
-
+(Without the ```namespace``` information)
 
 ```json
 {
