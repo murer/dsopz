@@ -8,7 +8,7 @@ You can find Datastore docs [here](https://cloud.google.com/datastore/)
 Basically speaking, DSOpz does two things on the datastore:
 
  1. Download entities and
- 2. Upload entities
+ 1. Upload entities
  
 ## Download Entities
 
@@ -40,6 +40,25 @@ $ head -n 1 all_my_entities.bak
    }
 }
 ```
+
+## Upload Entities
+
+If you have that entity file, you can now save it back to datastore:
+
+```shell
+$ cat all_my_entities.bak | dsopz import -d projectname -o upsert
+```
+
+That `-o upsert` makes dsopz save all entities from the file into the datastore. 
+Using each entity key, datastore will update existing entity and create the new ones.
+
+That is the way you delete these entities:
+
+```
+$ cat all_my_entities.bak | dsopz import -d projectname -o remove
+```
+
+
 
 
 
