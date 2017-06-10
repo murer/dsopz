@@ -31,33 +31,11 @@ head -n 1 all_my_entities.bak
 ```json
 {
    "key" : { 
-       "path" : [ { "kind" : "product",  "name" : "chair"  } ] 
+       "path" : [ { "kind" : "product",  "name" : "person"  } ] 
    },
    "properties" : {
-      "name" : { "stringValue" : "Murer", "excludeFromIndexes" : true },
-      "c4" : {
-         "booleanValue" : true,
-         "excludeFromIndexes" : true
-      },
-      "c3" : {
-         "arrayValue" : {
-            "values" : [
-               {
-                  "stringValue" : "a1",
-                  "excludeFromIndexes" : true
-               },
-               {
-                  "stringValue" : "a2",
-                  "excludeFromIndexes" : true
-               }
-            ]
-         },
-         "excludeFromIndexes" : false
-      },
-      "c2" : {
-         "excludeFromIndexes" : true,
-         "stringValue" : "changed"
-      }
+      "name" : { "stringValue" : "Murer", "excludeFromIndexes" : false },
+      "hasChildren" : { "booleanValue" : true, "excludeFromIndexes" : true },
    }
 }
 ```
