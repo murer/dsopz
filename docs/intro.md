@@ -58,6 +58,9 @@ That is the way you delete these entities:
 $ cat all_my_entities.bak | dsopz import -d projectname -o remove
 ```
 
+Delete operations uses only the ```key``` of entities (we will explain how to retrieve keys-only file after).
+All the keys in the file will be delete from the datastore. Not existing keys will be ignored.
+
 
 
 
