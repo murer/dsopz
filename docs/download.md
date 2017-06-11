@@ -26,7 +26,11 @@ optional arguments:
 Samples:
 
 ```shell
-$ dsopz export -d myproject | gzip > entities.bak.gz # Export all entities of all kinds from default namespace
+$ # Export all entities of all kinds from default namespace
+$ dsopz export -d myproject | gzip > entities.bak.gz 
+
+$ # Export all entities of 'produt' and 'user' kinds from 'other' namespace
+$ dsopz export -d myproject -k product user -n other | gzip > entities.bak.gz 
 ```
 
 ## Query
