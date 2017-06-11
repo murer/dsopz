@@ -25,3 +25,16 @@ optional arguments:
 
 ## Query
 
+```shell
+$ python -m dsopz.dsopz gql --help
+usage: dsopz.py gql [-h] -d DATASET [-n NAMESPACE] -q GQL
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d DATASET, --dataset DATASET
+                        dataset (pojectname)
+  -n NAMESPACE, --namespace NAMESPACE
+                        namespace (default: datastore default namespace)
+  -q GQL, --gql GQL     gql (sample: "select * from Product").
+```
+
