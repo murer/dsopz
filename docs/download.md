@@ -51,6 +51,10 @@ optional arguments:
 Samples:
 
 ```shell
-$ dsopz gql -d myproject -q "select * from Product where name = 'Android'"
+$ # Query for android product
+$ dsopz gql -d myproject -q "select * from Product where name = 'Android'" | gzip > entities.bak.gz
+
+$ # You can create a keys-only file
+$ dsopz gql -d myproject -q "select __key__ from Product where name = 'Android'" | gzip > entities.bak.gz
 ```
 
