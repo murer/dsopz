@@ -4,6 +4,9 @@ Here we show the ways DSOpz can download entities from [Google Cloud Datastore](
 
 Remeber, if you ***gzip*** the entity file you will save a lot of storage space
 
+DSOpz is implemented using [Datastore Cursors](https://cloud.google.com/appengine/docs/standard/java/datastore/query-cursors).
+So, it is possible to download any amount of entity
+
 ## Export
 
 ```shell
