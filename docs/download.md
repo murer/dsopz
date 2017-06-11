@@ -48,3 +48,9 @@ optional arguments:
   -q GQL, --gql GQL     gql (sample: "select * from Product").
 ```
 
+Samples:
+
+```shell
+$ dsopz gql -d myproject -q "select * from Product where name = 'Android'"
+```
+
