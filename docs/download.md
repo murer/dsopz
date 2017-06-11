@@ -7,8 +7,8 @@ Remeber, if you ***gzip*** the entity file you will save a lot of storage space
 ## Export
 
 ```shell
-$ python -m dsopz.dsopz export --help
-usage: dsopz.py export [-h] -d DATASET [-n NAMESPACE] [-k KINDS [KINDS ...]]
+$ dsopz export --help
+usage: dsopz export [-h] -d DATASET [-n NAMESPACE] [-k KINDS [KINDS ...]]
                        [-o KEYS_ONLY]
 
 optional arguments:
@@ -26,8 +26,8 @@ optional arguments:
 ## Query
 
 ```shell
-$ python -m dsopz.dsopz gql --help
-usage: dsopz.py gql [-h] -d DATASET [-n NAMESPACE] -q GQL
+$ dsopz gql --help
+usage: dsopz gql [-h] -d DATASET [-n NAMESPACE] -q GQL
 
 optional arguments:
   -h, --help            show this help message and exit
