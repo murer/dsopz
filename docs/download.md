@@ -23,6 +23,12 @@ optional arguments:
                         keys only (default: false)
 ```
 
+Samples:
+
+```shell
+$ dsopz export -d myproject | gzip > entities.bak.gz # Export all entities of all kinds from default namespace
+```
+
 ## Query
 
 ```shell
