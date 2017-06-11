@@ -31,6 +31,9 @@ $ dsopz export -d myproject | gzip > entities.bak.gz
 
 $ # Export all entities of 'produt' and 'user' kinds from 'other' namespace
 $ dsopz export -d myproject -k product user -n other | gzip > entities.bak.gz 
+
+$ # You can create a keys-only file
+$ dsopz export -d myproject -k product user -n other -o true | gzip > entities.bak.gz 
 ```
 
 ## Query
