@@ -60,11 +60,15 @@ class BatchProcessor(processor.Processor):
 
 def argparse_prepare(sub):
     sub.add_argument('-d', '--dataset', required=True, help='dataset')
-    sub.add_argument('-n', '--namespace', help='namespace')
-    sub.add_argument('-k', '--kinds', nargs='+', help='kinds')
-    sub.add_argument('-b', '--block', type=int, help='block size')
-    sub.add_argument('-p', '--parallel', type=int, help='parallel')
-    sub.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help='operation')
+    sub.add_argument('-n', '--namespace', help='namespace (default: default namespace)')
+    sub.add_argument('-k', '--kinds', nargs='+', help='kinds (default: all kinds)')
+    sub.add_argument('-b', '--block', type=int, help='block size (default: 500)')
+    sub.add_argument('-p', '--parallel', type=int, help='parallel (defaut: 10)')
+    sub.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help=
+        """
+        Use "upsert" to create entities and update entitiy properties based on "key".
+        Use "delete" to delete entities based on "key". You can use "keys-only" entity file to delete')
+        """)
 
 def argparse_exec(args):
     op = upsert
