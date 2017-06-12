@@ -41,7 +41,7 @@ $ # Delete all entities from "entities.bak.gz" from
 $ # default namespace of the "myproject" Datastore
 $ cat entities.bak.gz | gunzip | dsopz import -d myproject -o delete
 
-$ # Delete "product" and "user" entities from entity file 
+$ # Delete "product" and "user" entities from "entities.bak.gz"
 $ # from "other" namespace of the "myproject" Datastore  
 $ cat entities.bak.gz | gunzip | dsopz import -d myproject -o delete -k product user -n other
 ```
