@@ -1,4 +1,4 @@
-# Upload and Restore
+# Delete
 
 That is how DSOpz delete entities from [Google Cloud Datastore](https://cloud.google.com/datastore/)
 
@@ -6,7 +6,7 @@ If you gzip, remeber to gunzip
 
 DSOpz is implemented to delete in parallel
 
-## Export
+## Delete
 
 ```shell
 $ dsopz import --help
@@ -31,13 +31,13 @@ optional arguments:
                         entities based on "key".
 ```
 
-***Delete ignore properties from entities file. 
+***Delete ignore properties from entities file.
 So you can use both (keys-only and regular) files to delete enities***
 
 Samples:
 
 ```shell
-$ # Delete all entities from "entities.bak.gz" from 
+$ # Delete all entities from "entities.bak.gz" from
 $ # default namespace of the "myproject" Datastore
 $ cat entities.bak.gz | gunzip | dsopz import -d myproject -o delete
 

@@ -6,7 +6,7 @@ If you gzip, remeber to gunzip
 
 DSOpz is implemented to upload in parallel
 
-## Export
+## Import
 
 ```shell
 $ dsopz import --help
@@ -31,13 +31,13 @@ optional arguments:
                         entities based on "key".
 ```
 
-***If you upsert a keys-only file you will delete all properties from existing entities 
+***If you upsert a keys-only file you will delete all properties from existing entities
 and create all new entities without properties***
 
 Samples:
 
 ```shell
-$ # Create and update (upsert) all entities from "entities.bak.gz" 
+$ # Create and update (upsert) all entities from "entities.bak.gz"
 $ # into the default namespace of the "myproject" Datastore
 $ cat entities.bak.gz | gunzip | dsopz import -d myproject -o upsert
 
