@@ -29,8 +29,7 @@ optional arguments:
                         Use "upsert" to create entities and update entitiy
                         properties based on "key". Use "delete" to delete
                         entities based on "key". You can use "keys-only"
-                        entity file to delete')
-
+                        entity file to delete
 ```
 
 ***If you upsert a keys-only file you will delete all properties from existing entities 
