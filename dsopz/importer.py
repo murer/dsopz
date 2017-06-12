@@ -67,7 +67,7 @@ def argparse_prepare(sub):
     sub.add_argument('-o', '--operation', required=True, choices=('upsert', 'remove'), help=
         """
         Use "upsert" to create entities and update entitiy properties based on "key".
-        Use "delete" to delete entities based on "key". You can use "keys-only" entity file to delete')
+        Use "delete" to delete entities based on "key". You can use "keys-only" entity file to delete
         """)
 
 def argparse_exec(args):
