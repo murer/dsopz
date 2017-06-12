@@ -6,6 +6,9 @@ If you gzip, remeber to gunzip
 
 DSOpz is implemented to upload in parallel
 
+***If you upsert a keys-only file you will delete all properties from existing entities
+and create all new entities without properties***
+
 ## Import
 
 ```shell
@@ -30,9 +33,6 @@ optional arguments:
                         properties based on "key". Use "delete" to delete
                         entities based on "key".
 ```
-
-***If you upsert a keys-only file you will delete all properties from existing entities
-and create all new entities without properties***
 
 Samples:
 

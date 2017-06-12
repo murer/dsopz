@@ -6,6 +6,9 @@ If you gzip, remeber to gunzip
 
 DSOpz is implemented to delete in parallel
 
+***Delete ignore properties from entities file.
+So you can use both (keys-only and regular) files to delete enities***
+
 ## Delete
 
 ```shell
@@ -30,9 +33,6 @@ optional arguments:
                         properties based on "key". Use "delete" to delete
                         entities based on "key".
 ```
-
-***Delete ignore properties from entities file.
-So you can use both (keys-only and regular) files to delete enities***
 
 Samples:
 
