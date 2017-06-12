@@ -41,7 +41,7 @@ $ # Create and update (upsert) all entities from "entities.bak.gz"
 $ # into the default namespace of the "myproject" Datastore
 $ cat entities.bak.gz | gunzip | dsopz import -d myproject -o upsert
 
-$ # "Upsert" "product" and "user" entities 
+$ # "Upsert" "product" and "user" entities from "entities.bak.gz"
 $ # into the "other" namespace of the "myproject" Datastore  
 $ cat entities.bak.gz | gunzip | dsopz import -d myproject -o upsert -k product user -n other
 ```
