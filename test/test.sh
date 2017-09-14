@@ -79,7 +79,7 @@ import_export_test
 import_export_keys_test
 gql_test
 index_test
-#index_list_test
+index_list_test
 #import_block_test
 
 #offline_test
