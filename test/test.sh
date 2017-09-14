@@ -16,7 +16,8 @@ trap cleanup EXIT
 kind_test() {
   cleanup
   python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "test/entities.json"
-  python -m dsopz.dsopz 'kind' -d "$DS" -n "$NS"
+  python -m dsopz.dsopz 'kind' -d "$DS" -n "$NS" | grep 'dsopz_test'
+  echo aaaaa
 }
 
 import_export_test() {
