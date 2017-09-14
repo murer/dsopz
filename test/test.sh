@@ -4,10 +4,10 @@ DS=${1:-cloudcontainerz}
 NS=${2:-dsopz_test}
 
 EF=target/dsopz_test
-rm -rf "$EF" || true
-mkdir -p "$EF"
 
 cleanup() {
+rm -rf "$EF" || true
+mkdir -p "$EF"
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o remove
 }
 
@@ -75,13 +75,13 @@ cat "$EF/mapped.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 c4 | grep 'ch
 }
 
 kind_test
-import_export_test
-import_export_keys_test
-gql_test
-index_test
-index_list_test
-import_block_test
+#import_export_test
+#import_export_keys_test
+#gql_test
+#index_test
+#index_list_test
+#import_block_test
 
-offline_test
+#offline_test
 
 echo "SUCCESS"
