@@ -6,6 +6,7 @@ NS=${2:-dsopz_test}
 EF=target/dsopz_test
 
 cleanup() {
+echo '== == == == == == == == == == == == == == == == =='
 rm -rf "$EF" || true
 mkdir -p "$EF"
 python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o remove
