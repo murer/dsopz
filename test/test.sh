@@ -82,6 +82,6 @@ index_test
 index_list_test
 import_block_test
 
-#offline_test
+offline_test
 
 echo "SUCCESS"
