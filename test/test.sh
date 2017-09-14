@@ -75,7 +75,7 @@ cat "$EF/mapped.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 c4 | grep 'ch
 }
 
 kind_test
-#import_export_test
+import_export_test
 #import_export_keys_test
 #gql_test
 #index_test
