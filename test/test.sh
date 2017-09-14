@@ -15,52 +15,52 @@ trap cleanup EXIT
 
 kind_test() {
   cleanup
-  python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o upsert < "test/entities.json"
-  python -m dsopz.dsopz 'kind' -d "$DS" -n "$NS$1" | grep '^dsopz_test$'
+  python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "test/entities.json"
+  python -m dsopz.dsopz 'kind' -d "$DS" -n "$NS" | grep '^dsopz_test$'
 }
 
 import_export_test() {
 cleanup
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS$1" | wc -l | grep '^0$'
-python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o upsert < "test/entities.json"
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS$1" -o false | diff - "test/entities.json"
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS$1" | diff - "test/entities.json"
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | wc -l | grep '^0$'
+python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "test/entities.json"
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o false | diff - "test/entities.json"
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | diff - "test/entities.json"
 }
 
 import_export_keys_test() {
 cleanup
-python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o upsert < "test/entities.json"
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS$1" -o true | diff - "test/keys.json"
+python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "test/entities.json"
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" -o true | diff - "test/keys.json"
 }
 
 gql_test() {
 cleanup
-python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS$1" -q "select * from dsopz_test order by c2" | wc -l | grep '^0$'
+python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order by c2" | wc -l | grep '^0$'
 }
 
 index_test() {
 cleanup
 python -m dsopz.dsopz 'index' -k "dsopz_test" -c c2 -i true > "$EF/processed$1.json" < "test/entities.json"
-python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o upsert < "$EF/processed$1.json"
+python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "$EF/processed$1.json"
 sleep 1
-python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS$1" -q "select * from dsopz_test order by c2" | wc -l | grep '^2$'
-python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS$1" -q "select * from dsopz_test order by c3" | wc -l | grep '^0$'
+python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order by c2" | wc -l | grep '^2$'
+python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test order by c3" | wc -l | grep '^0$'
 }
 
 index_list_test() {
 cleanup
 python -m dsopz.dsopz 'index' -k "dsopz_test" -c c3 -i true > "$EF/processed$1.json" < "test/entities.json"
-python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o upsert < "$EF/processed$1.json"
+python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -o upsert < "$EF/processed$1.json"
 sleep 1
-python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS$1" -q "select * from dsopz_test where c3 = 'a1'" | wc -l | grep '^2$'
-python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS$1" -q "select * from dsopz_test where c3 = 'a2'" | wc -l | grep '^1$'
-python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS$1" -q "select * from dsopz_test where c3 = 'a3'" | wc -l | grep '^1$'
+python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a1'" | wc -l | grep '^2$'
+python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a2'" | wc -l | grep '^1$'
+python -m dsopz.dsopz 'gql' -d "$DS" -n "$NS" -q "select * from dsopz_test where c3 = 'a3'" | wc -l | grep '^1$'
 }
 
 import_block_test() {
 cleanup
-for k in $(seq 1 7); do cat test/template.json | sed "s/COUNTER/n$k/g"; done | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -p 2 -b 2 -o upsert
-python -m dsopz.dsopz 'export' -d "$DS" -n "$NS$1" | wc -l | grep '^7$'
+for k in $(seq 1 7); do cat test/template.json | sed "s/COUNTER/n$k/g"; done | python -m dsopz.dsopz 'import' -d "$DS" -n "$NS" -p 2 -b 2 -o upsert
+python -m dsopz.dsopz 'export' -d "$DS" -n "$NS" | wc -l | grep '^7$'
 }
 
 offline_test() {
