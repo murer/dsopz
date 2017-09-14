@@ -1,4 +1,5 @@
 import argparse
+import kind_loader
 import importer
 import exporter
 import reader
@@ -44,6 +45,7 @@ def main():
     parser = Parser()
     parser.prepare('version', Version())
     parser.prepare('console', console)
+    parser.prepare('kind', kind_loader)
     parser.prepare('export', exporter)
     parser.prepare('import', importer)
     parser.prepare('gql', reader)

@@ -18,9 +18,16 @@ cleanup 3 &
 cleanup 4 &
 cleanup 5 &
 cleanup 6 &
+cleanup 7 &
 wait
 }
 trap cleanup_all EXIT
+
+kind_test() {
+  cleanup "$1"
+  python -m dsopz.dsopz 'import' -d "$DS" -n "$NS$1" -o upsert < "test/entities.json"
+  python -m dsopz.dsopz 'kind' -d "$DS" -n "$NS$1" | grep '^dsopz_test$'
+}
 
 import_export_test() {
 cleanup "$1"
@@ -77,12 +84,13 @@ EOF
 cat "$EF/mapped.json" | python -m dsopz.dsopz csv -c c1 __key__ c2 c4 | grep 'changed' | wc -l | grep '^2$'
 }
 
-import_export_test 1 &
-import_export_keys_test 2 &
-gql_test 3 &
-index_test 4 &
-index_list_test 5 &
-import_block_test 6 &
+kind_test 1 &
+import_export_test 2 &
+import_export_keys_test 3 &
+gql_test 4 &
+index_test 5 &
+index_list_test 6 &
+import_block_test 7 &
 
 offline_test
 
@@ -92,5 +100,6 @@ wait %3
 wait %4
 wait %5
 wait %6
+wait %7
 
 echo "SUCCESS"
