@@ -2,7 +2,7 @@ import argparse
 import kind_loader
 import importer
 import exporter
-import reader
+import gql
 import console
 import processor_indexed
 import processor_csv
@@ -15,7 +15,6 @@ import oauth_installed
 import oauth_local
 import oauth_serviceaccount
 import config
-import tmp
 
 class Version(object):
 
@@ -49,8 +48,7 @@ def main():
     parser.prepare('kind', kind_loader)
     parser.prepare('export', exporter)
     parser.prepare('import', importer)
-    parser.prepare('gql', reader)
-    parser.prepare('tmp', tmp)
+    parser.prepare('gql', gql)
     parser.prepare('index', processor_indexed)
     parser.prepare('csv', processor_csv)
     parser.prepare('sql', processor_sql)
