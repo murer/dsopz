@@ -15,6 +15,7 @@ import oauth_installed
 import oauth_local
 import oauth_serviceaccount
 import config
+import tmp
 
 class Version(object):
 
@@ -49,6 +50,7 @@ def main():
     parser.prepare('export', exporter)
     parser.prepare('import', importer)
     parser.prepare('gql', reader)
+    parser.prepare('tmp', tmp)
     parser.prepare('index', processor_indexed)
     parser.prepare('csv', processor_csv)
     parser.prepare('sql', processor_sql)

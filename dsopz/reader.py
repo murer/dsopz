@@ -48,19 +48,19 @@ def query(dataset, gql, namespace=None, limit=1000, startCursor=None):
     ret['endCursor'] = resp['batch'].get('endCursor')
     return ret
 
-def iterate(dataset, gql, namespace=None, bulkSize=1000):
-    startCursor = None
+def iterate(dataset, gql, namespace=None, bulkSize=1000, startCursor=None, context=None):
     while True:
         page = query(dataset, gql, namespace, bulkSize, startCursor)
         if not page['entities']:
+            if context != None:
+                context['cursor'] = startCursor
             return
         startCursor = page.get('endCursor')
         for ent in page['entities']:
             yield ent
 
-
-def print_iterate(dataset, gql, namespace=None, msg=''):
-    it = iterate(dataset, gql, namespace)
+def print_iterate(dataset, gql, namespace=None, msg='', startCursor=None, context=None):
+    it = iterate(dataset, gql, namespace, startCursor=startCursor, context=context)
     loaded = 0
     try:
         while True:
