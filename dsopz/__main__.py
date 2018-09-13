@@ -1,7 +1,6 @@
-import dsopz
 
-def __main():
-	dsopz.main()
+from dsopz import oauth
 
-if __name__ == '__main__':
-	__main()
+from dsopz.config import config
+
+config.parse_args()

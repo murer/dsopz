@@ -34,5 +34,3 @@ def argparse_exec(args):
 		return sys.exit(1)
 	processor = ProcessorMapper(mapper, args.kinds)
 	processor.process()
-
-
