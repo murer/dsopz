@@ -1,13 +1,3 @@
-#import os
-
-#def auth_file():
-#	return os.path.expanduser('~/.dsopz/oauth.json')
-
-#if __name__ == '__main__':
-#	print(auth_file())
-
-
-
 import json as JSON
 from dsopz.config import config
 
