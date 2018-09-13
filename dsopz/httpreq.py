@@ -7,8 +7,6 @@ from urllib.parse import urlparse
 class Error(Exception):
 	"""Exceptions"""
 
-class HttpError(Error):
-	"""Exception"""
 
 def req_json(method, url, params = '', headers = {}, expects = [200]):
 	parsed = urlparse(url)
