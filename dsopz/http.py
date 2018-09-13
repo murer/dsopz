@@ -2,15 +2,17 @@ from http.client import HTTPSConnection, HTTPConnection
 import json as JSON
 from dsopz import util
 import threading
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 
 class Error(Exception):
 	"""Exceptions"""
 
-def req_json(method, url, params = '', headers = {}, expects = [200]):
+def req_json(method, url, params = None, headers = {}, expects = [200]):
 	parsed = urlparse(url)
 	host = parsed.netloc
 	uri = parsed.path
+	if isinstance(params, dict):
+		params = urlencode(params) if headers.get('Content-Type', 'application/json').startswith('application/x-www-form-urlencoded') else JSON.dumps(params)
 	if(parsed.query != ''):
 		uri = uri + '?' + parsed.query
 	conn = None

@@ -1,5 +1,8 @@
+import sys
 import json as JSON
 from dsopz.config import config
+from dsopz.http import req_json
+from urllib.parse import urlencode
 
 class OAuth(object):
 
@@ -26,7 +29,18 @@ class OAuth(object):
         if config.args.client:
             with open(config.args.client, 'r') as f:
                 self._clientsecret = JSON.loads(f.read())
-        print(config.args, self._scopes, self._clientsecret)
+        url = '%s?%s' % (self._clientsecret['installed']['auth_uri'],
+            urlencode({
+        		'client_id': self._clientsecret['installed']['client_id'],
+        		'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+                'scope': ' '.join(self._scopes),
+                'response_type': 'code',
+                'approval_prompt': 'force',
+                'access_type': 'offline'
+        	}))
+        print(url)
+        code = sys.stdin.readline().strip()
+        print('code', code)
 
 oauth = OAuth()
 
