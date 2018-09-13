@@ -5,6 +5,7 @@ class Config(object):
 	def __init__(self):
 		self.mods = {}
 		self.parser = argparse.ArgumentParser(description='DSOpz')
+		self.parser.add_argument('-a', '--auth-file', default='~/.dsopz/oauth.json', help='Local auth file')
 		self.subparsers = self.parser.add_subparsers(dest="subparsers", title="Command")
 
 	def add_parser(self, name, mod):
