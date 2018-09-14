@@ -3,11 +3,30 @@ import time
 import json as JSON
 from dsopz.config import config
 from dsopz.http import req_json
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse, parse_qs
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from dsopz import util
+import webbrowser
+
+class OAuthHandler(BaseHTTPRequestHandler):
+	def do_GET(self):
+		parsed = urlparse(self.path)
+		_, port = self.server.socket.getsockname()
+		params = parse_qs(parsed.query)
+		if not params.get('code'):
+			print('Error')
+			print(json.dumps(params, indent=True))
+		else:
+			oauth._resume(port, params['code'][0])
+		self.send_response(302)
+		self.send_header('Location', 'http://github.com/murer/dsopz')
+		self.send_header('Content-type','text/plain')
+		self.end_headers()
+		self.wfile.write('Ok'.encode('UTF-8'))
 
 class OAuth(object):
 
-    def login(self):
+    def _config(self):
         self._scopes = config.args.scopes or [
             'https://www.googleapis.com/auth/cloud-platform',
             'https://www.googleapis.com/auth/datastore',
@@ -30,6 +49,8 @@ class OAuth(object):
         if config.args.client:
             with open(config.args.client, 'r') as f:
                 self._clientsecret = JSON.loads(f.read())
+
+    def _login_text(self):
         url = '%s?%s' % (self._clientsecret['installed']['auth_uri'],
             urlencode({
                 'client_id': self._clientsecret['installed']['client_id'],
@@ -56,6 +77,48 @@ class OAuth(object):
         resp['body']['expires'] = now + expires_in
         resp['body']['handler'] = 'installed'
         print('Logged in')
+
+    def _login_browser(self):
+        server = HTTPServer(('localhost', 0), OAuthHandler)
+        _, port = server.socket.getsockname()
+        url = '%s?%s' % (self._clientsecret['installed']['auth_uri'],
+            urlencode({
+                'client_id': self._clientsecret['installed']['client_id'],
+                'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
+                'scope': ' '.join(self._scopes),
+                'response_type': 'code',
+                'approval_prompt': 'force',
+                'access_type': 'offline'
+            }))
+        try:
+            webbrowser.open(url, new=1, autoraise=True)
+            server.handle_request()
+        finally:
+            util.close(server.socket)
+
+    def _resume(self, port, code):
+        print('xxx', port, code)
+        resp = req_json('POST',  self._clientsecret['installed']['token_uri'], {
+            'code': code,
+            'client_id': self._clientsecret['installed']['client_id'],
+            'client_secret': self._clientsecret['installed']['client_secret'],
+            'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
+            'grant_type': 'authorization_code'
+        }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
+        now = now = int(time.time())
+        expires_in = resp['body']['expires_in']
+        resp['body']['created'] = now
+        resp['body']['expires'] = now + expires_in
+        resp['body']['handler'] = 'browser'
+        print('Logged in')
+
+    def login(self):
+        self._config()
+        if config.args.text:
+            self._login_text()
+        else:
+            self._login_browser()
+
 
 oauth = OAuth()
 
