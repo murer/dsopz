@@ -1,10 +1,12 @@
 import sys
 import time
 import json as JSON
+import os
 from dsopz.config import config
 from dsopz.http import req_json
 from urllib.parse import urlencode, urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
 from dsopz import util
 import webbrowser
 
@@ -27,11 +29,13 @@ class OAuthHandler(BaseHTTPRequestHandler):
 class OAuth(object):
 
     def _config(self):
-        self._scopes = config.args.scopes or [
+        self._scopes = [
             'https://www.googleapis.com/auth/cloud-platform',
             'https://www.googleapis.com/auth/datastore',
             'https://www.googleapis.com/auth/userinfo.email'
         ]
+        if hasattr(config.args, 'scopes') and config.args.scopes:
+            self._scopes = config.args.scopes
         self._clientsecret = {
            "installed" : {
               "auth_uri" : "https://accounts.google.com/o/oauth2/auth",
@@ -46,9 +50,10 @@ class OAuth(object):
               "token_uri" : "https://www.googleapis.com/oauth2/v3/token"
            }
         }
-        if config.args.client:
+        if hasattr(config.args, 'client') and config.args.client:
             with open(config.args.client, 'r') as f:
                 self._clientsecret = JSON.loads(f.read())
+        self._auth_file = Path(os.path.expanduser(config.args.auth_file))
 
     def _prepare_url(self, redirect):
         return '%s?%s' % (self._clientsecret['installed']['auth_uri'],
@@ -61,6 +66,16 @@ class OAuth(object):
                 'access_type': 'offline'
             }))
 
+    def _read_file(self):
+        with open(self._auth_file, 'r') as f:
+            return JSON.loads(f.read())
+
+    def _write_file(self, content):
+        util.makedirs(self._auth_file.parent)
+        with open(self._auth_file, 'w') as f:
+            f.write(JSON.dumps(content))
+        print('Logged in', content)
+
     def _exchange_code(self, code, redirect):
         resp = req_json('POST', self._clientsecret['installed']['token_uri'], {
             'code': code,
@@ -69,7 +84,6 @@ class OAuth(object):
             'redirect_uri': redirect,
             'grant_type': 'authorization_code'
         }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-        print(resp)
         now = now = int(time.time())
         expires_in = resp['body']['expires_in']
         resp['body']['created'] = now
@@ -83,7 +97,7 @@ class OAuth(object):
         print('code', code)
         resp = self._exchange_code(code, 'urn:ietf:wg:oauth:2.0:oob')
         resp['handler'] = 'installed'
-        print('Logged in', resp)
+        self._write_file(resp)
 
     def _login_browser(self):
         server = HTTPServer(('localhost', 0), OAuthHandler)
@@ -98,7 +112,7 @@ class OAuth(object):
     def _resume(self, port, code):
         resp = self._exchange_code(code, 'http://localhost:%s/redirect_uri' % (port))
         resp['handler'] = 'browser'
-        print('Logged in', resp)
+        self._write_file(resp)
 
     def login(self):
         self._config()
@@ -106,6 +120,16 @@ class OAuth(object):
             self._login_text()
         else:
             self._login_browser()
+
+    def token(self):
+        self._config()
+        content = self._read_file()
+        
+        return content
+
+    def print_token(self):
+        content = self.token()
+        print('xxxx', content)
 
 
 oauth = OAuth()
@@ -117,3 +141,5 @@ subparser.add_argument('-c', '--client', help='client secret json file')
 subparser = config.add_parser('login-gce', oauth.login)
 subparser = config.add_parser('login-serviceaccount', oauth.login)
 subparser.add_argument('-f', '--file', required=True, help='service account json file')
+subparser = config.add_parser('token', oauth.print_token)
+subparser.add_argument('-f', '--full', action='store_true', help='complete json')
