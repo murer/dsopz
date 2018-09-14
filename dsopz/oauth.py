@@ -1,4 +1,5 @@
 import sys
+import time
 import json as JSON
 from dsopz.config import config
 from dsopz.http import req_json
@@ -31,16 +32,30 @@ class OAuth(object):
                 self._clientsecret = JSON.loads(f.read())
         url = '%s?%s' % (self._clientsecret['installed']['auth_uri'],
             urlencode({
-        		'client_id': self._clientsecret['installed']['client_id'],
-        		'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+                'client_id': self._clientsecret['installed']['client_id'],
+                'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
                 'scope': ' '.join(self._scopes),
                 'response_type': 'code',
                 'approval_prompt': 'force',
                 'access_type': 'offline'
-        	}))
+            }))
         print(url)
         code = sys.stdin.readline().strip()
         print('code', code)
+        resp = req_json('POST', self._clientsecret['installed']['token_uri'], {
+            'code': code,
+            'client_id':  self._clientsecret['installed']['client_id'],
+            'client_secret':  self._clientsecret['installed']['client_secret'],
+            'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+            'grant_type': 'authorization_code'
+        }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
+        print(resp)
+        now = now = int(time.time())
+        expires_in = resp['body']['expires_in']
+        resp['body']['created'] = now
+        resp['body']['expires'] = now + expires_in
+        resp['body']['handler'] = 'installed'
+        print('Logged in')
 
 oauth = OAuth()
 
