@@ -10,6 +10,9 @@ from pathlib import Path
 from dsopz import util
 import webbrowser
 
+class Error(Exception):
+	"""Exceptions"""
+
 class OAuthHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
 		parsed = urlparse(self.path)
@@ -124,13 +127,19 @@ class OAuth(object):
     def token(self):
         self._config()
         content = self._read_file()
-        
+        if not content:
+            raise Error('You need to login')
+        now = now = int(time.time())
+        if now > content['expires'] - 60:
+            self._refresh_token(content)
         return content
 
     def print_token(self):
         content = self.token()
-        print('xxxx', content)
-
+        if config.args.access_token:
+            print(content['access_token'])
+        else:
+            print(JSON.dumps(content))
 
 oauth = OAuth()
 
@@ -142,4 +151,4 @@ subparser = config.add_parser('login-gce', oauth.login)
 subparser = config.add_parser('login-serviceaccount', oauth.login)
 subparser.add_argument('-f', '--file', required=True, help='service account json file')
 subparser = config.add_parser('token', oauth.print_token)
-subparser.add_argument('-f', '--full', action='store_true', help='complete json')
+subparser.add_argument('-a', '--access_token', action='store_true', help='complete json')
