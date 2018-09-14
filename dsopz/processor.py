@@ -19,3 +19,4 @@ class Processor(object):
 
     def submit(self, name, priority, fn):
         print('submit', fn)
+        fn()
