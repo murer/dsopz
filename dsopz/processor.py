@@ -20,4 +20,4 @@ class Processor(object):
         self.shutdown()
 
     def submit(self, fn, *args, **kwargs):
-        self.pool.submit(fn, *args, **kwargs)
+        return self.pool.submit(fn, *args, **kwargs)

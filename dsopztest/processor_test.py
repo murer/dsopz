@@ -12,16 +12,17 @@ class Task(object):
         time.sleep(1)
         print('sum', a)
         self.total = self.total + a
+        return self.total
 
 class TestCase(unittest.TestCase):
 
     def test_job(self):
         task = Task()
-        with Processor(1) as p:
-            p.submit(task.task, 1)
-            p.submit(task.task, 2)
-            p.submit(task.task, 4)
-            p.submit(task.task, 8)
+        with Processor(10) as p:
+            print(p.submit(task.task, 1).result())
+            print(p.submit(task.task, 2).result())
+            print(p.submit(task.task, 4).result())
+            print(p.submit(task.task, 8).result())
         self.assertEqual(15, task.total)
 
 if __name__ == '__main__':
