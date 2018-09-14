@@ -50,24 +50,23 @@ class OAuth(object):
             with open(config.args.client, 'r') as f:
                 self._clientsecret = JSON.loads(f.read())
 
-    def _login_text(self):
-        url = '%s?%s' % (self._clientsecret['installed']['auth_uri'],
+    def _prepare_url(self, redirect):
+        return '%s?%s' % (self._clientsecret['installed']['auth_uri'],
             urlencode({
                 'client_id': self._clientsecret['installed']['client_id'],
-                'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+                'redirect_uri': redirect,
                 'scope': ' '.join(self._scopes),
                 'response_type': 'code',
                 'approval_prompt': 'force',
                 'access_type': 'offline'
             }))
-        print(url)
-        code = sys.stdin.readline().strip()
-        print('code', code)
+
+    def _exchange_code(self, code, redirect):
         resp = req_json('POST', self._clientsecret['installed']['token_uri'], {
             'code': code,
             'client_id':  self._clientsecret['installed']['client_id'],
             'client_secret':  self._clientsecret['installed']['client_secret'],
-            'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+            'redirect_uri': redirect,
             'grant_type': 'authorization_code'
         }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
         print(resp)
@@ -75,21 +74,21 @@ class OAuth(object):
         expires_in = resp['body']['expires_in']
         resp['body']['created'] = now
         resp['body']['expires'] = now + expires_in
-        resp['body']['handler'] = 'installed'
-        print('Logged in')
+        return resp['body']
+
+    def _login_text(self):
+        url = self._prepare_url('urn:ietf:wg:oauth:2.0:oob')
+        print(url)
+        code = sys.stdin.readline().strip()
+        print('code', code)
+        resp = self._exchange_code(code, 'urn:ietf:wg:oauth:2.0:oob')
+        resp['handler'] = 'installed'
+        print('Logged in', resp)
 
     def _login_browser(self):
         server = HTTPServer(('localhost', 0), OAuthHandler)
         _, port = server.socket.getsockname()
-        url = '%s?%s' % (self._clientsecret['installed']['auth_uri'],
-            urlencode({
-                'client_id': self._clientsecret['installed']['client_id'],
-                'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
-                'scope': ' '.join(self._scopes),
-                'response_type': 'code',
-                'approval_prompt': 'force',
-                'access_type': 'offline'
-            }))
+        url = self._prepare_url('http://localhost:%s/redirect_uri' % (port))
         try:
             webbrowser.open(url, new=1, autoraise=True)
             server.handle_request()
@@ -97,20 +96,9 @@ class OAuth(object):
             util.close(server.socket)
 
     def _resume(self, port, code):
-        print('xxx', port, code)
-        resp = req_json('POST',  self._clientsecret['installed']['token_uri'], {
-            'code': code,
-            'client_id': self._clientsecret['installed']['client_id'],
-            'client_secret': self._clientsecret['installed']['client_secret'],
-            'redirect_uri': 'http://localhost:%s/redirect_uri' % (port),
-            'grant_type': 'authorization_code'
-        }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-        now = now = int(time.time())
-        expires_in = resp['body']['expires_in']
-        resp['body']['created'] = now
-        resp['body']['expires'] = now + expires_in
-        resp['body']['handler'] = 'browser'
-        print('Logged in')
+        resp = self._exchange_code(code, 'http://localhost:%s/redirect_uri' % (port))
+        resp['handler'] = 'browser'
+        print('Logged in', resp)
 
     def login(self):
         self._config()
