@@ -1,6 +1,10 @@
 language: python
 python:
-- '2.7'
+- "3.3"
+- "3.4"
+- "3.5"
+- "3.6"
+- "3.7"  # 3.7 development branch
 before_script:
 - "./ci/before_script.sh"
 install:
@@ -15,4 +19,3 @@ deploy:
   on:
     branch: release
     tags: false
-
