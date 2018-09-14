@@ -4,4 +4,4 @@
 
 #./test/test.sh cloudcontainerz "dsopz-it-$(($RANDOM % 100))-"
 
-python -m test
+python -m dsopztest

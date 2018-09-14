@@ -1,5 +1,5 @@
 import unittest
-from test.abstract_test_case import TestCase
+from dsopztest.abstract_test_case import TestCase
 
 class SplitXmlTest(TestCase):
 
