@@ -70,12 +70,13 @@ class OAuth(object):
             }))
 
     def _read_file(self):
-        with open(self._auth_file, 'r') as f:
+        with open(str(self._auth_file), 'r') as f:
             return JSON.loads(f.read())
 
     def _write_file(self, content):
+        print('xxxx', self._auth_file.parent)
         util.makedirs(self._auth_file.parent)
-        with open(self._auth_file, 'w') as f:
+        with open(str(self._auth_file), 'w') as f:
             f.write(JSON.dumps(content))
         print('Logged in', content)
 

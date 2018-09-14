@@ -9,11 +9,4 @@ def close(obj):
 		""" Done """
 
 def makedirs(directory):
-	try:
-		os.makedirs(directory)
-	except OSError as exc:
-		if exc.errno == errno.EEXIST and os.path.isdir(directory):
-			pass
-		else:
-			raise
-
+	os.makedirs(str(directory), exist_ok=True)
