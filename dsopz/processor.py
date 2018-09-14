@@ -1,22 +1,23 @@
+from concurrent.futures import ThreadPoolExecutor
+
+def task():
+    print('task')
 
 class Processor(object):
 
-    def __init__(self, max):
-        self.max = max
-
-    def start(self):
-        print('start')
-        return self
+    def __init__(self, max_workers):
+        self.pool = ThreadPoolExecutor(max_workers=max_workers)
+        self.pool.submit(task)
 
     def shutdown(self):
+        self.pool.shutdown(wait=True)
         print('shutdown')
 
     def __enter__(self):
-        return self.start()
+        return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.shutdown()
 
-    def submit(self, name, priority, fn, *args, **kwargs):
-        print('submit', fn, args, kwargs)
-        fn(*args, **kwargs)
+    def submit(self, fn, *args, **kwargs):
+        self.pool.submit(fn, *args, **kwargs)

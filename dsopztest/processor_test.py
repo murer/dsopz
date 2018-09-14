@@ -1,14 +1,20 @@
 import unittest
 from dsopz.processor import Processor
+from concurrent.futures import ThreadPoolExecutor
 
 def task(a, b):
-    return a + b
+    ret = a + b
+    print('task', ret)
+    return ret
 
 class TestCase(unittest.TestCase):
 
     def test_job(self):
-        with Processor(max=1) as p:
-            p.submit('n1', 0, task, 3, 4)
+        with Processor(1) as p:
+            p.submit(task, 3, 4)
+            p.submit(task, 3, 4)
+            p.submit(task, 3, 4)
+            p.submit(task, 3, 4)
 
 if __name__ == '__main__':
     unittest.main()
