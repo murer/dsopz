@@ -17,6 +17,6 @@ class Processor(object):
     def __exit__(self, exception_type, exception_value, traceback):
         self.shutdown()
 
-    def submit(self, name, priority, fn):
-        print('submit', fn)
-        fn()
+    def submit(self, name, priority, fn, *args, **kwargs):
+        print('submit', fn, args, kwargs)
+        fn(*args, **kwargs)
