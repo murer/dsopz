@@ -135,6 +135,9 @@ class OAuth(object):
             self._refresh_token(content)
         return content
 
+    def access_token(self):
+        return self.token()['access_token']
+
     def print_token(self):
         content = self.token()
         if config.args.access_token:

@@ -12,8 +12,10 @@ class Config(object):
 		self.mods[name] = mod
 		return self.subparsers.add_parser(name)
 
-	def parse_args(self):
-		self.args = self.parser.parse_args()
+	def parse_args(self, args=None):
+		print('xxx', args)
+		self.args = self.parser.parse_args(args)
+		print('yyyy', self.args)
 		mod = self.mods[self.args.subparsers]
 		mod()
 
