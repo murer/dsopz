@@ -14,6 +14,7 @@ class TestCase(abstract_test_case.TestCase):
             'startcursor',
             'endcursor'
         )
+        print(result)
         self.assertEqual(1, len(result))
 
 if __name__ == '__main__':

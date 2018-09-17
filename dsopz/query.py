@@ -1,5 +1,6 @@
 from dsopz.http import req_json
 from dsopz.oauth import oauth
+from dsopz.config import config
 
 def run_query(
         dataset,
@@ -10,7 +11,7 @@ def run_query(
         start_cusror = None,
         end_cursor = None):
 
-    url = 'https://datastore.googleapis.com/v1/projects/%s:runQuery' % (dataset)
+    url = '%s/v1/projects/%s:runQuery' % (config.args.url, dataset)
     gql_full = gql
     body = {
         'partitionId': {
@@ -25,7 +26,4 @@ def run_query(
     resp = req_json('POST', url, body, {
         'Authorization': 'Bearer %s' % (oauth.access_token())
     })
-    print(resp)
-
-
-    return [{}]
+    return resp['body']

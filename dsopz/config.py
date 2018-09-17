@@ -6,6 +6,7 @@ class Config(object):
 		self.mods = {}
 		self.parser = argparse.ArgumentParser(description='DSOpz')
 		self.parser.add_argument('-a', '--auth-file', default='~/.dsopz/oauth.json', help='Local auth file')
+		self.parser.add_argument('-u', '--url', default='https://datastore.googleapis.com/', help='URL')
 		self.subparsers = self.parser.add_subparsers(dest="subparsers", title="Command")
 
 	def add_parser(self, name, mod):
