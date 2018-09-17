@@ -7,7 +7,7 @@ class TestCase(abstract_test_case.TestCase):
         result = query(
             'dataset',
             'namespace',
-            'select *',
+            'select * from notfound',
             0,
             10,
             'startcursor',
