@@ -8,7 +8,7 @@ class TestCase(abstract_test_case.TestCase):
         result = run_query(
             'dsopzproj',
             '',
-            'select * from notfound',
+            'select * from notfound where x = 2',
             0,
             10,
             'startcursor',
