@@ -1,10 +1,10 @@
 from dsopztest import abstract_test_case
-from dsopz.query import query
+from dsopz.query import runQuery
 
 class TestCase(abstract_test_case.TestCase):
 
     def test_query(self):
-        result = query(
+        result = runQuery(
             'dataset',
             'namespace',
             'select * from notfound',
