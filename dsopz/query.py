@@ -1,6 +1,6 @@
 
 
-def runQuery(self,
+def run_query(self,
         dataset,
         namespace,
         gql,
