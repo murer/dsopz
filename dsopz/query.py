@@ -26,4 +26,6 @@ def run_query(
     resp = req_json('POST', url, body, {
         'Authorization': 'Bearer %s' % (oauth.access_token())
     })
-    return resp['body']
+    ret = resp['body']
+    ret['batch']['entityResults'] = ret['batch'].get('entityResults', [])
+    return ret
