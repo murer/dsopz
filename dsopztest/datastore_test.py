@@ -34,6 +34,11 @@ class TestCase(abstract_test_case.TestCase):
             }
         }
 
+        #loaded = ds.lookup('dsopzproj', [ entity['key'] ])
+        #self.assertEqual(entity, loaded['found'][0]['entity'])
+        #self.assertEqual(0, len(loaded['found']))
+        #self.assertEqual(1, len(loaded['missing']))
+
         result = ds.run_query('dsopzproj', '', 'select * from hero')
         self.assertEqual(entity, result['batch']['entityResults'][0]['entity'])
         self.assertEqual(1, len(result['batch']['entityResults']))
