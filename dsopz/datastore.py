@@ -39,9 +39,17 @@ def lookup(dataset, keys):
     return ret
 
 def commit(dataset, mutations):
-        url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
-        resp = req_json('POST', url, mutations, {
-            'Authorization': 'Bearer %s' % (oauth.access_token())
-        })
-        ret = resp['body']
-        return ret
+    url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
+    resp = req_json('POST', url, mutations, {
+        'Authorization': 'Bearer %s' % (oauth.access_token())
+    })
+    ret = resp['body']
+    return ret
+
+def mutation(dataset, upserts=None, removes=None):
+    body = { 'mode': 'NON_TRANSACTIONAL', 'mutations': [] }
+    if upserts:
+        body['mutations'].extend([ { 'upsert': entity } for entity in upserts ])
+    if removes:
+        body['mutations'].extend([ { 'delete': entity } for entity in removes ])
+    return commit(dataset, body)

@@ -34,12 +34,7 @@ class TestCase(abstract_test_case.TestCase):
             }
         }
 
-        ds.commit('dsopzproj', {
-            'mode': 'NON_TRANSACTIONAL',
-            'mutations': [ {
-                'delete': entity['key']
-            } ]
-        } )
+        ds.mutation('dsopzproj', removes = [ entity['key'] ])
 
         result = ds.lookup('dsopzproj', [ entity['key'] ])
         self.assertIsNone(result.get('found'))
@@ -50,12 +45,7 @@ class TestCase(abstract_test_case.TestCase):
         self.assertEqual('NO_MORE_RESULTS', result['batch']['moreResults'])
         self.assertIsNotNone(result['batch']['endCursor'])
 
-        ds.commit('dsopzproj', {
-            'mode': 'NON_TRANSACTIONAL',
-            'mutations': [ {
-                'upsert': entity
-            } ]
-        } )
+        ds.mutation('dsopzproj', upserts = [ entity ] )
 
         result = ds.run_query('dsopzproj', '', 'select * from hero')
         self.assertEqual(entity, result['batch']['entityResults'][0]['entity'])
