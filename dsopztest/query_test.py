@@ -14,7 +14,6 @@ class TestCase(abstract_test_case.TestCase):
             'startcursor',
             'endcursor'
         )
-        print(result)
         self.assertEqual(0, len(result['batch']['entityResults']))
         self.assertEqual('NO_MORE_RESULTS', result['batch']['moreResults'])
         self.assertIsNotNone(result['batch']['endCursor'])
