@@ -16,7 +16,7 @@ class Config(object):
 	def parse_args(self, args=None):
 		print('xxx', args)
 		self.args = self.parser.parse_args(args)
-		print('yyyy', self.args)
+		print('yyyy', vars(self.args))
 		mod = self.mods[self.args.subparsers]
 		mod()
 
