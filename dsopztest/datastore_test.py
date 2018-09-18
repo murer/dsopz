@@ -34,10 +34,28 @@ class TestCase(abstract_test_case.TestCase):
             }
         }
 
-        #loaded = ds.lookup('dsopzproj', [ entity['key'] ])
-        #self.assertEqual(entity, loaded['found'][0]['entity'])
-        #self.assertEqual(0, len(loaded['found']))
-        #self.assertEqual(1, len(loaded['missing']))
+        ds.commit('dsopzproj', {
+            'mode': 'NON_TRANSACTIONAL',
+            'mutations': [ {
+                'delete': entity['key']
+            } ]
+        } )
+
+        result = ds.lookup('dsopzproj', [ entity['key'] ])
+        self.assertIsNone(result.get('found'))
+        self.assertEqual(1, len(result['missing']))
+
+        result = ds.run_query('dsopzproj', '', 'select * from hero')
+        self.assertEqual(0, len(result['batch']['entityResults']))
+        self.assertEqual('NO_MORE_RESULTS', result['batch']['moreResults'])
+        self.assertIsNotNone(result['batch']['endCursor'])
+
+        ds.commit('dsopzproj', {
+            'mode': 'NON_TRANSACTIONAL',
+            'mutations': [ {
+                'upsert': entity
+            } ]
+        } )
 
         result = ds.run_query('dsopzproj', '', 'select * from hero')
         self.assertEqual(entity, result['batch']['entityResults'][0]['entity'])
@@ -52,6 +70,13 @@ class TestCase(abstract_test_case.TestCase):
         self.assertEqual(entity, loaded['found'][0]['entity'])
         self.assertEqual(1, len(loaded['found']))
         self.assertEqual(1, len(loaded['missing']))
+
+        ds.commit('dsopzproj', {
+            'mode': 'NON_TRANSACTIONAL',
+            'mutations': [ {
+                'delete': entity['key']
+            } ]
+        } )
 
 if __name__ == '__main__':
     unittest.main()

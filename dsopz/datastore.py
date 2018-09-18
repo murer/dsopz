@@ -37,3 +37,11 @@ def lookup(dataset, keys):
     })
     ret = resp['body']
     return ret
+
+def commit(dataset, mutations):
+        url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
+        resp = req_json('POST', url, mutations, {
+            'Authorization': 'Bearer %s' % (oauth.access_token())
+        })
+        ret = resp['body']
+        return ret
