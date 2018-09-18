@@ -28,3 +28,12 @@ def run_query(
     ret['batch']['entityResults'] = ret['batch'].get('entityResults', [])
     ret['query'] = ret.get('query', query)
     return ret
+
+def lookup(dataset, keys):
+    url = '%s/v1/projects/%s:lookup' % (config.args.url, dataset)
+    body = { 'keys': keys }
+    resp = req_json('POST', url, body, {
+        'Authorization': 'Bearer %s' % (oauth.access_token())
+    })
+    ret = resp['body']
+    return ret
