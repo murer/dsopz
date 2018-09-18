@@ -11,23 +11,23 @@ from dsopz import util
 import webbrowser
 
 class Error(Exception):
-	"""Exceptions"""
+    """Exceptions"""
 
 class OAuthHandler(BaseHTTPRequestHandler):
-	def do_GET(self):
-		parsed = urlparse(self.path)
-		_, port = self.server.socket.getsockname()
-		params = parse_qs(parsed.query)
-		if not params.get('code'):
-			print('Error')
-			print(json.dumps(params, indent=True))
-		else:
-			oauth._resume(port, params['code'][0])
-		self.send_response(302)
-		self.send_header('Location', 'http://github.com/murer/dsopz')
-		self.send_header('Content-type','text/plain')
-		self.end_headers()
-		self.wfile.write('Ok'.encode('UTF-8'))
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        _, port = self.server.socket.getsockname()
+        params = parse_qs(parsed.query)
+        if not params.get('code'):
+            print('Error')
+            print(json.dumps(params, indent=True))
+        else:
+            oauth._resume(port, params['code'][0])
+        self.send_response(302)
+        self.send_header('Location', 'http://github.com/murer/dsopz')
+        self.send_header('Content-type','text/plain')
+        self.end_headers()
+        self.wfile.write('Ok'.encode('UTF-8'))
 
 class OAuth(object):
 
@@ -124,6 +124,24 @@ class OAuth(object):
             self._login_text()
         else:
             self._login_browser()
+
+    def _refresh_token(self, content):
+        print(JSON.dumps(content, indent=True))
+        resp = req_json('POST', self._clientsecret['installed']['token_uri'], {
+            'refresh_token': content['refresh_token'],
+            'client_id': self._clientsecret['installed']['client_id'],
+            'client_secret': self._clientsecret['installed']['client_secret'],
+            'grant_type': 'refresh_token'
+        }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
+        print(JSON.dumps(resp, indent=True))
+        now = now = int(time.time())
+        content['expires_in'] = resp['body']['expires_in']
+        content['created'] = now
+        content['expires'] = now + resp['body']['expires_in']
+        content['access_token'] = resp['body']['access_token']
+        content['id_token'] = resp['body']['id_token']
+        self._write_file(content)
+
 
     def token(self):
         self._config()
