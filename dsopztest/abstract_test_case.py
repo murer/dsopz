@@ -12,7 +12,7 @@ class TestCase(unittest.TestCase):
         """ noop """
 
     def setUp(self):
-        config.parse_args([ 'noop' ])
+        config.parse_args([ '-u', 'http://localhost:8082', 'noop' ])
         """ noop """
 
     def tearDown(self):
