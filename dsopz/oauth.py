@@ -9,6 +9,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from dsopz import util
 import webbrowser
+import logging as log
 
 class Error(Exception):
     """Exceptions"""
@@ -19,8 +20,7 @@ class OAuthHandler(BaseHTTPRequestHandler):
         _, port = self.server.socket.getsockname()
         params = parse_qs(parsed.query)
         if not params.get('code'):
-            print('Error')
-            print(json.dumps(params, indent=True))
+            raise Error('Error %s', params)
         else:
             oauth._resume(port, params['code'][0])
         self.send_response(302)
@@ -74,11 +74,10 @@ class OAuth(object):
             return JSON.loads(f.read())
 
     def _write_file(self, content):
-        print('xxxx', self._auth_file.parent)
         util.makedirs(self._auth_file.parent)
         with open(str(self._auth_file), 'w') as f:
             f.write(JSON.dumps(content))
-        print('Logged in', content)
+        log.info('Logged in', content)
 
     def _exchange_code(self, code, redirect):
         resp = req_json('POST', self._clientsecret['installed']['token_uri'], {
@@ -98,7 +97,6 @@ class OAuth(object):
         url = self._prepare_url('urn:ietf:wg:oauth:2.0:oob')
         print(url)
         code = sys.stdin.readline().strip()
-        print('code', code)
         resp = self._exchange_code(code, 'urn:ietf:wg:oauth:2.0:oob')
         resp['handler'] = 'installed'
         self._write_file(resp)
@@ -126,14 +124,12 @@ class OAuth(object):
             self._login_browser()
 
     def _refresh_token(self, content):
-        print(JSON.dumps(content, indent=True))
         resp = req_json('POST', self._clientsecret['installed']['token_uri'], {
             'refresh_token': content['refresh_token'],
             'client_id': self._clientsecret['installed']['client_id'],
             'client_secret': self._clientsecret['installed']['client_secret'],
             'grant_type': 'refresh_token'
         }, { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' })
-        print(JSON.dumps(resp, indent=True))
         now = now = int(time.time())
         content['expires_in'] = resp['body']['expires_in']
         content['created'] = now

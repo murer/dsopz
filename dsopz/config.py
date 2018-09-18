@@ -1,4 +1,10 @@
 import argparse
+import logging as log
+
+log.basicConfig(
+    format='%(asctime)s.%(msecs)03d [%(module)s:%(lineno)s] %(levelname)s %(message)s',
+    datefmt='%m/%d/%Y %H:%M:%S',
+    level=log.INFO)
 
 class Config(object):
 
@@ -14,9 +20,7 @@ class Config(object):
 		return self.subparsers.add_parser(name)
 
 	def parse_args(self, args=None):
-		print('xxx', args)
 		self.args = self.parser.parse_args(args)
-		print('yyyy', vars(self.args))
 		mod = self.mods[self.args.subparsers]
 		mod()
 
@@ -42,7 +46,7 @@ def main():
 		'https://www.googleapis.com/auth/userinfo.email'
 	])
 	args = parser.parse_args()
-	print(args)
+	log.info(args)
 
 if __name__ == '__main__':
-	print(main())
+	log.info(main())

@@ -44,7 +44,7 @@ def __main():
 	obj = req_json('GET', 'https://api.github.com/users/murer/keys', headers = {
 		'User-Agent': 'dsopz'
 	}, expects = [200])
-	print(obj)
+	log.info(obj)
 
 if __name__ == '__main__':
 	__main()
