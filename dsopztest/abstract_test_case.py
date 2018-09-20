@@ -13,11 +13,7 @@ class TestCase(unittest.TestCase):
 
     def setUp(self):
         config.parse_args([ '-u', 'http://localhost:8082', '-a', './gen/auth/oauth.json', 'noop' ])
-        oauth._config()
-        oauth._write_file({
-            "expires" : 1537467118,
-            "access_token" : "dummytoken"
-        })
+        oauth._fake()
         self.server = DSEmulator()
         self.server.start()
 

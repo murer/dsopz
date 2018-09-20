@@ -93,6 +93,13 @@ class OAuth(object):
         resp['body']['expires'] = now + expires_in
         return resp['body']
 
+    def _fake(self):
+        self._config()
+        self._write_file({
+            "expires" : int(time.time()) + 3600,
+            "access_token" : "dummytoken"
+        })
+
     def _login_text(self):
         url = self._prepare_url('urn:ietf:wg:oauth:2.0:oob')
         print(url)
