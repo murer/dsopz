@@ -1,5 +1,5 @@
 import subprocess
-import time
+from dsopz import util
 from dsopz.http import req_text
 
 class DSEmulator(object):
@@ -8,7 +8,7 @@ class DSEmulator(object):
         self.server = subprocess.Popen(
             [ 'gcloud', 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk' ]
         )
-        time.sleep(2)
+        util.wait_check_port('localhost', 8082)
 
     def wait(self):
         self.server.wait()
@@ -20,7 +20,6 @@ class DSEmulator(object):
 def main():
     server = DSEmulator()
     server.start()
-    time.sleep(5)
     server.shutdown()
 
 if __name__ == '__main__':
