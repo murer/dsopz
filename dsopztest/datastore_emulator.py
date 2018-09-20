@@ -21,7 +21,6 @@ def main():
     server.start()
     time.sleep(5)
     server.shutdown()
-    server.wait()
 
 if __name__ == '__main__':
     main()
