@@ -18,3 +18,5 @@ fi
 ./gen/google-cloud-sdk/bin/gcloud components install beta cloud-datastore-emulator -q
 
 ./gen/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ./cmds/keys/dsopzit.secret.json
+
+./gen/google-cloud-sdk/bin/gcloud config set project dsopzproj
