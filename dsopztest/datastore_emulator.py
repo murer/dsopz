@@ -12,7 +12,7 @@ class DSEmulator(object):
         self.server = subprocess.Popen(
             [ cmd, 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk' ]
         )
-        util.wait_check_port('localhost', 8082)
+        util.wait_check_port('localhost', 8082, sleep=1)
 
     def wait(self):
         self.server.wait()
