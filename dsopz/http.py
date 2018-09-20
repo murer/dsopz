@@ -7,7 +7,7 @@ from urllib.parse import urlparse, urlencode
 class Error(Exception):
 	"""Exceptions"""
 
-def req_json(method, url, params = None, headers = {}, expects = [200]):
+def req_text(method, url, params = None, headers = {}, expects = [200]):
 	parsed = urlparse(url)
 	host = parsed.netloc
 	uri = parsed.path
@@ -30,15 +30,22 @@ def req_json(method, url, params = None, headers = {}, expects = [200]):
 		if response.status not in expects:
 			raise Error('Status: %d %s %sri' % (response.status, response.reason, response.read()))
 		string = response.read()
-		if not string:
-			return None
-		ret = JSON.loads(string.decode('UTF-8'))
+		if string:
+			string = string.decode('UTF-8')
 		return {
 			'status': response.status,
-			'body': ret
+			'body': string
 		}
 	finally:
 		util.close(conn)
+
+def req_json(method, url, params = None, headers = {}, expects = [200]):
+	resp = req_text(method, url, params, headers, expects)
+	if not resp['body']:
+		resp['body'] = None
+	else:
+		resp['body'] = JSON.loads(resp['body'])
+	return resp
 
 def __main():
 	obj = req_json('GET', 'https://api.github.com/users/murer/keys', headers = {
