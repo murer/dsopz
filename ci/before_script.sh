@@ -15,3 +15,4 @@ if ! ./gen/google-cloud-sdk/bin/gcloud --version; then
 fi
 
 ./gen/google-cloud-sdk/bin/gcloud components update -q
+./gen/google-cloud-sdk/bin/gcloud components install cloud-datastore-emulator -q
