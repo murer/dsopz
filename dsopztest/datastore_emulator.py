@@ -9,16 +9,18 @@ class DSEmulator(object):
             [ 'gcloud', 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk' ]
         )
 
+    def wait(self):
+        self.server.wait()
+
     def shutdown(self):
-        req_json('POST', 'http://localhost:8082/shutdown', '')
+        req_text('POST', 'http://localhost:8082/shutdown', '')
+        self.wait()
 
 def main():
-    server = subprocess.Popen(
-        [ 'gcloud', 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk' ]
-    )
-    print('xxx', server)
+    server = DSEmulator()
+    server.start()
     time.sleep(5)
-    req_text('POST', 'http://localhost:8082/shutdown', '')
+    server.shutdown()
     server.wait()
 
 if __name__ == '__main__':
