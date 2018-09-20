@@ -2,6 +2,7 @@ import unittest
 import shutil
 import os
 from dsopz.config import config
+from dsopztest.datastore_emulator import DSEmulator
 
 class Error(Exception):
     """Exceptions"""
@@ -13,10 +14,11 @@ class TestCase(unittest.TestCase):
 
     def setUp(self):
         config.parse_args([ '-u', 'http://localhost:8082', 'noop' ])
-        """ noop """
+        self.server = DSEmulator()
+        self.server.start()
 
     def tearDown(self):
-        """ close """
+        self.server.shutdown()
 
 def noop():
     return True

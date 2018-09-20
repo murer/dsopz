@@ -8,6 +8,7 @@ class DSEmulator(object):
         self.server = subprocess.Popen(
             [ 'gcloud', 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk' ]
         )
+        time.sleep(2)
 
     def wait(self):
         self.server.wait()

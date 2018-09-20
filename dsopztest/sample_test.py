@@ -1,7 +1,6 @@
 import unittest
-from dsopztest.abstract_test_case import TestCase
 
-class SplitXmlTest(TestCase):
+class SplitXmlTest(unittest.TestCase):
 
     def testA(self):
         self.assertEqual(1, 1)
