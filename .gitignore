@@ -7,3 +7,4 @@ dsopz.egg-info
 *.secret.json
 _site
 myblog
+gen
