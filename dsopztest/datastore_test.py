@@ -60,11 +60,10 @@ class DatastoreTest(abstract_test_case.TestCase):
         } )
 
     def test_run_query_cursor(self):
-        entities = [ ds.centity(ds.ckey(['k', 'n%s' % i])) for i in range(3) ]
-        ds.mutation('dsopzproj', upserts=entities)
+        ds.mutation('dsopzproj', upserts=[ ds.centity(ds.ckey(['k', 'n%s' % i])) for i in range(3) ])
         block1 = ds.run_query('dsopzproj', '', 'select __key__ from k limit 3')
-        self.assertEqual(['n0', 'n1', 'n2'], [ i['entity']['key']['path'][0]['name'] for i in block1['batch']['entityResults'] ])
         self.assertEqual(block1['batch']['endCursor'], block1['batch']['entityResults'][2]['cursor'])
+        self.assertEqual(['n0', 'n1', 'n2'], [ i['entity']['key']['path'][0]['name'] for i in block1['batch']['entityResults'] ])
         query = block1['query']
 
         query['startCursor'] = block1['batch']['entityResults'][0]['cursor']
@@ -80,8 +79,15 @@ class DatastoreTest(abstract_test_case.TestCase):
             ['batch']['entityResults']
         ])
 
-
-
+    def test_stream_query(self):
+        ds.mutation('dsopzproj', upserts=[ ds.centity(ds.ckey(['k', 'n%s' % i])) for i in range(5) ])
+        query = 'select __key__ from k limit 2'
+        self.assertEqual(['n0', 'n1' ],
+            [ i['entity']['key']['path'][0]['name'] for i in
+            ds.run_query('dsopzproj', '', query)['batch']['entityResults']])
+        self.assertEqual(['n0', 'n1', 'n2', 'n3', 'n4'],
+            [ i['entity']['key']['path'][0]['name'] for i in
+            ds.stream_query('dsopzproj', '', query)])
 
 if __name__ == '__main__':
     unittest.main()

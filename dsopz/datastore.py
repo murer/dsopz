@@ -83,5 +83,16 @@ def mutation(dataset, upserts=None, removes=None):
         body['mutations'].extend([ { 'delete': entity } for entity in removes ])
     return commit(dataset, body)
 
-def abc(dataset, namespace, query):
-    yield run_query(dataset, namespace, query)
+def stream_query(dataset, namespace, query):
+    first = False
+    while True:
+        result = run_query(dataset, namespace, query)
+        query = result['query']
+        if first:
+            yield query
+            first = False
+        if not result['batch']['entityResults']:
+            return
+        for entity in result['batch']['entityResults']:
+            yield entity
+            query['startCursor'] = entity['cursor']
