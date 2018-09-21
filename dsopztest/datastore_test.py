@@ -80,8 +80,15 @@ class DatastoreTest(abstract_test_case.TestCase):
         ])
 
     def test_stream_query(self):
-        ds.mutation('dsopzproj', upserts=[ ds.centity(ds.ckey(['k', 'n%s' % i])) for i in range(5) ])
         query = 'select __key__ from k limit 2'
+        result = ds.stream_query('dsopzproj', '', query)
+        self.assertEqual({ "limit": 2, "kind": [{ "name": "k" }],
+            "projection": [{ "property": { "name": "__key__" }}]},
+            next(result))
+        self.assertEqual([],
+            [ i['entity']['key']['path'][0]['name'] for i in result])
+
+        ds.mutation('dsopzproj', upserts=[ ds.centity(ds.ckey(['k', 'n%s' % i])) for i in range(5) ])
         self.assertEqual(['n0', 'n1' ],
             [ i['entity']['key']['path'][0]['name'] for i in
             ds.run_query('dsopzproj', '', query)['batch']['entityResults']])
