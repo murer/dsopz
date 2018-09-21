@@ -3,6 +3,9 @@ from dsopz.oauth import oauth
 from dsopz.config import config
 import json as JSON
 
+class Error(Exception):
+	"""Exceptions"""
+
 def ckey(k, dataset='dsopzproj', namespace=None):
     if len(k) % 2 != 0:
         raise Error('must be even %s' % (k))
@@ -79,3 +82,6 @@ def mutation(dataset, upserts=None, removes=None):
     if removes:
         body['mutations'].extend([ { 'delete': entity } for entity in removes ])
     return commit(dataset, body)
+
+def abc(dataset, namespace, query):
+    yield run_query(dataset, namespace, query)

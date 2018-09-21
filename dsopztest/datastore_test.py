@@ -3,10 +3,9 @@ from dsopztest import abstract_test_case
 from dsopz import datastore as ds
 import json as JSON
 
-class TestCase(abstract_test_case.TestCase):
+class DatastoreTest(abstract_test_case.TestCase):
 
-    def test_run_query(self):
-
+    def test_run_query_empty(self):
         result = ds.run_query('dsopzproj', '', 'select * from notfound where x = 2 and y = 1')
         self.assertEqual(0, len(result['batch']['entityResults']))
         #self.assertEqual('NO_MORE_RESULTS', result['batch']['moreResults'])
@@ -59,6 +58,30 @@ class TestCase(abstract_test_case.TestCase):
                 'delete': entity['key']
             } ]
         } )
+
+    def test_run_query_cursor(self):
+        entities = [ ds.centity(ds.ckey(['k', 'n%s' % i])) for i in range(3) ]
+        ds.mutation('dsopzproj', upserts=entities)
+        block1 = ds.run_query('dsopzproj', '', 'select __key__ from k limit 3')
+        self.assertEqual(['n0', 'n1', 'n2'], [ i['entity']['key']['path'][0]['name'] for i in block1['batch']['entityResults'] ])
+        self.assertEqual(block1['batch']['endCursor'], block1['batch']['entityResults'][2]['cursor'])
+        query = block1['query']
+
+        query['startCursor'] = block1['batch']['entityResults'][0]['cursor']
+        self.assertEqual(['n1', 'n2' ], [
+            i['entity']['key']['path'][0]['name']
+            for i in ds.run_query('dsopzproj', '', query)
+            ['batch']['entityResults']
+        ])
+        query['startCursor'] = block1['batch']['endCursor']
+        self.assertEqual([ ], [
+            i['entity']['key']['path'][0]['name']
+            for i in ds.run_query('dsopzproj', '', query)
+            ['batch']['entityResults']
+        ])
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

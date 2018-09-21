@@ -1,9 +1,6 @@
 import unittest
 from dsopz.datastore import ckey, cprop, centity
 
-class Error(Exception):
-	"""Exceptions"""
-
 class DatagenTest(unittest.TestCase):
 
     def test_key(self):
