@@ -84,7 +84,7 @@ def mutation(dataset, upserts=None, removes=None):
     return commit(dataset, body)
 
 def stream_query(dataset, namespace, query):
-    first = False
+    first = True
     while True:
         result = run_query(dataset, namespace, query)
         query = result['query']

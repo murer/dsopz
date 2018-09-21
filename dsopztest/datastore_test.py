@@ -85,9 +85,13 @@ class DatastoreTest(abstract_test_case.TestCase):
         self.assertEqual(['n0', 'n1' ],
             [ i['entity']['key']['path'][0]['name'] for i in
             ds.run_query('dsopzproj', '', query)['batch']['entityResults']])
+
+        result = ds.stream_query('dsopzproj', '', query)
+        self.assertEqual({ "limit": 2, "kind": [{ "name": "k" }],
+            "projection": [{ "property": { "name": "__key__" }}]},
+            next(result))
         self.assertEqual(['n0', 'n1', 'n2', 'n3', 'n4'],
-            [ i['entity']['key']['path'][0]['name'] for i in
-            ds.stream_query('dsopzproj', '', query)])
+            [ i['entity']['key']['path'][0]['name'] for i in result])
 
 if __name__ == '__main__':
     unittest.main()
