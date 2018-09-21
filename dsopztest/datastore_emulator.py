@@ -10,7 +10,7 @@ class DSEmulator(object):
         if not os.path.isfile(cmd):
             cmd = 'gcloud'
         self.server = subprocess.Popen(
-            [ cmd, 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk' ]
+            [ cmd, 'beta', 'emulators', 'datastore', 'start', '--host-port', 'localhost:8082', '--no-store-on-disk', '--consistency', '1.0' ]
         )
         util.wait_check_port('localhost', 8082)
 
