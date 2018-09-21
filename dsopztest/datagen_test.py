@@ -1,20 +1,8 @@
 import unittest
+from dsopz.datastore import ckey, cprop, centity
 
 class Error(Exception):
 	"""Exceptions"""
-
-def key(k, dataset='dsopzproj', namespace=None):
-    if len(k) % 2 != 0:
-        raise Error('must be even %s' % (k))
-    ret = {
-        'partitionId': { 'projectId': dataset },
-        'path': []
-    }
-    for i in range(0, len(k), 2):
-        ret['path'].append({ 'kind': k[i], 'name': k[i+1] })
-    if namespace:
-        ret['partitionId']['namespaceId'] = namespace
-    return ret
 
 class DatagenTest(unittest.TestCase):
 
@@ -22,15 +10,29 @@ class DatagenTest(unittest.TestCase):
         self.assertEqual({
             'partitionId': { 'projectId': 'dsopzproj' },
             'path': [ { 'kind': 'hero', 'name': 'ana' }]
-        }, key(('hero', 'ana')))
+        }, ckey(('hero', 'ana')))
         self.assertEqual({
             'partitionId': { 'projectId': 'x', 'namespaceId': 'y' },
             'path': [ { 'kind': 'hero', 'name': 'ana' }]
-        }, key(('hero', 'ana'), dataset='x', namespace='y'))
+        }, ckey(('hero', 'ana'), dataset='x', namespace='y'))
         self.assertEqual({
             'partitionId': { 'projectId': 'dsopzproj' },
             'path': [ {'kind': 'x', 'name':  'y'}, { 'kind': 'hero', 'name': 'ana' }]
-        }, key(('x', 'y', 'hero', 'ana')))
+        }, ckey(('x', 'y', 'hero', 'ana')))
+
+    def test_entity(self):
+        self.assertEqual({
+            'key': {
+                'partitionId': { 'projectId': 'dsopzproj' },
+                'path': [ {'kind': 'k1', 'name':  'v1'}, { 'kind': 'k2', 'name': 'v2' }]
+            },
+            'properties': {
+                'role': { 'stringValue': 'SUPPORT' }
+            }
+        }, centity(
+            ckey( ('k1', 'v1', 'k2', 'v2') ),
+            cprop('role', 'string', 'SUPPORT')
+        ))
 
 if __name__ == '__main__':
     unittest.main()

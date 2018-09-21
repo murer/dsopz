@@ -3,6 +3,32 @@ from dsopz.oauth import oauth
 from dsopz.config import config
 import json as JSON
 
+def ckey(k, dataset='dsopzproj', namespace=None):
+    if len(k) % 2 != 0:
+        raise Error('must be even %s' % (k))
+    ret = {
+        'partitionId': { 'projectId': dataset },
+        'path': []
+    }
+    for i in range(0, len(k), 2):
+        ret['path'].append({ 'kind': k[i], 'name': k[i+1] })
+    if namespace:
+        ret['partitionId']['namespaceId'] = namespace
+    return ret
+
+def cprop(name, type, value):
+    return {
+        name: {
+            '%sValue' % (type): value
+        }
+    }
+
+def centity(k, *props):
+    entity = { 'key': k, 'properties': {}}
+    for i in props:
+        entity['properties'].update(i)
+    return entity
+
 def run_query(
         dataset,
         namespace,

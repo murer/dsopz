@@ -24,15 +24,7 @@ class TestCase(abstract_test_case.TestCase):
 
     def test_full(self):
 
-        entity = {
-            'key': {
-                'partitionId': { 'projectId': 'dsopzproj' },
-                'path': [ { 'kind': 'hero', 'name': 'ana' }]
-            },
-            'properties': {
-                'role': { 'stringValue': 'SUPPORT' }
-            }
-        }
+        entity = ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT'))
 
         ds.mutation('dsopzproj', removes = [ entity['key'] ])
 
