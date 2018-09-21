@@ -26,7 +26,7 @@ def check_port(host, port):
     finally:
         close(sock)
 
-def wait_check_port(host, port, sleep=0.1, times=20):
+def wait_check_port(host, port, sleep=0.1, times=50):
     for i in range(times):
         if check_port(host, port):
             return
