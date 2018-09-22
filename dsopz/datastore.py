@@ -4,7 +4,7 @@ from dsopz.config import config
 import json as JSON
 
 class Error(Exception):
-	"""Exceptions"""
+    """Exceptions"""
 
 def ckey(k, dataset='dsopzproj', namespace=None):
     if len(k) % 2 != 0:
@@ -83,7 +83,7 @@ def mutation(dataset, upserts=None, removes=None):
         body['mutations'].extend([ { 'delete': entity } for entity in removes ])
     return commit(dataset, body)
 
-def stream_query(dataset, namespace, query):
+def stream_block(dataset, namespace, query):
     first = True
     while True:
         result = run_query(dataset, namespace, query)
@@ -93,6 +93,12 @@ def stream_query(dataset, namespace, query):
             first = False
         if not result['batch']['entityResults']:
             return
-        for entity in result['batch']['entityResults']:
+        yield result
+        query['startCursor'] = result['batch']['endCursor']
+
+def stream_entity(dataset, namespace, query):
+    result = stream_block(dataset, namespace, query)
+    yield next(result)
+    for k in result:
+        for entity in k['batch']['entityResults']:
             yield entity
-            query['startCursor'] = entity['cursor']

@@ -79,9 +79,9 @@ class DatastoreTest(abstract_test_case.TestCase):
             ['batch']['entityResults']
         ])
 
-    def test_stream_query(self):
+    def test_stream_entity(self):
         query = 'select __key__ from k limit 2'
-        result = ds.stream_query('dsopzproj', '', query)
+        result = ds.stream_entity('dsopzproj', '', query)
         self.assertEqual({ "limit": 2, "kind": [{ "name": "k" }],
             "projection": [{ "property": { "name": "__key__" }}]},
             next(result))
@@ -93,7 +93,7 @@ class DatastoreTest(abstract_test_case.TestCase):
             [ i['entity']['key']['path'][0]['name'] for i in
             ds.run_query('dsopzproj', '', query)['batch']['entityResults']])
 
-        result = ds.stream_query('dsopzproj', '', query)
+        result = ds.stream_entity('dsopzproj', '', query)
         self.assertEqual({ "limit": 2, "kind": [{ "name": "k" }],
             "projection": [{ "property": { "name": "__key__" }}]},
             next(result))
