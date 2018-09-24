@@ -11,7 +11,7 @@ class Processor(Executor):
         self._shutdown = False
         self._shutdown_lock = threading.Lock()
         self._name = name
-        self._queue = Queue()
+        self._queue = Queue(maxsize=max_workers*10)
         self._threads = []
         for i in range(max_workers):
             thread = threading.Thread(target=self._work)
@@ -22,7 +22,7 @@ class Processor(Executor):
         with self._shutdown_lock:
             self._shutdown = True
             for _ in self._threads:
-                self._queue.put_nowait([None, None, None, None])
+                self._queue.put([None, None, None, None])
         self._queue.join()
         for thread in self._threads:
             thread.join()
