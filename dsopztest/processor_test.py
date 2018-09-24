@@ -40,6 +40,7 @@ class ProcessorTest(unittest.TestCase):
         task = Task()
         with Processor('p', 10) as p:
             self.assertEqual(Error, p.submit(task.task, 'error').exception(2).__class__)
+        self.assertEqual(0, task.total)
 
     def test_large(self):
         task = Task()
