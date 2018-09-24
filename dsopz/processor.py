@@ -1,33 +1,31 @@
 from concurrent.futures import Executor, Future
+from queue import Queue
 import threading
 
-"""
-class Processor(object):
-
-    def __init__(self, name, max_workers):
-        self.name = name
-        self.pool = ThreadPoolExecutor(max_workers=max_workers)
-
-    def shutdown(self):
-        self.pool.shutdown(wait=True)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        self.shutdown()
-
-    def submit(self, fn, *args, **kwargs):
-        return self.pool.submit(fn, *args, **kwargs)
-"""
+class Error(Exception):
+	"""Exceptions"""
 
 class Processor(Executor):
 
     def __init__(self, name, max_workers):
-        self.name = name
+        self._shutdown = False
+        self._shutdown_lock = threading.Lock()
+        self._name = name
+        self._queue = Queue()
+        self._threads = []
+        for i in range(max_workers):
+            thread = threading.Thread(target=self._work)
+            self._threads.append(thread)
+            thread.start()
 
     def shutdown(self):
-        """ implement """
+        with self._shutdown_lock:
+            self._shutdown = True
+            for _ in self._threads:
+                self._queue.put_nowait([None, None, None, None])
+        self._queue.join()
+        for thread in self._threads:
+            thread.join()
 
     def __enter__(self):
         return self
@@ -35,14 +33,23 @@ class Processor(Executor):
     def __exit__(self, exception_type, exception_value, traceback):
         self.shutdown()
 
-    def _work(self, future, fn, args, kwargs):
-        if not future.set_running_or_notify_cancel():
-            return
-        result = fn(*args, *kwargs)
-        future.set_result(result)
+    def _work(self):
+        while True:
+            future, fn, args, kwargs = self._queue.get()
+            if not future:
+                self._queue.task_done()
+                return
+            if not future.set_running_or_notify_cancel():
+                return
+            result = fn(*args, *kwargs)
+            self._queue.task_done()
+            future.set_result(result)
+        return True
 
     def submit(self, fn, *args, **kwargs):
-        ret = Future()
-        thread = threading.Thread(target=self._work, args=[ret, fn, args, kwargs])
-        thread.start()
-        return ret
+        with self._shutdown_lock:
+            if self._shutdown:
+                raise Error('cannot schedule new futures after shutdown')
+            ret = Future()
+            self._queue.put([ret, fn, args, kwargs])
+            return ret

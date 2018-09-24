@@ -27,10 +27,8 @@ class ProcessorTest(unittest.TestCase):
     def test_future(self):
         task = Task()
         with Processor('p', 10) as p:
-            a = p.submit(task.task, 1)
-            b = p.submit(task.task, 2)
-            self.assertEqual(1, a.result(2))
-            self.assertEqual(3, b.result(2))
+            self.assertEqual(1, p.submit(task.task, 1).result(2))
+            self.assertEqual(3, p.submit(task.task, 2).result(2))
         self.assertEqual(3, task.total)
 
 if __name__ == '__main__':
