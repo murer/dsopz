@@ -9,7 +9,7 @@ class Task(object):
         self.total = 0
 
     def task(self, a):
-        time.sleep(0.1)
+        time.sleep(0.0002)
         self.total = self.total + a
         return self.total
 
@@ -30,6 +30,15 @@ class ProcessorTest(unittest.TestCase):
             self.assertEqual(1, p.submit(task.task, 1).result(2))
             self.assertEqual(3, p.submit(task.task, 2).result(2))
         self.assertEqual(3, task.total)
+
+    def test_large(self):
+        task = Task()
+        with Processor('p', 10) as p:
+            for k in range(1000):
+                p.submit(task.task, 1)
+        self.assertEqual(1000, task.total)
+
+
 
 if __name__ == '__main__':
     unittest.main()
