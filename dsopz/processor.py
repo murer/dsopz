@@ -41,9 +41,14 @@ class Processor(Executor):
                 return
             if not future.set_running_or_notify_cancel():
                 return
-            result = fn(*args, *kwargs)
-            self._queue.task_done()
-            future.set_result(result)
+            try:
+                result = fn(*args, *kwargs)
+            except BaseException as exc:
+                future.set_exception(exc)
+            else:
+                future.set_result(result)
+            finally:
+                self._queue.task_done()
         return True
 
     def submit(self, fn, *args, **kwargs):
