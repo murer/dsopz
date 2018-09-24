@@ -1,8 +1,8 @@
 import unittest
 
-class SplitXmlTest(unittest.TestCase):
+class SampleTest(unittest.TestCase):
 
-    def testA(self):
+    def test1(self):
         self.assertEqual(1, 1)
 
     def testB(self):
