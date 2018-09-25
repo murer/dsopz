@@ -32,8 +32,13 @@ def cmd_kind():
         name = k['path'][0]['name']
         if name.startswith('__') and not config.args.all:
             continue
-        print(name)
+        print(JSON.dumps(entity))
 
+def cmd_namespace():
+    result = stream_entity(config.args.dataset, None, 'select __key__ from __namespace__')
+    query = next(result)
+    for entity in result:
+        print(JSON.dumps(entity))
 
 subparser = config.add_parser('query', cmd_query)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
@@ -46,3 +51,6 @@ subparser = config.add_parser('kind', cmd_kind)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
 subparser.add_argument('-a', '--all', action='store_true', help='print "__.*__" also')
+
+subparser = config.add_parser('namespace', cmd_namespace)
+subparser.add_argument('-d', '--dataset', required=True, help='dataset')
