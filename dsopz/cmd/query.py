@@ -3,10 +3,6 @@ from dsopz.config import config
 from dsopz.datastore import stream_entity
 import json as JSON
 
-def print_query(result):
-    for entity in result:
-        print(JSON.dumps(entity))
-
 def cmd_query():
     result = stream_entity(config.args.dataset, config.args.namespace, config.args.gql)
     query = next(result)
