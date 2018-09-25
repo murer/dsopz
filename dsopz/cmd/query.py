@@ -19,7 +19,7 @@ def cmd_resume():
         entity = JSON.loads(line)
         print(line)
         head['query']['startCursor'] = entity['cursor']
-    result = stream_entity(head['dataset'], head['namespace'], head['query'])
+    result = stream_entity(head['dataset'], head.get('namespace'), head['query'])
     next(result)
     for entity in result:
         print(JSON.dumps(entity))
@@ -38,7 +38,7 @@ def cmd_kind():
 def cmd_namespace():
     result = stream_entity(config.args.dataset, None, 'select __key__ from __namespace__')
     query = next(result)
-    print(JSON.dumps({'query': query, 'dataset': config.args.dataset, 'namespace': config.args.namespace}))
+    print(JSON.dumps({'query': query, 'dataset': config.args.dataset }))
     for entity in result:
         print(JSON.dumps(entity))
 
