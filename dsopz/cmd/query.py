@@ -27,6 +27,7 @@ def cmd_resume():
 def cmd_kind():
     result = stream_entity(config.args.dataset, config.args.namespace, 'select __key__ from __kind__')
     query = next(result)
+    print(JSON.dumps({'query': query, 'dataset': config.args.dataset, 'namespace': config.args.namespace}))
     for entity in result:
         k = entity['entity']['key']
         name = k['path'][0]['name']
@@ -37,6 +38,7 @@ def cmd_kind():
 def cmd_namespace():
     result = stream_entity(config.args.dataset, None, 'select __key__ from __namespace__')
     query = next(result)
+    print(JSON.dumps({'query': query, 'dataset': config.args.dataset, 'namespace': config.args.namespace}))
     for entity in result:
         print(JSON.dumps(entity))
 
