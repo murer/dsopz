@@ -1,10 +1,15 @@
 from dsopz.config import config
+from dsopz.datastore import stream_entity
+import json as JSON
 
 def cmd_query():
-    return True
+    result = stream_entity(config.args.dataset, config.args.namespace, config.args.gql)
+    query = next(result)
+    print(JSON.dumps({'query': query}))
+    for entity in result:
+        print(JSON.dumps(entity))
 
 subparser = config.add_parser('query', cmd_query)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
 subparser.add_argument('-g', '--gql', required=True, help='gql')
-subparser.add_argument('-f', '--file', help='file')
