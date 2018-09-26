@@ -1,6 +1,6 @@
 import sys
 from dsopz.config import config
-from dsopz.datastore import stream_entity
+from dsopz.datastore import stream_entity, mutation
 import json as JSON
 
 def cmd_query():
@@ -42,6 +42,41 @@ def cmd_namespace():
     for entity in result:
         print(JSON.dumps(entity))
 
+def cmd_upsert():
+    block = []
+    for line in sys.stdin:
+        line = line.strip()
+        entity = JSON.loads(line)
+        if entity.get('entity'):
+            entity['entity']['key']['partitionId']['projectId'] = config.args.dataset
+            entity['entity']['key']['partitionId']['namespaceId'] = config.args.namespace
+            block.append(entity['entity'])
+        if len(block) > 2:
+            mutation(config.args.dataset, upserts=block)
+            block = []
+    if len(block) > 0:
+        mutation(config.args.dataset, upserts=block)
+
+def cmd_remove():
+    block = []
+    for line in sys.stdin:
+        line = line.strip()
+        entity = JSON.loads(line)
+        if entity.get('entity'):
+            block.append({
+                'partitionId': {
+                    'projectId': config.args.dataset,
+                    'namespaceId': config.args.namespace
+                },
+                'path': entity['entity']['key']['path']
+            })
+        if len(block) > 1000:
+            mutation(config.args.dataset, removes=block)
+            block = []
+    if len(block) > 0:
+        mutation(config.args.dataset, removes=block)
+
+
 subparser = config.add_parser('query', cmd_query)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
@@ -56,3 +91,11 @@ subparser.add_argument('-a', '--all', action='store_true', help='print "__.*__" 
 
 subparser = config.add_parser('namespace', cmd_namespace)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
+
+subparser = config.add_parser('upsert', cmd_upsert)
+subparser.add_argument('-d', '--dataset', required=True, help='dataset')
+subparser.add_argument('-n', '--namespace', help='namespace')
+
+subparser = config.add_parser('remove', cmd_remove)
+subparser.add_argument('-d', '--dataset', required=True, help='dataset')
+subparser.add_argument('-n', '--namespace', help='namespace')
