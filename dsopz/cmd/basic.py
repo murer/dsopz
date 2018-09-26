@@ -51,7 +51,7 @@ def cmd_upsert():
             entity['entity']['key']['partitionId']['projectId'] = config.args.dataset
             entity['entity']['key']['partitionId']['namespaceId'] = config.args.namespace
             block.append(entity['entity'])
-        if len(block) > 2:
+        if len(block) > 1000:
             mutation(config.args.dataset, upserts=block)
             block = []
     if len(block) > 0:
