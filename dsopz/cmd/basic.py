@@ -3,13 +3,20 @@ from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_entity
 
+class Error(Exception):
+	"""Exceptions"""
+
 def cmd_download():
-    query = dsutil.resolve_query(config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
+    if (config.args.gql or config.args.query) and not config.args.dataset:
+            raise Error('dataset is required for query or gql')
+    if (config.args.resume or config.args.resume_gz) and (config.args.dataset or config.args.namespace):
+        raise Error('dataset/namespace is not allowed for resume or resume_gz')
+    header = dsutil.resolve_query(config.args.dataset, config.args.namespace, config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
     with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
-        result = stream_entity(config.args.dataset, config.args.namespace, query)
+        result = stream_entity(header['dataset'], header['namespace'], header['query'])
         query = next(result)
         if not config.args.append:
-            f.write({'dataset': config.args.dataset, 'namespace': config.args.namespace, 'query': query})
+            f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
         for line in result:
             f.write(line)
 
@@ -27,8 +34,8 @@ def cmd_rm():
 
 
 subparser = config.add_parser('download', cmd_download)
-subparser.add_argument('-d', '--dataset', required=True, help='dataset')
-subparser.add_argument('-n', '--namespace', help='namespace')
+subparser.add_argument('-d', '--dataset', help='dataset. Required for gql or query')
+subparser.add_argument('-n', '--namespace', help='Namespace. Ignored for resume or resume-gz')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-g', '--gql', help='gql')
 group.add_argument('-q', '--query', help='json query')
