@@ -5,7 +5,7 @@ from dsopz.datastore import stream_entity
 
 def cmd_query():
     query = dsutil.resolve_query(config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
-    with io.jwriter(config.args.file, config.args.file_gz) as f:
+    with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
         result = stream_entity(config.args.dataset, config.args.namespace, query)
         query = next(result)
         if not config.args.append:
