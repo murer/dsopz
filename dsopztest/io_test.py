@@ -6,18 +6,18 @@ from dsopz import util
 class ReaderWriterTest(unittest.TestCase):
 
     def test_stream_read_plain(self):
-        with io.Writer('target/sandbox/data.txt', False) as f:
+        with io.JWriter('target/sandbox/data.txt', False) as f:
             f.write('line1')
             f.write('line2')
-        with io.Reader('target/sandbox/data.txt', False) as f:
+        with io.JReader('target/sandbox/data.txt', False) as f:
             lines = [l for l in f]
             self.assertEqual(['line1', 'line2'], lines)
 
     def test_stream_read_gz(self):
-        with io.Writer('target/sandbox/data.txt.gz', True) as f:
+        with io.JWriter('target/sandbox/data.txt.gz', True) as f:
             f.write('line1')
             f.write('line2')
-        with io.Reader('target/sandbox/data.txt.gz', True) as f:
+        with io.JReader('target/sandbox/data.txt.gz', True) as f:
             lines = [l for l in f]
             self.assertEqual(['line1', 'line2'], lines)
 

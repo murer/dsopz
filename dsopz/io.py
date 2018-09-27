@@ -1,31 +1,9 @@
-from io import BufferedIOBase, TextIOBase
 from dsopz import util
 import gzip
+import json as JSON
 
 class Error(Exception):
     """Exceptions"""
-
-def stream(f=None, fgz=None, mode=None):
-    if not mode:
-        raise Error('mode is required')
-    if not mode.startswith('w') and not mode.startswith('r'):
-        raise Error("not mode.startswith('w') and not mode.startswith('r')")
-    if not f and not fgz:
-        raise Error('not f and not fgz')
-    if f and fgz:
-        raise Error('f and fgz')
-    f = f or fgz
-    if f == '-' and not std:
-        raise Error("f == '-' and not std")
-    if f == '-':
-        f = sys.stdout if mode.startswith('w') else sys.stdin
-    should_close = False
-    if isinstance(f, str):
-        f = open(f, mode)
-        should_close = True
-    if fgz:
-        f = gzip(f) if mode.startswith('w') else gunzip(f)
-    return (f, should_close)
 
 class Writer(object):
 
@@ -46,7 +24,7 @@ class Writer(object):
 
     def write(self, line):
         data = '%s\n' % (line)
-        data = data.encode('UTF-8') 
+        data = data.encode('UTF-8')
         self._wrapper.write(data)
 
     def __enter__(self):
@@ -96,3 +74,15 @@ class Reader(object):
         if self._should_close:
             util.close(self._wrapper)
             util.close(self._plain_file)
+
+class JWriter(Writer):
+
+    def write(self, line):
+        data = JSON.dumps(line)
+        return super().write(data)
+
+class JReader(Reader):
+
+    def __next__(self):
+        data = super().__next__()
+        return JSON.loads(data)
