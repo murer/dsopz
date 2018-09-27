@@ -45,7 +45,7 @@ class Reader(object):
         if not f:
             raise Error('not f')
         if f == '-':
-            self._reader = sys.stdin
+            self._reader = sys.stdin.buffer
         elif isinstance(f, str):
             self._reader = open(f, 'rb')
             self._closable_plain = self._reader
