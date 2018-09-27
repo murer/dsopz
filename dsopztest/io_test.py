@@ -1,35 +1,29 @@
 import unittest
+import gzip
 from dsopz import io
 from dsopz import util
 
-class StreamTest(unittest.TestCase):
+class ReaderWriterTest(unittest.TestCase):
 
     def setUp(self):
         util.makedirs('target/sandbox')
         with open('target/sandbox/data.txt', 'wb') as f:
             f.write(b'line1\nline2\n')
-        self.f = None
+        with gzip.open('target/sandbox/data.txt.gz', 'wb') as f:
+            f.write(b'line1\nline2\n')
 
-    def tearDown(self):
-        self.close_f()
+    def test_stream_read_plain(self):
+        with io.Writer('target/sandbox/data.txt', False) as f:
+            f.write('line1')
+            f.write('line2')
+        with io.Reader('target/sandbox/data.txt', False) as f:
+            lines = [l for l in f]
+            self.assertEqual(['line1', 'line2'], lines)
 
-    def close_f(self):
-        util.close(self.f)
-        self.f = None
-
-    def test_stream_read(self):
-        (self.f, c) = io.stream('target/sandbox/data.txt', mode='r')
-        self.assertEqual('line1\nline2\n', self.f.read())
-        self.assertEqual(True, c)
-        self.close_f()
-
-        (self.f, c) = io.stream('target/sandbox/data.txt', mode='r')
-        lines = [l for l in self.f]
-        self.assertEqual(['line1\n', 'line2\n'], lines)
-        self.assertEqual(True, c)
-        self.close_f()
-
-
+    def test_stream_read_gz(self):
+        with io.Reader('target/sandbox/data.txt.gz', True) as f:
+            lines = [l for l in f]
+            self.assertEqual(['line1', 'line2'], lines)
 
 if __name__ == '__main__':
     unittest.main()
