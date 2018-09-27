@@ -11,7 +11,7 @@ def resolve_query(dataset, namespace, gql=True, query=None, plain=None, gz=None)
             query = header['query']
             lastLine = None
             for line in f:
-                lastLine = f
-            query['startCursor'] = line['cursor']
+                lastLine = line
+            query['startCursor'] = lastLine['cursor'] if lastLine else query['startCursor']
             return header
     raise Error('error')
