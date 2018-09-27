@@ -8,7 +8,8 @@ def cmd_query():
     with io.jwriter(config.args.file, config.args.file_gz) as f:
         result = stream_entity(config.args.dataset, config.args.namespace, query)
         query = next(result)
-        f.write({'dataset': config.args.dataset, 'namespace': config.args.namespace, 'query': query})
+        if not config.args.append:
+            f.write({'dataset': config.args.dataset, 'namespace': config.args.namespace, 'query': query})
         for line in result:
             f.write(line)
 
@@ -36,6 +37,7 @@ group.add_argument('-rgz', '--resume-gz', help='json query and cursor from gzip 
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='output file or - for stdout')
 group.add_argument('-fgz', '--file-gz', help='output gzip file or - for stdout')
+subparser.add_argument('-a', '--append', action='store_true', help='append into file and do not write header')
 
 subparser = config.add_parser('kind', cmd_kind)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
