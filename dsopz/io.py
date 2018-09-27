@@ -98,3 +98,15 @@ def jreader(plain = None, gz = None):
     else:
         gz = False
     return JReader(plain, gz)
+
+def jwriter(plain = None, gz = None):
+    if not plain and not gz:
+        raise Error('not plain and not gz')
+    if plain and gz:
+        raise Error('plain and gz')
+    if gz:
+        plain = gz
+        gz = True
+    else:
+        gz = False
+    return JWriter(plain, gz)
