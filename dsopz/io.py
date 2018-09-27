@@ -8,7 +8,7 @@ class Error(Exception):
 
 class Writer(object):
 
-    def __init__(self, f, gz=False):
+    def __init__(self, f, gz=False, append=False):
         self._closable_plain = None
         self._closable_gz = None
         if not f:
@@ -16,7 +16,7 @@ class Writer(object):
         if f == '-':
             self._writer = sys.stdout.buffer
         elif isinstance(f, str):
-            self._writer = open(f, 'wb')
+            self._writer = open(f, 'ab' if append else 'wb')
             self._closable_plain = self._writer
         if gz:
             self._writer = gzip.open(self._writer, 'wb')
@@ -96,7 +96,7 @@ def jreader(plain = None, gz = None):
         gz = False
     return JReader(plain, gz)
 
-def jwriter(plain = None, gz = None):
+def jwriter(plain = None, gz = None, append=False):
     if not plain and not gz:
         raise Error('not plain and not gz')
     if plain and gz:
@@ -106,4 +106,4 @@ def jwriter(plain = None, gz = None):
         gz = True
     else:
         gz = False
-    return JWriter(plain, gz)
+    return JWriter(plain, gz=gz, append=append)
