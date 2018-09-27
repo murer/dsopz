@@ -86,3 +86,15 @@ class JReader(Reader):
     def __next__(self):
         data = super().__next__()
         return JSON.loads(data)
+
+def jreader(plain = None, gz = None):
+    if not plain and not gz:
+        raise Error('not plain and not gz')
+    if plain and gz:
+        raise Error('plain and gz')
+    if gz:
+        plain = gz
+        gz = True
+    else:
+        gz = False
+    return JReader(plain, gz)

@@ -9,7 +9,7 @@ class ReaderWriterTest(unittest.TestCase):
         with io.JWriter('target/sandbox/data.txt', False) as f:
             f.write('line1')
             f.write('line2')
-        with io.JReader('target/sandbox/data.txt', False) as f:
+        with io.jreader(plain='target/sandbox/data.txt') as f:
             lines = [l for l in f]
             self.assertEqual(['line1', 'line2'], lines)
 
@@ -17,7 +17,7 @@ class ReaderWriterTest(unittest.TestCase):
         with io.JWriter('target/sandbox/data.txt.gz', True) as f:
             f.write('line1')
             f.write('line2')
-        with io.JReader('target/sandbox/data.txt.gz', True) as f:
+        with io.jreader(gz='target/sandbox/data.txt.gz') as f:
             lines = [l for l in f]
             self.assertEqual(['line1', 'line2'], lines)
 
