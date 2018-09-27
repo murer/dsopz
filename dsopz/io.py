@@ -1,6 +1,7 @@
 from dsopz import util
 import gzip
 import json as JSON
+import sys
 
 class Error(Exception):
     """Exceptions"""
@@ -8,24 +9,23 @@ class Error(Exception):
 class Writer(object):
 
     def __init__(self, f, gz=False):
+        self._closable_plain = None
+        self._closable_gz = None
         if not f:
             raise Error('not f')
         if f == '-':
-            f = sys.stdout
-        should_close = False
-        if isinstance(f, str):
-            should_close = True
-            f = open(f, 'wb')
-        self._plain_file = f
+            self._writer = sys.stdout.buffer
+        elif isinstance(f, str):
+            self._writer = open(f, 'wb')
+            self._closable_plain = self._writer
         if gz:
-            f = gzip.open(f, 'wb')
-        self._wrapper = f
-        self._should_close = should_close
+            self._writer = gzip.open(self._writer, 'wb')
+            self._closable_gz = self._writer
 
     def write(self, line):
         data = '%s\n' % (line)
         data = data.encode('UTF-8')
-        self._wrapper.write(data)
+        self._writer.write(data)
 
     def __enter__(self):
         return self
@@ -34,29 +34,27 @@ class Writer(object):
         self.close()
 
     def close(self):
-        if self._should_close:
-            util.close(self._wrapper)
-            util.close(self._plain_file)
+        util.close(self._closable_gz)
+        util.close(self._closable_plain)
 
 class Reader(object):
 
     def __init__(self, f, gz=False):
+        self._closable_plain = None
+        self._closable_gz = None
         if not f:
             raise Error('not f')
         if f == '-':
-            f = sys.stdin
-        should_close = False
-        if isinstance(f, str):
-            should_close = True
-            f = open(f, 'rb')
-        self._plain_file = f
+            self._reader = sys.stdin
+        elif isinstance(f, str):
+            self._reader = open(f, 'rb')
+            self._closable_plain = self._reader
         if gz:
-            f = gzip.open(f, 'rb')
-        self._wrapper = f
-        self._should_close = should_close
+            self._reader = gzip.open(self._reader, 'rb')
+            self._closable_gz = self._reader
 
     def __next__(self):
-        ret = next(self._wrapper)
+        ret = next(self._reader)
         ret = ret.decode('UTF-8')
         ret = ret.strip()
         return ret
@@ -71,9 +69,8 @@ class Reader(object):
         self.close()
 
     def close(self):
-        if self._should_close:
-            util.close(self._wrapper)
-            util.close(self._plain_file)
+        util.close(self._closable_gz)
+        util.close(self._closable_plain)
 
 class JWriter(Writer):
 
