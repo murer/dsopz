@@ -3,7 +3,7 @@ from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_entity
 
-def cmd_query():
+def cmd_download():
     query = dsutil.resolve_query(config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
     with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
         result = stream_entity(config.args.dataset, config.args.namespace, query)
@@ -26,7 +26,7 @@ def cmd_rm():
     return True
 
 
-subparser = config.add_parser('query', cmd_query)
+subparser = config.add_parser('download', cmd_download)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
 group = subparser.add_mutually_exclusive_group(required=True)
