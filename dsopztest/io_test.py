@@ -5,6 +5,9 @@ from dsopz import util
 
 class ReaderWriterTest(unittest.TestCase):
 
+    def setUp(self):
+        util.makedirs('target/sandbox')
+
     def test_stream_plain(self):
         with io.jwriter(plain='target/sandbox/data.txt') as f:
             f.write('line1')
