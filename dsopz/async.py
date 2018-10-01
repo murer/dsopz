@@ -8,8 +8,8 @@ def _work(future, fn, args, kwargs):
     except BaseException as exc:
         future.set_exception(exc)
     else:
-        future.set_result(result)
-    
+        future.set_result(ret)
+
 def async(fn, *args, **kwargs):
     ret = Future()
     thread = threading.Thread(target=_work, args=[ret, fn, args, kwargs])
