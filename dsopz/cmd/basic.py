@@ -4,7 +4,7 @@ from dsopz import dsutil
 from dsopz.datastore import stream_entity
 
 class Error(Exception):
-	"""Exceptions"""
+    """Exceptions"""
 
 def cmd_download():
     if (config.args.gql or config.args.query) and not config.args.dataset:
@@ -27,6 +27,12 @@ def cmd_namespace():
     return True
 
 def cmd_upsert():
+    import json as JSON
+    with io.jreader(config.args.file, config.args.file_gz) as f:
+        for line in f:
+            entity = line.get('entity')
+            if entity:
+                print(JSON.dumps(entity))
     return True
 
 def cmd_rm():
@@ -60,9 +66,10 @@ group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='output file or - for stdout')
 group.add_argument('-fgz', '--file-gz', help='output gzip file or - for stdout')
 
-subparser = config.add_parser('upsert', cmd_namespace)
+subparser = config.add_parser('upsert', cmd_upsert)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
+subparser.add_argument('-p', '--progress', help='file necessary to track and resume the process. Entities may be upsert twice anyway')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='input file or - for stdin')
 group.add_argument('-fgz', '--file-gz', help='input gzip file or - for stdin')
