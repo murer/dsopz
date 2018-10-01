@@ -8,11 +8,11 @@ class HttpTest(abstract_test_case.TestCase):
 
     def test_sync(self):
         self.assertEqual(404, http.req_text('POST', 'http://localhost:8082/not-found', expects=[404])['status'])
+        self.assertEqual(404, async(
+            http.req_text, 'POST', 'http://localhost:8082/not-found', expects=[404]
+        ).result()['status'])
 
-    def test_async(self):
-        fut = async(http.req_text, 'POST', 'http://localhost:8082/not-found', expects=[404])
-        resp = fut.result()
-        self.assertEqual(404, resp['status'])
+
 
 if __name__ == '__main__':
     unittest.main()
