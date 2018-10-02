@@ -3,6 +3,8 @@ from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_entity, mutation
 from dsopz.async import blockify
+from dsopz import util
+from os import devnull
 
 class Error(Exception):
     """Exceptions"""
@@ -40,10 +42,18 @@ def cmd_namespace():
             f.write(line)
 
 def cmd_upsert():
-    with io.jreader(config.args.file, config.args.file_gz) as f:
-        for block in blockify(f, 10, lambda x: x.get('entity')):
-            print('send', len(block))
-            mutation(config.args.dataset, config.args.namespace, upserts=block)
+    skip = dsutil.resolve_mutation_skip(config.args.resume)
+    count = 0
+    r = io.jwriter(config.args.resume, append=True) if config.args.resume else None
+    try:
+        with io.jreader(config.args.file, config.args.file_gz) as f:
+            for block in blockify(f, 10, lambda x: x.get('entity')):
+                count = count + len(block)
+                if count > skip:
+                    mutation(config.args.dataset, config.args.namespace, upserts=block)
+                    r.write(count)
+    finally:
+        util.close(r)
 
 def cmd_rm():
     with io.jreader(config.args.file, config.args.file_gz) as f:
@@ -82,7 +92,7 @@ group.add_argument('-fgz', '--file-gz', help='output gzip file or - for stdout')
 subparser = config.add_parser('upsert', cmd_upsert)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
-subparser.add_argument('-p', '--progress', help='file necessary to track and resume the process. Entities may be upsert twice anyway')
+subparser.add_argument('-r', '--resume', help='file necessary to track and resume the process. Entities may be upsert twice anyway')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='input file or - for stdin')
 group.add_argument('-fgz', '--file-gz', help='input gzip file or - for stdin')

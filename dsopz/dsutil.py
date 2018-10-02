@@ -1,5 +1,6 @@
 from dsopz.config import config
 from dsopz import io
+from dsopz import util
 
 def resolve_query(dataset, namespace, gql=True, query=None, plain=None, gz=None):
     if gql or query:
@@ -15,3 +16,15 @@ def resolve_query(dataset, namespace, gql=True, query=None, plain=None, gz=None)
             query['startCursor'] = lastLine['cursor'] if lastLine else query['startCursor']
             return header
     raise Error('error')
+
+def resolve_mutation_skip(resume):
+    if not resume:
+        return 0
+    try:
+        with io.jreader(resume) as r:
+            ret = None
+            for l in r:
+                ret = l
+            return ret
+    except FileNotFoundError:
+        return 0
