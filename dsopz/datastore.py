@@ -9,10 +9,11 @@ class Error(Exception):
 def _set_partition(k, dataset, namespace):
     if not dataset:
         k.pop('partitionId')
-        return
+        return k
     k['partitionId'] = { 'projectId': dataset }
     if namespace:
         k['partitionId']['namespaceId'] = namespace
+    return k
 
 def ckey(k, dataset='dsopzproj', namespace=None):
     if len(k) % 2 != 0:
@@ -68,8 +69,9 @@ def run_query(
         _set_partition(entity['entity']['key'], None, None)
     return ret
 
-def lookup(dataset, keys):
+def lookup(dataset, namespace, keys):
     url = '%s/v1/projects/%s:lookup' % (config.args.url, dataset)
+    keys = [ _set_partition({ 'path': k['path'] }, dataset, namespace) for k in keys ]
     body = { 'keys': keys }
     resp = req_json('POST', url, body, {
         'Authorization': 'Bearer %s' % (oauth.access_token())
