@@ -6,6 +6,11 @@ import json as JSON
 class Error(Exception):
     """Exceptions"""
 
+def _set_partition(k, dataset, namespace):
+    k['partitionId'] = { 'projectId': dataset }
+    if namespace:
+        k['partitionId']['namespaceId'] = namespace
+
 def ckey(k, dataset='dsopzproj', namespace=None):
     if len(k) % 2 != 0:
         raise Error('must be even %s' % (k))
@@ -75,12 +80,16 @@ def commit(dataset, mutations):
     ret = resp['body']
     return ret
 
-def mutation(dataset, upserts=None, removes=None):
+def mutation(dataset, namespace, upserts=None, removes=None):
     body = { 'mode': 'NON_TRANSACTIONAL', 'mutations': [] }
     if upserts:
-        body['mutations'].extend([ { 'upsert': entity } for entity in upserts ])
+        for entity in upserts:
+            _set_partition(entity['key'], dataset, namespace)
+            body['mutations'].append({ 'upsert': entity })
     if removes:
-        body['mutations'].extend([ { 'delete': entity } for entity in removes ])
+        for k in removes:
+            _set_partition(k, dataset, namespace)
+            body['mutations'].append({ 'delete': k })
     return commit(dataset, body)
 
 def stream_block(dataset, namespace, query):
