@@ -7,6 +7,9 @@ class Error(Exception):
     """Exceptions"""
 
 def _set_partition(k, dataset, namespace):
+    if not dataset:
+        k.pop('partitionId')
+        return
     k['partitionId'] = { 'projectId': dataset }
     if namespace:
         k['partitionId']['namespaceId'] = namespace
@@ -62,7 +65,7 @@ def run_query(
     ret['batch']['entityResults'] = ret['batch'].get('entityResults', [])
     ret['query'] = ret.get('query', query)
     for entity in ret['batch']['entityResults']:
-        entity['entity']['key'].pop('partitionId')
+        _set_partition(entity['entity']['key'], None, None)
     return ret
 
 def lookup(dataset, keys):
@@ -76,7 +79,7 @@ def lookup(dataset, keys):
         raise Error('idk what is deferred')
     ret = ret.get('found', [])
     for entity in ret:
-        entity['entity']['key'].pop('partitionId')
+        _set_partition(entity['entity']['key'], None, None)
     return ret
 
 def commit(dataset, mutations):
