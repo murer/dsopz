@@ -37,6 +37,7 @@ class DatastoreTest(abstract_test_case.TestCase):
         self.assertIsNotNone(result['batch']['endCursor'])
 
         ds.mutation('dsopzproj', None, upserts = [ entity ] )
+        entity['key'].pop('partitionId')
 
         result = ds.run_query('dsopzproj', '', 'select * from hero')
         self.assertEqual(entity, result['batch']['entityResults'][0]['entity'])
