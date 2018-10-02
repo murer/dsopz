@@ -9,7 +9,7 @@ setup(
   description = 'Google Datastore Operations',
   entry_points = {
       "console_scripts": [
-          "dsopz = dsopz:__main__:main"
+          "dsopz = dsopz"
       ]
   },
   author = 'Paulo Henrique Murer',
