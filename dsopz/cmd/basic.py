@@ -22,12 +22,22 @@ def cmd_download():
             f.write(line)
 
 def cmd_kind():
-    config.args.gql = 'select * from __kind__'
-    cmd_download()
+    header = dsutil.resolve_query(config.args.dataset, config.args.namespace, 'select * from __kind__', None, None, None)
+    with io.jwriter(config.args.file, config.args.file_gz, append=False) as f:
+        result = stream_entity(header['dataset'], header['namespace'], header['query'])
+        query = next(result)
+        f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
+        for line in result:
+            f.write(line)
 
 def cmd_namespace():
-    config.args.gql = 'select * from __namespace__'
-    cmd_download()
+    header = dsutil.resolve_query(config.args.dataset, None, 'select * from __namespace__', None, None, None)
+    with io.jwriter(config.args.file, config.args.file_gz, append=False) as f:
+        result = stream_entity(header['dataset'], header['namespace'], header['query'])
+        query = next(result)
+        f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
+        for line in result:
+            f.write(line)
 
 def cmd_upsert():
     with io.jreader(config.args.file, config.args.file_gz) as f:
@@ -61,7 +71,6 @@ subparser.add_argument('-a', '--append', action='store_true', help='append into 
 subparser = config.add_parser('kind', cmd_kind)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
-subparser.add_argument('-a', '--all', action='store_true', help='print "__.*__" also')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='output file or - for stdout')
 group.add_argument('-fgz', '--file-gz', help='output gzip file or - for stdout')
