@@ -22,10 +22,12 @@ def cmd_download():
             f.write(line)
 
 def cmd_kind():
-    return True
+    config.args.gql = 'select * from __kind__'
+    cmd_download()
 
 def cmd_namespace():
-    return True
+    config.args.gql = 'select * from __namespace__'
+    cmd_download()
 
 def cmd_upsert():
     with io.jreader(config.args.file, config.args.file_gz) as f:
