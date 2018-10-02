@@ -96,8 +96,9 @@ class OAuth(object):
     def _fake(self):
         self._config()
         self._write_file({
-            "expires" : int(time.time()) + 3600,
-            "access_token" : "dummytoken"
+            'expires' : int(time.time()) + 3600,
+            'access_token' : 'dummytoken',
+            'handler': 'fake'
         })
 
     def _login_text(self):
