@@ -104,12 +104,10 @@ class DatastoreTest(abstract_test_case.TestCase):
         entity = ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT'))
         ds.mutation('dsopzproj', None, upserts = [ entity ])
         self.assertEqual([{
-                'partitionId': {'projectId': 'dsopzproj'},
                 'path': [{'kind': 'hero', 'name': 'ana'}]
             }], [ i['entity']['key'] for i in
             ds.run_query('dsopzproj', '', 'select * from hero')['batch']['entityResults']])
         self.assertEqual([{
-                'partitionId': {'projectId': 'dsopzproj'},
                 'path': [{'kind': 'hero', 'name': 'ana'}]
             }], [ i['entity']['key'] for i in
             ds.lookup('dsopzproj', [entity['key']])['found']])

@@ -61,6 +61,8 @@ def run_query(
     ret = resp['body']
     ret['batch']['entityResults'] = ret['batch'].get('entityResults', [])
     ret['query'] = ret.get('query', query)
+    for entity in ret['batch']['entityResults']:
+        entity['entity']['key'].pop('partitionId')
     return ret
 
 def lookup(dataset, keys):
@@ -70,6 +72,10 @@ def lookup(dataset, keys):
         'Authorization': 'Bearer %s' % (oauth.access_token())
     })
     ret = resp['body']
+    if ret.get('deferred'):
+        raise Error('idk what is deferred')
+    for entity in ret.get('found', []):
+        entity['entity']['key'].pop('partitionId')
     return ret
 
 def commit(dataset, mutations):
