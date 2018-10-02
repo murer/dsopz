@@ -14,6 +14,7 @@ class Config(object):
         self.parser.add_argument('-a', '--auth-file', default='~/.dsopz/oauth.json', help='Local auth file')
         self.parser.add_argument('-u', '--url', default='https://datastore.googleapis.com/', help='URL')
         self.subparsers = self.parser.add_subparsers(dest="subparsers", title="Command")
+        self.subparsers.required = True
 
     def add_parser(self, name, mod):
         self.mods[name] = mod
