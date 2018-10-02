@@ -23,6 +23,8 @@ install_pycrypto() {
   pip install pycrypto
 }
 
+./cmds/decrypt.sh
+
 install_gcloud &
 install_pycrypto &
 
