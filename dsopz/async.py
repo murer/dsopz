@@ -19,7 +19,9 @@ def async(fn, *args, **kwargs):
 def blockify(array, block_size, filter=None):
     ret = []
     for i in array:
-        if not filter or filter(i):
+        if filter:
+            i = filter(i)
+        if i != None:
             ret.append(i)
             if len(ret) >= block_size:
                 yield ret

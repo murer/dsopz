@@ -41,18 +41,16 @@ def cmd_namespace():
 
 def cmd_upsert():
     with io.jreader(config.args.file, config.args.file_gz) as f:
-        for block in blockify(f, 1, lambda x: x.get('entity')):
-            entities = []
-            for k in block:
-                entity = k['entity']
-                entity['key']['partitionId']['projectId'] = config.args.dataset
-                entity['key']['partitionId']['namespaceId'] = config.args.namespace
-                entities.append(entity)
-            mutation(config.args.dataset, upserts=entities)
-    return True
+        for block in blockify(f, 10, lambda x: x.get('entity')):
+            print('send', len(block))
+            mutation(config.args.dataset, config.args.namespace, upserts=block)
 
 def cmd_rm():
-    return True
+    with io.jreader(config.args.file, config.args.file_gz) as f:
+        for block in blockify(f, 10, lambda x: x.get('entity', {}).get('key')):
+            print('send', len(block))
+            resp = mutation(config.args.dataset, config.args.namespace, removes=block)
+            print(resp)
 
 
 subparser = config.add_parser('download', cmd_download)
@@ -89,7 +87,7 @@ group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='input file or - for stdin')
 group.add_argument('-fgz', '--file-gz', help='input gzip file or - for stdin')
 
-subparser = config.add_parser('rm', cmd_namespace)
+subparser = config.add_parser('rm', cmd_rm)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
 group = subparser.add_mutually_exclusive_group(required=True)
