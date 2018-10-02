@@ -31,7 +31,6 @@ class DSEmulator(object):
 
     def start(self):
         with self._lock:
-            print('start', self._clients)
             if self._clients < 0:
                 raise Error('wrong')
             if self._clients == 0:
@@ -40,7 +39,6 @@ class DSEmulator(object):
 
     def stop(self):
         with self._lock:
-            print('stop', self._clients)
             if self._clients <= 0:
                 raise Error('wrong')
             self._clients = self._clients - 1
