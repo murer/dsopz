@@ -34,6 +34,7 @@ def cmd_upsert():
             entities = []
             for k in block:
                 entity = k['entity']
+                entity['key']['partitionId']['projectId'] = config.args.dataset
                 entity['key']['partitionId']['namespaceId'] = config.args.namespace
                 entities.append(entity)
             mutation(config.args.dataset, upserts=entities)
