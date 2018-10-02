@@ -74,7 +74,8 @@ def lookup(dataset, keys):
     ret = resp['body']
     if ret.get('deferred'):
         raise Error('idk what is deferred')
-    for entity in ret.get('found', []):
+    ret = ret.get('found', [])
+    for entity in ret:
         entity['entity']['key'].pop('partitionId')
     return ret
 

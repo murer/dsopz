@@ -28,8 +28,7 @@ class DatastoreTest(abstract_test_case.TestCase):
         ds.mutation('dsopzproj', None, removes = [ entity['key'] ])
 
         result = ds.lookup('dsopzproj', [ entity['key'] ])
-        self.assertIsNone(result.get('found'))
-        self.assertEqual(1, len(result['missing']))
+        self.assertEqual(0, len(result))
 
         result = ds.run_query('dsopzproj', '', 'select * from hero')
         self.assertEqual(0, len(result['batch']['entityResults']))
@@ -49,9 +48,8 @@ class DatastoreTest(abstract_test_case.TestCase):
             'partitionId': { 'projectId': 'dsopzproj' },
             'path': [ { 'kind': 'notfound', 'name': 'notfound' } ]
         } ])
-        self.assertEqual(entity, loaded['found'][0]['entity'])
-        self.assertEqual(1, len(loaded['found']))
-        self.assertEqual(1, len(loaded['missing']))
+        self.assertEqual(entity, loaded[0]['entity'])
+        self.assertEqual(1, len(loaded))
 
         ds.commit('dsopzproj', {
             'mode': 'NON_TRANSACTIONAL',
@@ -111,7 +109,7 @@ class DatastoreTest(abstract_test_case.TestCase):
         self.assertEqual([{
                 'path': [{'kind': 'hero', 'name': 'ana'}]
             }], [ i['entity']['key'] for i in
-            ds.lookup('dsopzproj', [entity['key']])['found']])
+            ds.lookup('dsopzproj', [entity['key']])])
 
 
 
