@@ -10,7 +10,7 @@ def _work(future, fn, args, kwargs):
     else:
         future.set_result(ret)
 
-def async(fn, *args, **kwargs):
+def dispatch(fn, *args, **kwargs):
     ret = Future()
     thread = threading.Thread(target=_work, args=[ret, fn, args, kwargs])
     thread.start()
