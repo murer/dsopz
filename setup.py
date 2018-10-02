@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '2.0.beta2'
+version = '2.0.beta3'
 
 setup(
   name = 'dsopz',
@@ -9,7 +9,7 @@ setup(
   description = 'Google Datastore Operations',
   entry_points = {
       "console_scripts": [
-          "dsopz = dsopz"
+          "dsopz = dsopz:main"
       ]
   },
   author = 'Paulo Henrique Murer',
