@@ -1,7 +1,8 @@
 from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
-from dsopz.datastore import stream_entity
+from dsopz.datastore import stream_entity, mutation
+from dsopz.async import blockify
 
 class Error(Exception):
     """Exceptions"""
@@ -29,10 +30,13 @@ def cmd_namespace():
 def cmd_upsert():
     import json as JSON
     with io.jreader(config.args.file, config.args.file_gz) as f:
-        for line in f:
-            entity = line.get('entity')
-            if entity:
-                print(JSON.dumps(entity))
+        for block in blockify(f, 1, lambda x: x.get('entity')):
+            entities = []
+            for k in block:
+                entity = k['entity']
+                entity['key']['partitionId']['namespaceId'] = config.args.namespace
+                entities.append(entity)
+            mutation(config.args.dataset, upserts=entities)
     return True
 
 def cmd_rm():

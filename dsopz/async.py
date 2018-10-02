@@ -15,3 +15,14 @@ def async(fn, *args, **kwargs):
     thread = threading.Thread(target=_work, args=[ret, fn, args, kwargs])
     thread.start()
     return ret
+
+def blockify(array, block_size, filter=None):
+    ret = []
+    for i in array:
+        if not filter or filter(i):
+            ret.append(i)
+            if len(ret) >= block_size:
+                yield ret
+                ret = []
+    if len(ret) > 0:
+        yield ret
