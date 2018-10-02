@@ -28,7 +28,6 @@ def cmd_namespace():
     return True
 
 def cmd_upsert():
-    import json as JSON
     with io.jreader(config.args.file, config.args.file_gz) as f:
         for block in blockify(f, 1, lambda x: x.get('entity')):
             entities = []
