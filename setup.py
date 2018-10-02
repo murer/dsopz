@@ -1,15 +1,15 @@
 from distutils.core import setup
 
-version = '2.0.beta3'
+version = '2.0.beta6'
 
 setup(
   name = 'dsopz',
-  packages = ['dsopz','dsopz.cmd'],
+  packages = ['dsopz'],
   version = version,
   description = 'Google Datastore Operations',
   entry_points = {
       "console_scripts": [
-          "dsopz = dsopz:main"
+          "dsopz = dsopz.main:main"
       ]
   },
   author = 'Paulo Henrique Murer',
@@ -17,5 +17,8 @@ setup(
   url = 'https://github.com/murer/dsopz',
   download_url = 'https://github.com/murer/dsopz/tarball/dsopz-%s' % (version),
   keywords = ['gae', 'datastore', 'appengine'],
-  classifiers = [],
+  classifiers= [
+        "Programming Language :: Python :: 3",
+        "Operating System :: OS Independent"
+    ],
 )
