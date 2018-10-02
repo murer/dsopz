@@ -5,6 +5,7 @@ from dsopz.datastore import stream_entity, mutation
 from dsopz.async import blockify
 from dsopz import util
 from os import devnull
+import logging as log
 
 class Error(Exception):
     """Exceptions"""
@@ -43,6 +44,7 @@ def cmd_namespace():
 
 def cmd_upsert():
     skip = dsutil.resolve_mutation_skip(config.args.resume)
+    log.info('Already processed: %s', skip)
     count = 0
     r = io.jwriter(config.args.resume, append=True) if config.args.resume else None
     try:
@@ -50,17 +52,28 @@ def cmd_upsert():
             for block in blockify(f, 10, lambda x: x.get('entity')):
                 count = count + len(block)
                 if count > skip:
+                    log.info('Processing: %s', count)
                     mutation(config.args.dataset, config.args.namespace, upserts=block)
                     r.write(count)
     finally:
         util.close(r)
 
 def cmd_rm():
-    with io.jreader(config.args.file, config.args.file_gz) as f:
-        for block in blockify(f, 10, lambda x: x.get('entity', {}).get('key')):
-            print('send', len(block))
-            resp = mutation(config.args.dataset, config.args.namespace, removes=block)
-            print(resp)
+    skip = dsutil.resolve_mutation_skip(config.args.resume)
+    log.info('Already processed: %s', skip)
+    count = 0
+    r = io.jwriter(config.args.resume, append=True) if config.args.resume else None
+    try:
+        with io.jreader(config.args.file, config.args.file_gz) as f:
+            for block in blockify(f, 10, lambda x: x.get('entity', {}).get('key')):
+                count = count + len(block)
+                if count > skip:
+                    log.info('Processing: %s', count)
+                    mutation(config.args.dataset, config.args.namespace, removes=block)
+                    r.write(count)
+    finally:
+        util.close(r)
+
 
 
 subparser = config.add_parser('download', cmd_download)
@@ -100,6 +113,7 @@ group.add_argument('-fgz', '--file-gz', help='input gzip file or - for stdin')
 subparser = config.add_parser('rm', cmd_rm)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
+subparser.add_argument('-r', '--resume', help='file necessary to track and resume the process. Entities may be upsert twice anyway')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='input file or - for stdin')
 group.add_argument('-fgz', '--file-gz', help='input gzip file or - for stdin')
