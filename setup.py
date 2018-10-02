@@ -13,7 +13,7 @@ setup(
       ]
   },
   author = 'Paulo Henrique Murer',
-  author_email = 'fuweweu@gmail.com',
+  author_email = 'paulo.murer@gmail.com',
   url = 'https://github.com/murer/dsopz',
   download_url = 'https://github.com/murer/dsopz/tarball/dsopz-%s' % (version),
   keywords = ['gae', 'datastore', 'appengine'],
