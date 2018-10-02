@@ -2,7 +2,7 @@ from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_entity, mutation
-from dsopz.processor import blockify
+from dsopz.async import blockify
 from dsopz import util
 from os import devnull
 import logging as log
