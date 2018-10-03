@@ -59,7 +59,6 @@ def cmd_upsert():
         with io.jreader(config.args.file, config.args.file_gz) as f:
             for block in blockify(f, 1000, lambda x: x.get('entity'), skip):
                 count = count + len(block)
-                #if count > skip:
                 log.info('Processing: %s', count)
                 mutation(config.args.dataset, config.args.namespace, upserts=block)
                 if r:
@@ -74,12 +73,11 @@ def cmd_rm():
     r = io.jwriter(config.args.resume, append=True) if config.args.resume else None
     try:
         with io.jreader(config.args.file, config.args.file_gz) as f:
-            for block in blockify(f, 1000, lambda x: x.get('entity', {}).get('key')):
+            for block in blockify(f, 1000, lambda x: x.get('entity', {}).get('key'), skip):
                 count = count + len(block)
-                if count > skip:
-                    log.info('Processing: %s', count)
-                    mutation(config.args.dataset, config.args.namespace, removes=block)
-                    r.write(count)
+                log.info('Processing: %s', count)
+                mutation(config.args.dataset, config.args.namespace, removes=block)
+                r.write(count)
     finally:
         util.close(r)
 

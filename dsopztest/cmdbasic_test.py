@@ -90,5 +90,37 @@ class CmdbasicTest(abstract_test_case.TestCase):
         self.assertEqual([None, 'ana1', 'ana2', 'nova1', 'nova2', 'tassy1', 'tassy2' ],
             [ ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name') for ent in ds.stream_entity('any', self.id(), 'select * from hero') ])
 
+    def test_rm(self):
+        ds.mutation('any', self.id(), upserts=[
+            ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT')),
+            ds.centity(ds.ckey(('hero', 'nova')), ds.cprop('role', 'string', 'STRIKER')),
+            ds.centity(ds.ckey(('hero', 'tassy')), ds.cprop('role', 'string', 'SUPPORT'))
+        ])
+        self.xedn('download', ['-q', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
+
+        with io.jwriter(plain=self.sb('track')) as f:
+            f.write(3)
+        self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
+        self.assertEqual([None, 'ana', 'nova', 'tassy'], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
+            for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
+
+        with io.jwriter(plain=self.sb('track')) as f:
+            f.write(2)
+        self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
+        self.assertEqual([None, 'ana', 'nova'], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
+            for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
+
+        with io.jwriter(plain=self.sb('track')) as f:
+            f.write(1)
+        self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
+        self.assertEqual([None, 'ana' ], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
+            for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
+
+        with io.jwriter(plain=self.sb('track')) as f:
+            f.write(0)
+        self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
+        self.assertEqual([None], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
+            for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
+
 if __name__ == '__main__':
     unittest.main()
