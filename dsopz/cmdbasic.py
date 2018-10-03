@@ -62,7 +62,7 @@ def cmd_upsert():
                 log.info('Processing: %s', count)
                 mutation(config.args.dataset, config.args.namespace, upserts=block)
                 if r:
-                    r.write(count)
+                    r.write({'processed': count})
     finally:
         util.close(r)
 
@@ -77,7 +77,7 @@ def cmd_rm():
                 count = count + len(block)
                 log.info('Processing: %s', count)
                 mutation(config.args.dataset, config.args.namespace, removes=block)
-                r.write(count)
+                r.write({'processed': count})
     finally:
         util.close(r)
 

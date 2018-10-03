@@ -59,7 +59,7 @@ class CmdbasicTest(abstract_test_case.TestCase):
         self.assertEqual({"key": {"path": [{"kind": "hero", "name": "ana1"}]}, "properties": {"role": {"stringValue": "SUPPORT"}}},
             ds.lookup('any', self.id(), [{'path': [{'kind': 'hero', 'name': 'ana1' }]}])[0]['entity'])
 
-        self.assertEqual([3], io.read_all(plain=self.sb('track')))
+        self.assertEqual([{'processed': 3}], io.read_all(plain=self.sb('track')))
 
         with io.jwriter(gz=self.sb('n1.json.gz')) as f:
             f.write({'entity': ds.centity(ds.ckey(('hero', 'ana2')), ds.cprop('role', 'string', 'SUPPORT')) })
@@ -67,25 +67,25 @@ class CmdbasicTest(abstract_test_case.TestCase):
             f.write({'entity': ds.centity(ds.ckey(('hero', 'tassy2')), ds.cprop('role', 'string', 'SUPPORT')) })
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(3)
+            f.write({'processed': 3})
         self.xedn('upsert', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana1', 'nova1', 'tassy1' ],
             [ ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name') for ent in ds.stream_entity('any', self.id(), 'select * from hero') ])
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(2)
+            f.write({'processed': 2})
         self.xedn('upsert', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana1', 'nova1', 'tassy1', 'tassy2' ],
             [ ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name') for ent in ds.stream_entity('any', self.id(), 'select * from hero') ])
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(1)
+            f.write({'processed': 1})
         self.xedn('upsert', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana1', 'nova1', 'nova2', 'tassy1', 'tassy2' ],
             [ ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name') for ent in ds.stream_entity('any', self.id(), 'select * from hero') ])
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(0)
+            f.write({'processed': 0})
         self.xedn('upsert', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana1', 'ana2', 'nova1', 'nova2', 'tassy1', 'tassy2' ],
             [ ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name') for ent in ds.stream_entity('any', self.id(), 'select * from hero') ])
@@ -99,25 +99,25 @@ class CmdbasicTest(abstract_test_case.TestCase):
         self.xedn('download', ['-q', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(3)
+            f.write({'processed': 3})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana', 'nova', 'tassy'], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(2)
+            f.write({'processed': 2})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana', 'nova'], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(1)
+            f.write({'processed': 1})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana' ], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write(0)
+            f.write({'processed': 0})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )

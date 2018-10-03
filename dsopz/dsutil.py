@@ -25,6 +25,6 @@ def resolve_mutation_skip(resume):
             ret = None
             for l in r:
                 ret = l
-            return ret
+            return ret['processed']
     except FileNotFoundError:
         return 0
