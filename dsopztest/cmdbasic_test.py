@@ -53,11 +53,13 @@ class CmdbasicTest(abstract_test_case.TestCase):
             f.write({'entity': ds.centity(ds.ckey(('hero', 'nova1')), ds.cprop('role', 'string', 'STRIKER')) })
             f.write({'entity': ds.centity(ds.ckey(('hero', 'tassy1')), ds.cprop('role', 'string', 'SUPPORT')) })
 
-        self.xedn('upsert', ['-fgz', self.sb('n1.json.gz')])
+        self.xedn('upsert', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana1', 'nova1', 'tassy1'],
             [ ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name') for ent in ds.stream_entity('any', self.id(), 'select * from hero') ])
         self.assertEqual([{"entity": {"key": {"path": [{"kind": "hero", "name": "ana1"}]}, "properties": {"role": {"stringValue": "SUPPORT"}}}, "version": "2"}],
             ds.lookup('any', self.id(), [{'path': [{'kind': 'hero', 'name': 'ana1' }]}]))
+
+        self.assertEqual([3], io.read_all(plain=self.sb('track')))
 
         with io.jwriter(gz=self.sb('n1.json.gz')) as f:
             f.write({'entity': ds.centity(ds.ckey(('hero', 'ana2')), ds.cprop('role', 'string', 'SUPPORT')) })
