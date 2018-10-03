@@ -1,11 +1,12 @@
 from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
-from dsopz.datastore import stream_entity, mutation
+from dsopz.datastore import stream_block, mutation
 from dsopz.processor import blockify
 from dsopz import util
 from os import devnull
 import logging as log
+import json as JSON
 
 class Error(Exception):
     """Exceptions"""
@@ -16,19 +17,25 @@ def cmd_download():
     if (config.args.resume or config.args.resume_gz) and (config.args.dataset or config.args.namespace):
         raise Error('dataset/namespace is not allowed for resume or resume_gz')
     header = dsutil.resolve_query(config.args.dataset, config.args.namespace, config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
+    count = 0
     with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
-        result = stream_entity(header['dataset'], header['namespace'], header['query'])
+        result = stream_block(header['dataset'], header['namespace'], header['query'])
         query = next(result)
+        log.info('query: %s', JSON.dumps(query))
         if not config.args.append:
             f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
-        for line in result:
-            f.write(line)
+        for block in result:
+            count = count + len(block['batch']['entityResults'])
+            for entity in block['batch']['entityResults']:
+                f.write(entity)
+            log.info('Downloaded: %s', count)
 
 def cmd_kind():
     header = dsutil.resolve_query(config.args.dataset, config.args.namespace, 'select * from __kind__', None, None, None)
     with io.jwriter(config.args.file, config.args.file_gz, append=False) as f:
         result = stream_entity(header['dataset'], header['namespace'], header['query'])
         query = next(result)
+        log.info('query: %s', JSON.dumps(query))
         f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
         for line in result:
             f.write(line)
@@ -38,6 +45,7 @@ def cmd_namespace():
     with io.jwriter(config.args.file, config.args.file_gz, append=False) as f:
         result = stream_entity(header['dataset'], header['namespace'], header['query'])
         query = next(result)
+        log.info('query: %s', JSON.dumps(query))
         f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
         for line in result:
             f.write(line)
