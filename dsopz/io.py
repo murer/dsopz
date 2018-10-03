@@ -107,3 +107,10 @@ def jwriter(plain = None, gz = None, append=False):
     else:
         gz = False
     return JWriter(plain, gz=gz, append=append)
+
+def read_all(plain = None, gz = None):
+    ret = []
+    with jreader(plain, gz) as f:
+        for i in f:
+            ret.append(i)
+    return ret

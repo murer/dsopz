@@ -14,7 +14,7 @@ class Error(Exception):
 class TestCase(unittest.TestCase):
 
     def xedn(self, cmd, args):
-        return self.xe([cmd, '-d', 'a', '-n', self.id()] + args)
+        return self.xe([cmd, '-d', 'any', '-n', self.id()] + args)
 
     def xe(self, args):
         args = [ '-u', 'http://localhost:8082', '-a', './gen/auth/oauth.json' ] + args
