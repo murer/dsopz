@@ -36,3 +36,16 @@ def blockify(array, block_size, filter=None, skip=0):
         raise Error('skip %s > count %s' % (skip, count))
     if len(ret) > 0:
         yield ret
+
+def merge(arrays):
+    ret = []
+    while True:
+        stop = True
+        for array in arrays:
+            try:
+                ret.append(next(array))
+                stop = False
+            except StopIteration:
+                pass
+        if stop:
+            return ret
