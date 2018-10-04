@@ -3,8 +3,18 @@ import gzip
 from dsopz import io
 from dsopz import util
 from dsopz import processor
+from time import sleep
 
 class ProcessorTest(unittest.TestCase):
+
+    def _work(self, a, b=None):
+        sleep(0.02)
+        return (a, b)
+
+    def test_dispatch(self):
+        f = processor.dispatch(self._work, 'a', b='b')
+        self.assertEqual(False, f.done())
+        self.assertEqual(('a', 'b'), f.result())
 
     def test_merge_gens(self):
         self.assertEqual([
