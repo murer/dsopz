@@ -7,7 +7,16 @@ from dsopz import processor
 class ProcessorTest(unittest.TestCase):
 
     def test_merge(self):
-        self.assertEqual(list('ax15by6z'), processor.merge([
+        self.assertEqual([
+            (0, 'a'),
+            (1, 'x'),
+            (2, '1'),
+            (3, '5'),
+            (0, 'b'),
+            (1, 'y'),
+            (3, '6'),
+            (1, 'z')
+        ], processor.merge([
             iter('ab'),
             iter('xyz'),
             iter('1'),

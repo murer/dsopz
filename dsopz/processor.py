@@ -41,9 +41,9 @@ def merge(arrays):
     ret = []
     while True:
         stop = True
-        for array in arrays:
+        for idx, array in enumerate(arrays):
             try:
-                ret.append(next(array))
+                ret.append( (idx, next(array)) )
                 stop = False
             except StopIteration:
                 pass
