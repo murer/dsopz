@@ -8,30 +8,50 @@ class Error(Exception):
 class Future(object):
 
     def __init__(self):
-        self.queue = Queue(maxsize=2)
-        self.status = 0
+        self._result = None
+        self._status = 0
+        self._lock = threading.Condition()
 
     def set_running_or_notify_cancel(self):
-        self.status = 1
-        return False
+        with self._lock:
+            self._status = 1
+            return False
 
     def set_result(self, result):
-        self.queue.put((None, result))
+        with self._lock:
+            if self._status != 1:
+                raise Error('illegal state: %s' % (self._status))
+            print('set_result')
+            self._result = (None, result)
+            self._status = 2
+            self._lock.notify_all()
+            print('set_resulted')
 
     def set_exception(self, exception):
-        self.queue.put((exception, None))
+        with self._lock:
+            if self._status != 1:
+                raise Error('illegal state: %s' % (self._status))
+            print('set_exception')
+            self._result = (exception, None)
+            self._status = 2
+            self._lock.notify_all()
+            print('set_exceptioned')
 
     def done(self):
-        return self.status == 0
+        with self._lock:
+            return self._status != 1
 
     def resolve(self):
-        if self.status == 0:
-            raise Error('illegal state: %s' % (self.status))
-        if self.status == 2:
+        with self._lock:
+            if self._status == 0:
+                raise Error('illegal state: %s' % (self._status))
+            if self._status == 2:
+                return self._result
+            print('resolve')
+            self._lock.wait()
+            print('resolved')
+            self._status = 2
             return self._result
-        self._result = self.queue.get()
-        self.status = 2
-        return self._result
 
     def result(self):
         print('fjsdklfhdsk')
