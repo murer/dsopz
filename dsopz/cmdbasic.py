@@ -47,15 +47,14 @@ def cmd_download():
     )
 
 def cmd_kind():
-    gql = [ 'select * from __kind__' ] if config.args.all else [
-            "select * from __kind__ where __key__ < KEY(__kind__, '__')",
-            "select * from __kind__ where __key__ > KEY(__kind__, '__\ufffd')" ]
     _download(
         dataset=config.args.dataset,
         namespace=config.args.namespace,
         file=config.args.file,
         file_gz=config.args.file_gz,
-        gql=gql
+        gql=[ 'select * from __kind__' ] if config.args.all else [
+                "select * from __kind__ where __key__ < KEY(__kind__, '__')",
+                "select * from __kind__ where __key__ > KEY(__kind__, '__\ufffd')" ]
     )
 
 def cmd_namespace():
