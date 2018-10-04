@@ -24,7 +24,7 @@ def _download(dataset=None, namespace=None, file=None, file_gz=None, gql=None, q
         log.info('queries: %s', JSON.dumps(queries))
         if not append:
             f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
-        for queryidx, result in async_gen(merge_gens(results)):
+        for queryidx, result in async_gen(merge_gens(results), len(results*2)):
             count[queryidx] = count[queryidx] + len(result['batch']['entityResults'])
             for entity in result['batch']['entityResults']:
                 entity['queryIndex'] = queryidx
