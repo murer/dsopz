@@ -1,7 +1,7 @@
 from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
-from dsopz.datastore import stream_block, mutation
+from dsopz.datastore import stream_block, mutation, stream_entity
 from dsopz.processor import blockify
 from dsopz import util
 from os import devnull
@@ -11,18 +11,18 @@ import json as JSON
 class Error(Exception):
     """Exceptions"""
 
-def cmd_download():
-    if (config.args.gql or config.args.query or config.args.kind) and not config.args.dataset:
+def _download(dataset=None, namespace=None, file=None, file_gz=None, gql=None, query=None, kind=None, resume=None, resume_gz=None, append=None):
+    if (gql or query or kind) and not dataset:
             raise Error('dataset is required for query, gql or kind')
-    if (config.args.resume or config.args.resume_gz) and (config.args.dataset or config.args.namespace):
+    if (resume or resume_gz) and (dataset or namespace):
         raise Error('dataset/namespace is not allowed for resume or resume_gz')
-    header = dsutil.resolve_query(config.args.dataset, config.args.namespace, config.args.gql, config.args.query, config.args.kind, config.args.resume, config.args.resume_gz)
+    header = dsutil.resolve_query(dataset, namespace, gql, query, kind, resume, resume_gz)
     count = [0] * len(header['queries'])
-    with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
+    with io.jwriter(file, file_gz, append=append) as f:
         results = [stream_block(header['dataset'], header['namespace'], q) for q in header['queries']]
         queries = [next(h) for h in results]
         log.info('queries: %s', JSON.dumps(queries))
-        if not config.args.append:
+        if not append:
             f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
         for queryidx, result in enumerate(results):
             for block in result:
@@ -32,25 +32,36 @@ def cmd_download():
                     f.write(entity)
                 log.info('Downloaded: %s', count)
 
+def cmd_download():
+    _download(
+        dataset=config.args.dataset,
+        namespace=config.args.namespace,
+        file=config.args.file,
+        file_gz=config.args.file_gz,
+        gql=config.args.gql,
+        query=config.args.query,
+        kind=config.args.kind,
+        resume=config.args.resume,
+        resume_gz=config.args.resume_gz,
+        append=config.args.append
+    )
+
 def cmd_kind():
-    header = dsutil.resolve_query(config.args.dataset, config.args.namespace, 'select * from __kind__', None, None, None)
-    with io.jwriter(config.args.file, config.args.file_gz, append=False) as f:
-        result = stream_entity(header['dataset'], header['namespace'], header['query'])
-        query = next(result)
-        log.info('query: %s', JSON.dumps(query))
-        f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
-        for line in result:
-            f.write(line)
+    _download(
+        dataset=config.args.dataset,
+        namespace=config.args.namespace,
+        file=config.args.file,
+        file_gz=config.args.file_gz,
+        kind=[ '__kind__' ]
+    )
 
 def cmd_namespace():
-    header = dsutil.resolve_query(config.args.dataset, None, 'select * from __namespace__', None, None, None)
-    with io.jwriter(config.args.file, config.args.file_gz, append=False) as f:
-        result = stream_entity(header['dataset'], header['namespace'], header['query'])
-        query = next(result)
-        log.info('query: %s', JSON.dumps(query))
-        f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
-        for line in result:
-            f.write(line)
+    _download(
+        dataset=config.args.dataset,
+        file=config.args.file,
+        file_gz=config.args.file_gz,
+        kind=[ '__namespace__' ]
+    )
 
 def cmd_upsert():
     skip = dsutil.resolve_mutation_skip(config.args.resume)
