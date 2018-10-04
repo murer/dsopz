@@ -23,5 +23,11 @@ class ProcessorTest(unittest.TestCase):
             iter('56')
         ]) ])
 
+    def test_abc(self):
+        self.assertEqual(
+            [ 'a', 'b', 'c', 'd', 'e', 'f' ],
+            [x for x in processor.abc(iter('abcdef'))]
+        )
+
 if __name__ == '__main__':
     unittest.main()

@@ -48,3 +48,17 @@ def merge_gens(arrays):
                 pass
         if stop:
             return
+
+def abc(gen, maxsize=10):
+    elements = []
+    try:
+        while True:
+            while len(elements) < maxsize:
+                elements.append(dispatch(lambda x: next(x), gen))
+            element = elements.pop(0)
+            yield element.result()
+    except StopIteration:
+        pass
+    finally:
+        while len(elements) > 0:
+            elements.pop(0).exception()
