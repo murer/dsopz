@@ -1,11 +1,11 @@
 import threading
-from concurrent.futures import Future
+#from concurrent.futures import Future
 from queue import Queue
 
 class Error(Exception):
     """Exceptions"""
 
-class Future1(object):
+class Future(object):
 
     def __init__(self):
         self.queue = Queue(maxsize=2)
@@ -16,13 +16,35 @@ class Future1(object):
         return False
 
     def set_result(self, result):
-        self.queue.put(result)
+        self.queue.put((None, result))
+
+    def set_exception(self, exception):
+        self.queue.put((exception, None))
 
     def done(self):
         return self.status == 0
 
+    def resolve(self):
+        if self.status == 0:
+            raise Error('illegal state: %s' % (self.status))
+        if self.status == 2:
+            return self._result
+        self._result = self.queue.get()
+        self.status = 2
+        return self._result
+
     def result(self):
-        return self.queue.get()
+        print('fjsdklfhdsk')
+        ret = self.resolve()
+        print('result', ret)
+        if ret[0]:
+            raise ret[0]
+        return ret[1]
+
+    def exception(self):
+        ret = self.resolve()
+        print('exception', ret)
+        return ret[0]
 
 def _work(future, fn, args, kwargs):
     future.set_running_or_notify_cancel()
