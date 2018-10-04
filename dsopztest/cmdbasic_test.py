@@ -6,6 +6,34 @@ import json as JSON
 
 class CmdbasicTest(abstract_test_case.TestCase):
 
+    def test_query_multiple(self):
+        ds.mutation('any', self.id(), upserts=[
+            ds.centity(ds.ckey(('hero1', 'ana')), ds.cprop('role', 'string', 'SUPPORT')),
+            ds.centity(ds.ckey(('hero2', 'aba')), ds.cprop('role', 'string', 'STRIKER'))
+        ])
+        self.xedn('download', ['-g', 'select * from hero1', 'select * from hero2', '-fgz', self.sb('n1.json.gz')])
+        result = io.read_all(gz=self.sb('n1.json.gz'))
+        self.assertEqual({
+            'dataset': 'any',
+            'namespace': self.id(),
+            'queries': [{'kind': [{'name': 'hero1'}]}, {'kind': [{'name': 'hero2'}]}]
+        }, result.pop(0))
+        self.assertEqual(['ana', 'aba'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+
+        ds.mutation('any', self.id(), upserts=[
+            ds.centity(ds.ckey(('hero1', 'tassy')), ds.cprop('role', 'string', 'SUPPORT')),
+            ds.centity(ds.ckey(('hero2', 'nova')), ds.cprop('role', 'string', 'SPEC'))
+        ])
+        self.xe(['download', '-fgz', self.sb('n2.json.gz'), '-rgz', self.sb('n1.json.gz')])
+        result = io.read_all(gz=self.sb('n2.json.gz'))
+        self.assertEqual(2, len([x.pop('startCursor') for x in result[0]['queries']]))
+        self.assertEqual({
+            'dataset': 'any',
+            'namespace': self.id(),
+            'queries': [{'kind': [{'name': 'hero1'}]}, {'kind': [{'name': 'hero2'}]}]
+        }, result.pop(0))
+        self.assertEqual(['tassy', 'nova'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+
 
     def test_query(self):
         ds.mutation('any', self.id(), upserts=[
@@ -13,22 +41,22 @@ class CmdbasicTest(abstract_test_case.TestCase):
             ds.centity(ds.ckey(('hero', 'nova')), ds.cprop('role', 'string', 'STRIKER'))
         ])
 
-        self.xedn('download', ['-q', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
+        self.xedn('download', ['-g', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
         result = io.read_all(gz=self.sb('n1.json.gz'))
         self.assertEqual({
             'dataset': 'any',
             'namespace': self.id(),
-            'query': {'kind': [{'name': 'hero'}]}
+            'queries': [{'kind': [{'name': 'hero'}]}]
         }, result.pop(0))
         self.assertEqual(['ana', 'nova'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
 
         self.xe(['download', '-rgz', self.sb('n1.json.gz'), '-f', self.sb('empty.json.gz')])
         result = io.read_all(plain=self.sb('empty.json.gz'))
-        self.assertIsNotNone(result[0]['query'].pop('startCursor'))
+        self.assertIsNotNone(result[0]['queries'][0].pop('startCursor'))
         self.assertEqual({
             'dataset': 'any',
             'namespace': self.id(),
-            'query': {'kind': [{'name': 'hero'}]}
+            'queries': [{'kind': [{'name': 'hero'}]}]
         }, result.pop(0))
         self.assertEqual(0, len(result))
 
@@ -41,7 +69,7 @@ class CmdbasicTest(abstract_test_case.TestCase):
         self.assertEqual({
             'dataset': 'any',
             'namespace': self.id(),
-            'query': {'kind': [{'name': 'hero'}]}
+            'queries': [{'kind': [{'name': 'hero'}]}]
         }, result.pop(0))
         self.assertEqual(['ana', 'nova', 'tassy'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
 
@@ -96,7 +124,7 @@ class CmdbasicTest(abstract_test_case.TestCase):
             ds.centity(ds.ckey(('hero', 'nova')), ds.cprop('role', 'string', 'STRIKER')),
             ds.centity(ds.ckey(('hero', 'tassy')), ds.cprop('role', 'string', 'SUPPORT'))
         ])
-        self.xedn('download', ['-q', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
+        self.xedn('download', ['-g', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
 
         with io.jwriter(plain=self.sb('track')) as f:
             f.write({'processed': 3})

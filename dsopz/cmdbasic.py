@@ -17,18 +17,20 @@ def cmd_download():
     if (config.args.resume or config.args.resume_gz) and (config.args.dataset or config.args.namespace):
         raise Error('dataset/namespace is not allowed for resume or resume_gz')
     header = dsutil.resolve_query(config.args.dataset, config.args.namespace, config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
-    count = 0
+    count = [0] * len(header['queries'])
     with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
-        result = stream_block(header['dataset'], header['namespace'], header['query'])
-        query = next(result)
-        log.info('query: %s', JSON.dumps(query))
+        results = [stream_block(header['dataset'], header['namespace'], q) for q in header['queries']]
+        queries = [next(h) for h in results]
+        log.info('queries: %s', JSON.dumps(queries))
         if not config.args.append:
-            f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'query': query})
-        for block in result:
-            count = count + len(block['batch']['entityResults'])
-            for entity in block['batch']['entityResults']:
-                f.write(entity)
-            log.info('Downloaded: %s', count)
+            f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
+        for queryidx, result in enumerate(results):
+            for block in result:
+                count[queryidx] = count[queryidx] + len(block['batch']['entityResults'])
+                for entity in block['batch']['entityResults']:
+                    entity['queryIndex'] = queryidx
+                    f.write(entity)
+                log.info('Downloaded: %s', count)
 
 def cmd_kind():
     header = dsutil.resolve_query(config.args.dataset, config.args.namespace, 'select * from __kind__', None, None, None)
@@ -81,14 +83,12 @@ def cmd_rm():
     finally:
         util.close(r)
 
-
-
 subparser = config.add_parser('download', cmd_download)
 subparser.add_argument('-d', '--dataset', help='dataset. Required for gql or query')
 subparser.add_argument('-n', '--namespace', help='Namespace. Ignored for resume or resume-gz')
 group = subparser.add_mutually_exclusive_group(required=True)
-group.add_argument('-g', '--gql', help='gql')
-group.add_argument('-q', '--query', help='json query')
+group.add_argument('-g', '--gql', nargs='+', help='gql')
+group.add_argument('-q', '--query', nargs='+', help='json query')
 group.add_argument('-r', '--resume', help='json query and cursor from file')
 group.add_argument('-rgz', '--resume-gz', help='json query and cursor from gzip file or - for stdin')
 group = subparser.add_mutually_exclusive_group(required=True)
