@@ -12,6 +12,7 @@ class Error(Exception):
     """Exceptions"""
 
 def cmd_download():
+    config.args.query = [JSON.loads(q) for q in config.args.query or []]
     if (config.args.gql or config.args.query) and not config.args.dataset:
             raise Error('dataset is required for query or gql')
     if (config.args.resume or config.args.resume_gz) and (config.args.dataset or config.args.namespace):

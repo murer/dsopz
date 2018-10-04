@@ -41,7 +41,7 @@ class CmdbasicTest(abstract_test_case.TestCase):
             ds.centity(ds.ckey(('hero', 'nova')), ds.cprop('role', 'string', 'STRIKER'))
         ])
 
-        self.xedn('download', ['-g', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
+        self.xedn('download', ['-q', '{"kind": [{"name": "hero"}]}', '-fgz', self.sb('n1.json.gz')])
         result = io.read_all(gz=self.sb('n1.json.gz'))
         self.assertEqual({
             'dataset': 'any',
