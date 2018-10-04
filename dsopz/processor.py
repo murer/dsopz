@@ -52,7 +52,6 @@ def merge_gens(arrays):
 
 def _async_gen_work(gen, q):
     for i in gen:
-        print('put', i)
         q.put((False, i))
     q.put((True, None))
 
@@ -61,7 +60,6 @@ def async_gen(gen, maxsize=10):
     fut = dispatch(_async_gen_work, gen, q)
     while True:
         done, ret = q.get()
-        print('get', done, ret, fut.done())
         if done:
             fut.result()
             return
