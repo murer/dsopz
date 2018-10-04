@@ -11,6 +11,15 @@ class Future(object):
         self._result = None
         self._status = 0
         self._lock = threading.Condition()
+        self._cancel_request = False
+
+    def cancel_requested(self):
+        with self._lock:
+            return self._cancel_request
+
+    def cancel(self):
+        with self._lock:
+            self._cancel_request = True
 
     def set_running_or_notify_cancel(self):
         with self._lock:
@@ -80,6 +89,22 @@ def dispatch(fn, *args, **kwargs):
     thread = threading.Thread(target=_work, args=[ret, fn, args, kwargs])
     thread.start()
     return ret
+
+def _workf(future, fn, args, kwargs):
+    future.set_running_or_notify_cancel()
+    try:
+        ret = fn(future, *args, **kwargs)
+    except BaseException as exc:
+        future.set_exception(exc)
+    else:
+        future.set_result(ret)
+
+def dispatchf(fn, *args, **kwargs):
+    ret = Future()
+    thread = threading.Thread(target=_workf, args=[ret, fn, args, kwargs])
+    thread.start()
+    return ret
+
 
 def blockify(array, block_size, filter=None, skip=0):
     ret = []

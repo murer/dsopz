@@ -16,6 +16,15 @@ class ProcessorTest(unittest.TestCase):
             raise Error('error')
         return (a, b)
 
+    def _work_cancel(self, future, ret):
+        ret['c'] = 1
+        for _ in range(20):
+            sleep(0.1)
+            if future.cancel_requested():
+                raise Error('cancel')
+        ret['c'] = 2
+        return 'done'
+
     def test_dispatch(self):
         f = processor.dispatch(self._work, 'a', b='b')
         self.assertEqual(False, f.done())
@@ -26,7 +35,21 @@ class ProcessorTest(unittest.TestCase):
         self.assertEqual(False, f.done())
         self.assertIsNotNone(f.exception())
         with self.assertRaises(Error):
-            self.assertEqual(('a', 'b'), f.result())
+            f.result()
+
+    def test_dispatch_cancel(self):
+        data = {'c': 0}
+        f = processor.dispatchf(self._work_cancel, data)
+        self.assertEqual(False, f.done())
+        sleep(0.02)
+        self.assertEqual(1, data['c'])
+        f.cancel()
+        self.assertIsNotNone(f.exception())
+        with self.assertRaises(Error):
+            f.result()
+        self.assertEqual(1, data['c'])
+
+
 
     def test_merge_gens(self):
         self.assertEqual([
