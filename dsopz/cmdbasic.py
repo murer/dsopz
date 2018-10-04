@@ -24,13 +24,20 @@ def _download(dataset=None, namespace=None, file=None, file_gz=None, gql=None, q
         log.info('queries: %s', JSON.dumps(queries))
         if not append:
             f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
-        for queryidx, result in enumerate(results):
-            for block in result:
-                count[queryidx] = count[queryidx] + len(block['batch']['entityResults'])
-                for entity in block['batch']['entityResults']:
-                    entity['queryIndex'] = queryidx
-                    f.write(entity)
-                log.info('Downloaded: %s', count)
+        done = False
+        while not done:
+            done = True
+            for queryidx, result in enumerate(results):
+                try:
+                    block = next(result)
+                    done = False
+                    count[queryidx] = count[queryidx] + len(block['batch']['entityResults'])
+                    for entity in block['batch']['entityResults']:
+                        entity['queryIndex'] = queryidx
+                        f.write(entity)
+                    log.info('Downloaded: %s', count)
+                except StopIteration:
+                    pass
 
 def cmd_download():
     _download(
