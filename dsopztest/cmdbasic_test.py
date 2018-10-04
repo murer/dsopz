@@ -6,6 +6,20 @@ import json as JSON
 
 class CmdbasicTest(abstract_test_case.TestCase):
 
+    def test_query_kind(self):
+        ds.mutation('any', self.id(), upserts=[
+            ds.centity(ds.ckey(('hero1', 'ana')), ds.cprop('role', 'string', 'SUPPORT')),
+            ds.centity(ds.ckey(('hero2', 'aba')), ds.cprop('role', 'string', 'STRIKER'))
+        ])
+        self.xedn('download', ['-k', 'hero1', 'hero2', '-fgz', self.sb('n1.json.gz')])
+        result = io.read_all(gz=self.sb('n1.json.gz'))
+        self.assertEqual({
+            'dataset': 'any',
+            'namespace': self.id(),
+            'queries': [{'kind': [{'name': 'hero1'}]}, {'kind': [{'name': 'hero2'}]}]
+        }, result.pop(0))
+        self.assertEqual(['ana', 'aba'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+
     def test_query_multiple(self):
         ds.mutation('any', self.id(), upserts=[
             ds.centity(ds.ckey(('hero1', 'ana')), ds.cprop('role', 'string', 'SUPPORT')),

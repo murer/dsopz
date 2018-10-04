@@ -12,12 +12,11 @@ class Error(Exception):
     """Exceptions"""
 
 def cmd_download():
-    config.args.query = [JSON.loads(q) for q in config.args.query or []]
-    if (config.args.gql or config.args.query) and not config.args.dataset:
-            raise Error('dataset is required for query or gql')
+    if (config.args.gql or config.args.query or config.args.kind) and not config.args.dataset:
+            raise Error('dataset is required for query, gql or kind')
     if (config.args.resume or config.args.resume_gz) and (config.args.dataset or config.args.namespace):
         raise Error('dataset/namespace is not allowed for resume or resume_gz')
-    header = dsutil.resolve_query(config.args.dataset, config.args.namespace, config.args.gql, config.args.query, config.args.resume, config.args.resume_gz)
+    header = dsutil.resolve_query(config.args.dataset, config.args.namespace, config.args.gql, config.args.query, config.args.kind, config.args.resume, config.args.resume_gz)
     count = [0] * len(header['queries'])
     with io.jwriter(config.args.file, config.args.file_gz, append=config.args.append) as f:
         results = [stream_block(header['dataset'], header['namespace'], q) for q in header['queries']]
@@ -90,6 +89,7 @@ subparser.add_argument('-n', '--namespace', help='Namespace. Ignored for resume 
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-g', '--gql', nargs='+', help='gql')
 group.add_argument('-q', '--query', nargs='+', help='json query')
+group.add_argument('-k', '--kind', nargs='+', help='kinds')
 group.add_argument('-r', '--resume', help='json query and cursor from file')
 group.add_argument('-rgz', '--resume-gz', help='json query and cursor from gzip file or - for stdin')
 group = subparser.add_mutually_exclusive_group(required=True)

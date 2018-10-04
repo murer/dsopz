@@ -1,8 +1,12 @@
 from dsopz.config import config
 from dsopz import io
 from dsopz import util
+import json as JSON
 
-def resolve_query(dataset, namespace, gql=None, query=None, plain=None, gz=None):
+def resolve_query(dataset, namespace, gql=None, query=None, kind=None, plain=None, gz=None):
+    query = [JSON.loads(q) if isinstance(q, str) else q for q in (query or [])]
+    if kind:
+        query = [{'kind': [{'name': k}]} for k in kind]
     if gql or query:
         ret = gql or query
         return { 'dataset': dataset, 'namespace': namespace, 'queries': ret }

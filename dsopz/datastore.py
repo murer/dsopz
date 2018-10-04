@@ -105,7 +105,6 @@ def mutation(dataset, namespace, upserts=None, removes=None):
     return commit(dataset, body)
 
 def stream_block(dataset, namespace, query):
-    print('hfsdfjksd', type(query))
     first = True
     while True:
         result = run_query(dataset, namespace, query)
