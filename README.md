@@ -4,6 +4,9 @@ DSOpz (Datastore Operationz) lets you manage your Google Cloud Datastore from co
 
 [![Build Status](https://travis-ci.org/murer/dsopz.svg?branch=master)](https://travis-ci.org/murer/dsopz)
 
+## Dsopz 2 Beta
+
+This documentation is all about dsopz-1.x.x. I'm woking on dspoz2 :)
 
 ## Features
 
