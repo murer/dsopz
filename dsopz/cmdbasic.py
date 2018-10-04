@@ -47,12 +47,15 @@ def cmd_download():
     )
 
 def cmd_kind():
+    gql = [ 'select * from __kind__' ] if config.args.all else [
+            "select * from __kind__ where __key__ < KEY(__kind__, '__')",
+            "select * from __kind__ where __key__ > KEY(__kind__, '__\ufffd')" ]
     _download(
         dataset=config.args.dataset,
         namespace=config.args.namespace,
         file=config.args.file,
         file_gz=config.args.file_gz,
-        kind=[ '__kind__' ]
+        gql=gql
     )
 
 def cmd_namespace():
@@ -111,6 +114,7 @@ subparser.add_argument('-a', '--append', action='store_true', help='append into 
 subparser = config.add_parser('kind', cmd_kind)
 subparser.add_argument('-d', '--dataset', required=True, help='dataset')
 subparser.add_argument('-n', '--namespace', help='namespace')
+subparser.add_argument('-a', '--all', action='store_true', help='include reserved (__*__) kinds')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='output file or - for stdout')
 group.add_argument('-fgz', '--file-gz', help='output gzip file or - for stdout')
