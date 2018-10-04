@@ -18,7 +18,7 @@ class ProcessorTest(unittest.TestCase):
 
     def _work_cancel(self, future, ret):
         ret['c'] = 1
-        for _ in range(20):
+        for _ in range(10):
             sleep(0.1)
             if future.cancel_requested():
                 raise Error('cancel')
