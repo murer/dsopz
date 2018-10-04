@@ -5,16 +5,28 @@ from dsopz import util
 from dsopz import processor
 from time import sleep
 
+class Error(Exception):
+    """Exceptions"""
+
 class ProcessorTest(unittest.TestCase):
 
     def _work(self, a, b=None):
         sleep(0.02)
+        if a == 'error':
+            raise Error('error')
         return (a, b)
 
     def test_dispatch(self):
         f = processor.dispatch(self._work, 'a', b='b')
         self.assertEqual(False, f.done())
+        self.assertIsNone(f.exception())
         self.assertEqual(('a', 'b'), f.result())
+
+        f = processor.dispatch(self._work, 'error', b='b')
+        self.assertEqual(False, f.done())
+        self.assertIsNotNone(f.exception())
+        with self.assertRaises(Error):
+            self.assertEqual(('a', 'b'), f.result())
 
     def test_merge_gens(self):
         self.assertEqual([

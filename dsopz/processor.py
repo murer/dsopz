@@ -5,6 +5,25 @@ from queue import Queue
 class Error(Exception):
     """Exceptions"""
 
+class Future1(object):
+
+    def __init__(self):
+        self.queue = Queue(maxsize=2)
+        self.status = 0
+
+    def set_running_or_notify_cancel(self):
+        self.status = 1
+        return False
+
+    def set_result(self, result):
+        self.queue.put(result)
+
+    def done(self):
+        return self.status == 0
+
+    def result(self):
+        return self.queue.get()
+
 def _work(future, fn, args, kwargs):
     future.set_running_or_notify_cancel()
     try:
