@@ -2,7 +2,7 @@ from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_block, mutation, stream_entity
-from dsopz.processor import blockify
+from dsopz.processor import blockify, merge_gens
 from dsopz import util
 from os import devnull
 import logging as log
@@ -24,6 +24,7 @@ def _download(dataset=None, namespace=None, file=None, file_gz=None, gql=None, q
         log.info('queries: %s', JSON.dumps(queries))
         if not append:
             f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
+
         done = False
         while not done:
             done = True

@@ -37,7 +37,7 @@ def blockify(array, block_size, filter=None, skip=0):
     if len(ret) > 0:
         yield ret
 
-def merge(arrays):
+def merge_gens(arrays):
     while True:
         stop = True
         for idx, array in enumerate(arrays):

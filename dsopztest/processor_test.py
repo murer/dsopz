@@ -6,7 +6,7 @@ from dsopz import processor
 
 class ProcessorTest(unittest.TestCase):
 
-    def test_merge(self):
+    def test_merge_gens(self):
         self.assertEqual([
             (0, 'a'),
             (1, 'x'),
@@ -16,7 +16,7 @@ class ProcessorTest(unittest.TestCase):
             (1, 'y'),
             (3, '6'),
             (1, 'z')
-        ], [x for x in processor.merge([
+        ], [x for x in processor.merge_gens([
             iter('ab'),
             iter('xyz'),
             iter('1'),
