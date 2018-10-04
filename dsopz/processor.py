@@ -138,8 +138,8 @@ def merge_gens(arrays):
 
 def _async_gen_work(gen, q):
     for i in gen:
-        q.put((False, i))
-    q.put((True, None))
+        q.put((False, i), timeout=60)
+    q.put((True, None), timeout=60)
 
 def async_gen(gen, maxsize=10):
     q = Queue(maxsize=maxsize)
