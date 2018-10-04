@@ -49,7 +49,7 @@ def merge_gens(arrays):
         if stop:
             return
 
-def abc(gen, maxsize=10):
+def async_gen(gen, maxsize=10):
     elements = []
     try:
         while True:

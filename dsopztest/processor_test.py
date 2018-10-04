@@ -23,10 +23,10 @@ class ProcessorTest(unittest.TestCase):
             iter('56')
         ]) ])
 
-    def test_abc(self):
+    def test_async_gen(self):
         self.assertEqual(
             [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ],
-            [x for x in processor.abc(iter('abcdefg'), maxsize=3)]
+            [x for x in processor.async_gen(iter('abcdefg'), maxsize=3)]
         )
 
 if __name__ == '__main__':
