@@ -16,12 +16,12 @@ class ProcessorTest(unittest.TestCase):
             (1, 'y'),
             (3, '6'),
             (1, 'z')
-        ], processor.merge([
+        ], [x for x in processor.merge([
             iter('ab'),
             iter('xyz'),
             iter('1'),
             iter('56')
-        ]))
+        ]) ])
 
 if __name__ == '__main__':
     unittest.main()

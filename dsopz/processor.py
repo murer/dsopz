@@ -38,14 +38,13 @@ def blockify(array, block_size, filter=None, skip=0):
         yield ret
 
 def merge(arrays):
-    ret = []
     while True:
         stop = True
         for idx, array in enumerate(arrays):
             try:
-                ret.append( (idx, next(array)) )
+                yield (idx, next(array))
                 stop = False
             except StopIteration:
                 pass
         if stop:
-            return ret
+            return
