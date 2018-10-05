@@ -105,6 +105,7 @@ def cmd_upsert():
         log.info('Last waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
         p_fut.result()
         io.write_all(config.args.resume, append=True, lines=[{'processed':p_end+1}])
+    log.info('Done')
 
 def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
     skip = dsutil.resolve_mutation_skip(resume)
