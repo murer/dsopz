@@ -87,7 +87,7 @@ def _resume(file, file_gz, resume, skip, parser):
             yield (start, idx, block)
 
 
-def cmd_upsert():
+def cmd_upserty():
     skip = dsutil.resolve_mutation_skip(config.args.resume)
     log.info('Skip: %s', skip)
     buffer = []
@@ -127,6 +127,15 @@ def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
                     r.write({'processed': count})
     finally:
         util.close(r)
+
+def cmd_upsert():
+    dsutil.UpsertMutation(
+        config.args.dataset,
+        config.args.namespace,
+        config.args.file,
+        config.args.file_gz,
+        config.args.resume
+    ).execute()
 
 def cmd_upsertx():
     _mutation(
