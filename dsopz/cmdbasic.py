@@ -2,7 +2,7 @@ from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_block, mutation, stream_entity
-from dsopz.processor import blockify, merge_gens, async_gen
+from dsopz.processor import blockify, merge_gens, AsyncGen
 from dsopz import util
 from os import devnull
 import logging as log
@@ -24,12 +24,13 @@ def _download(dataset=None, namespace=None, file=None, file_gz=None, gql=None, q
         log.info('queries: %s', JSON.dumps(queries))
         if not append:
             f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
-        for queryidx, result in async_gen(merge_gens(results)):
-            count[queryidx] = count[queryidx] + len(result['batch']['entityResults'])
-            for entity in result['batch']['entityResults']:
-                entity['queryIndex'] = queryidx
-                f.write(entity)
-            log.info('Downloaded: %s', count)
+        with AsyncGen(merge_gens(results)) as r:
+            for queryidx, result in r:
+                count[queryidx] = count[queryidx] + len(result['batch']['entityResults'])
+                for entity in result['batch']['entityResults']:
+                    entity['queryIndex'] = queryidx
+                    f.write(entity)
+                log.info('Downloaded: %s', count)
 
 def cmd_download():
     _download(

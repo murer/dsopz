@@ -160,8 +160,8 @@ class AsyncGen(object):
             if future.cancel_requested():
                 print('REQUESTED')
                 return
-            q.put((False, i), timeout=60)
-        q.put((True, None), timeout=60)
+            q.put((False, i), timeout=5)
+        q.put((True, None), timeout=5)
 
     def __enter__(self):
         return self
@@ -171,9 +171,9 @@ class AsyncGen(object):
 
     def close(self):
         self._future.cancel()
-        while not self._queue.empty():
-            s = self._queue.get_nowait()
-            print('sss', s)
+#        while not self._queue.empty():
+#            s = self._queue.get_nowait()
+#            print('sss', s)
         self._future.close()
 
     def __iter__(self):
@@ -181,6 +181,7 @@ class AsyncGen(object):
 
     def __next__(self):
         done, ret = self._queue.get()
+        self._queue.task_done()
         if done:
             raise StopIteration
         return ret
