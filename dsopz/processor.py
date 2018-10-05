@@ -75,6 +75,18 @@ class Future(object):
         print('exception', ret)
         return ret[0]
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    def close(self):
+        with self._lock:
+            if not self.done():
+                self.cancel()
+            self.exception()
+
 def _work(future, fn, args, kwargs):
     future.set_running_or_notify_cancel()
     try:
