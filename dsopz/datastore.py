@@ -84,6 +84,18 @@ def lookup(dataset, namespace, keys):
         _set_partition(entity['entity']['key'], None, None)
     return ret
 
+import threading
+
+CC = 1
+lock = threading.Lock()
+
+def C():
+    global CC
+    global lock
+    with lock:
+        CC = CC + 1
+        return CC
+
 def commit(dataset, namespace, mutations):
     for m in mutations['mutations']:
         if m.get('insert'):
@@ -94,12 +106,16 @@ def commit(dataset, namespace, mutations):
             _set_partition(m['upsert']['key'], dataset, namespace)
         if m.get('delete'):
             _set_partition(m['delete'], dataset, namespace)
-    url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
-    resp = req_json('POST', url, mutations, {
-        'Authorization': 'Bearer %s' % (oauth.access_token())
-    })
-    ret = resp['body']
-    return ret
+    with open('/home/murer/tmp/d/c-%s' % (C()), 'w') as f:
+        f.write(JSON.dumps(mutations))
+        f.write('\n')
+        url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
+        resp = req_json('POST', url, mutations, {
+            'Authorization': 'Bearer %s' % (oauth.access_token())
+        })
+        ret = resp['body']
+        f.write(JSON.dumps(ret))
+        return ret
 
 def mutation(dataset, namespace, upserts=None, removes=None):
     body = { 'mode': 'NON_TRANSACTIONAL', 'mutations': [] }

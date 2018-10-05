@@ -48,9 +48,6 @@ class Mutation(object):
          self._file_gz = file_gz
          self._resume_file = resume
 
-    def _parse_line(self, line):
-        raise Error('Implement it')
-
     def _resume(self):
         start = None
         block = []
@@ -77,7 +74,8 @@ class Mutation(object):
             p_start, p_end, p_block, p_fut = self._buffer.pop(0)
             log.info('Waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
             p_fut.result()
-            io.write_all(self._resume_file, append=True, lines=[{'processed':p_end+1}])
+            if self._resume_file:
+                io.write_all(self._resume_file, append=True, lines=[{'processed':p_end+1}])
 
     def execute(self):
         self._skip = resolve_mutation_skip(self._resume_file)
@@ -86,7 +84,8 @@ class Mutation(object):
         for start, end, block in self._resume():
             log.info('Processing: [%s - %s], len: %s', start, end, len(block))
             self._consume_buffer(19)
-            fut = dispatch(mutation, self._dataset, self._namespace, upserts=block)
+            upserts, removes = self._operation(block)
+            fut = dispatch(mutation, self._dataset, self._namespace, upserts=upserts, removes=removes)
             self._buffer.append( (start, end, block, fut) )
         self._consume_buffer(0)
         log.info('Done')
@@ -95,3 +94,15 @@ class UpsertMutation(Mutation):
 
     def _parse_line(self, line):
         return line.get('entity')
+
+    def _operation(self, block):
+        return (block, None)
+
+
+class RemoveMutation(Mutation):
+
+    def _parse_line(self, line):
+        return line.get('entity', {}).get('key')
+
+    def _operation(self, block):
+        return (None, block)

@@ -149,15 +149,13 @@ def cmd_upsertx():
     )
 
 def cmd_rm():
-    _mutation(
+    dsutil.RemoveMutation(
         config.args.dataset,
         config.args.namespace,
         config.args.file,
         config.args.file_gz,
-        config.args.resume,
-        'remove',
-        lambda x: x.get('entity', {}).get('key')
-    )
+        config.args.resume
+    ).execute()
 
 subparser = config.add_parser('download', cmd_download)
 subparser.add_argument('-d', '--dataset', help='dataset. Required for gql or query')
