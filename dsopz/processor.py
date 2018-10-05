@@ -172,8 +172,8 @@ class AsyncGen(object):
     def close(self):
         self._future.cancel()
         while not self._queue.empty():
-            print('sss')
-            self._queue.get_nowait()
+            s = self._queue.get_nowait()
+            print('sss', s)
         self._future.close()
 
     def __iter__(self):
