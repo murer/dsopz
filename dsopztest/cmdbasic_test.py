@@ -141,25 +141,25 @@ class CmdbasicTest(abstract_test_case.TestCase):
         self.xedn('download', ['-g', 'select * from hero', '-fgz', self.sb('n1.json.gz')])
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write({'processed': 3})
+            f.write({'processed': 4})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana', 'nova', 'tassy'], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write({'processed': 2})
+            f.write({'processed': 3})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana', 'nova'], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write({'processed': 1})
+            f.write({'processed': 2})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None, 'ana' ], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )
 
         with io.jwriter(plain=self.sb('track')) as f:
-            f.write({'processed': 0})
+            f.write({'processed': 1})
         self.xedn('rm', ['-fgz', self.sb('n1.json.gz'), '-r', self.sb('track')])
         self.assertEqual([None], [ent.get('entity', {}).get('key', {}).get('path', [{}])[0].get('name')
             for ent in ds.stream_entity('any', self.id(), 'select __key__ from hero')] )

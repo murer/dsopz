@@ -50,7 +50,7 @@ class DatastoreTest(abstract_test_case.TestCase):
         self.assertEqual(entity, loaded[0]['entity'])
         self.assertEqual(1, len(loaded))
 
-        ds.commit('dsopzproj', {
+        ds.commit('dsopzproj', self.id(), {
             'mode': 'NON_TRANSACTIONAL',
             'mutations': [ {
                 'delete': entity['key']
