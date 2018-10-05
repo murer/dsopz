@@ -142,7 +142,7 @@ def merge_gens(arrays):
 
 class AsyncGen(object):
 
-    def __init__(self, gen, maxsize=50):
+    def __init__(self, gen, maxsize=10):
         self._queue = Queue(maxsize=maxsize)
         self._future = dispatchf(self._async_gen_work, gen, self._queue)
 
