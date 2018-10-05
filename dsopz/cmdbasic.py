@@ -93,16 +93,18 @@ def cmd_upsert():
     buffer = []
     for start, end, block in _resume(config.args.file, config.args.file_gz, config.args.resume, skip, lambda x: x.get('entity')):
         log.info('Processing: [%s - %s], len: %s', start, end, len(block))
-        while len(buffer) >= 50:
+        while len(buffer) >= 20:
             p_start, p_end, p_block, p_fut = buffer.pop(0)
             log.info('Waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
             p_fut.result()
+            io.write_all(config.args.resume, append=True, lines=[{'processed':p_end+1}])
         fut = dispatch(mutation, config.args.dataset, config.args.namespace, upserts=block)
         buffer.append( (start, end, block, fut) )
     while len(buffer) > 0:
         p_start, p_end, p_block, p_fut = buffer.pop(0)
         log.info('Last waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
         p_fut.result()
+        io.write_all(config.args.resume, append=True, lines=[{'processed':p_end+1}])
 
 def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
     skip = dsutil.resolve_mutation_skip(resume)

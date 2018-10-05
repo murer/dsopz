@@ -114,3 +114,8 @@ def read_all(plain = None, gz = None):
         for i in f:
             ret.append(i)
     return ret
+
+def write_all(plain = None, gz = None, append=False, lines=None):
+    with jwriter(plain, gz, append=append) as f:
+        for line in (lines or []):
+            f.write(line)
