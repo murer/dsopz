@@ -87,47 +87,6 @@ def _resume(file, file_gz, resume, skip, parser):
             yield (start, idx, block)
 
 
-def cmd_upserty():
-    skip = dsutil.resolve_mutation_skip(config.args.resume)
-    log.info('Skip: %s', skip)
-    buffer = []
-    for start, end, block in _resume(config.args.file, config.args.file_gz, config.args.resume, skip, lambda x: x.get('entity')):
-        log.info('Processing: [%s - %s], len: %s', start, end, len(block))
-        while len(buffer) >= 20:
-            p_start, p_end, p_block, p_fut = buffer.pop(0)
-            log.info('Waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
-            p_fut.result()
-            io.write_all(config.args.resume, append=True, lines=[{'processed':p_end+1}])
-        fut = dispatch(mutation, config.args.dataset, config.args.namespace, upserts=block)
-        buffer.append( (start, end, block, fut) )
-    while len(buffer) > 0:
-        p_start, p_end, p_block, p_fut = buffer.pop(0)
-        log.info('Last waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
-        p_fut.result()
-        io.write_all(config.args.resume, append=True, lines=[{'processed':p_end+1}])
-    log.info('Done')
-
-def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
-    skip = dsutil.resolve_mutation_skip(resume)
-    log.info('Already processed: %s', skip)
-    count = 0
-    r = io.jwriter(resume, append=True) if resume else None
-    try:
-        with io.jreader(file, file_gz) as f:
-            for block in blockify(f, 500, parser, skip):
-                count = count + len(block)
-                log.info('Processing: %s', count)
-                if op == 'upsert':
-                    mutation(dataset, namespace, upserts=block)
-                elif op == 'remove':
-                    mutation(dataset, namespace, removes=block)
-                else:
-                    raise Error('unknown: %s' % (op))
-                if r:
-                    r.write({'processed': count})
-    finally:
-        util.close(r)
-
 def cmd_upsert():
     dsutil.UpsertMutation(
         config.args.dataset,
@@ -136,17 +95,6 @@ def cmd_upsert():
         config.args.file_gz,
         config.args.resume
     ).execute()
-
-def cmd_upsertx():
-    _mutation(
-        config.args.dataset,
-        config.args.namespace,
-        config.args.file,
-        config.args.file_gz,
-        config.args.resume,
-        'upsert',
-        lambda x: x.get('entity')
-    )
 
 def cmd_rm():
     dsutil.RemoveMutation(
