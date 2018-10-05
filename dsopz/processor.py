@@ -30,21 +30,17 @@ class Future(object):
         with self._lock:
             if self._status != 1:
                 raise Error('illegal state: %s' % (self._status))
-            print('set_result')
             self._result = (None, result)
             self._status = 2
             self._lock.notify_all()
-            print('set_resulted')
 
     def set_exception(self, exception):
         with self._lock:
             if self._status != 1:
                 raise Error('illegal state: %s' % (self._status))
-            print('set_exception')
             self._result = (exception, None)
             self._status = 2
             self._lock.notify_all()
-            print('set_exceptioned')
 
     def done(self):
         with self._lock:
@@ -56,23 +52,18 @@ class Future(object):
                 raise Error('illegal state: %s' % (self._status))
             if self._status == 2:
                 return self._result
-            print('resolve')
             self._lock.wait()
-            print('resolved')
             self._status = 2
             return self._result
 
     def result(self):
-        print('fjsdklfhdsk')
         ret = self.resolve()
-        print('result', ret)
         if ret[0]:
             raise ret[0]
         return ret[1]
 
     def exception(self):
         ret = self.resolve()
-        print('exception', ret)
         return ret[0]
 
     def __enter__(self):
@@ -158,7 +149,6 @@ class AsyncGen(object):
     def _async_gen_work(self, future, gen, q):
         for i in gen:
             if future.cancel_requested():
-                print('REQUESTED')
                 return
             q.put((False, i), timeout=5)
         q.put((True, None), timeout=5)
