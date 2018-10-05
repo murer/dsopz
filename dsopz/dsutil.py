@@ -2,6 +2,10 @@ from dsopz.config import config
 from dsopz import io
 from dsopz import util
 import json as JSON
+from dsopz.processor import blockify
+
+class Error(Exception):
+    """Exceptions"""
 
 def resolve_query(dataset, namespace, gql=None, query=None, kind=None, plain=None, gz=None):
     query = [JSON.loads(q) if isinstance(q, str) else q for q in (query or [])]
@@ -32,8 +36,3 @@ def resolve_mutation_skip(resume):
             return ret['processed']
     except FileNotFoundError:
         return 0
-
-
-def mutation(dataset, namespace, gen, parser):
-    for line in gen:
-        op, element = parser(line)

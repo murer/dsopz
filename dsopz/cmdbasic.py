@@ -65,37 +65,48 @@ def cmd_namespace():
         kind=[ '__namespace__' ]
     )
 
-def cmd_upsert():
-    skip = dsutil.resolve_mutation_skip(config.args.resume)
+def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
+    skip = dsutil.resolve_mutation_skip(resume)
     log.info('Already processed: %s', skip)
     count = 0
-    r = io.jwriter(config.args.resume, append=True) if config.args.resume else None
+    r = io.jwriter(resume, append=True) if resume else None
     try:
-        with io.jreader(config.args.file, config.args.file_gz) as f:
-            for block in blockify(f, 500, lambda x: x.get('entity'), skip):
+        with io.jreader(file, file_gz) as f:
+            for block in blockify(f, 500, parser, skip):
                 count = count + len(block)
                 log.info('Processing: %s', count)
-                mutation(config.args.dataset, config.args.namespace, upserts=block)
+                if op == 'upsert':
+                    mutation(dataset, namespace, upserts=block)
+                elif op == 'remove':
+                    mutation(dataset, namespace, removes=block)
+                else:
+                    raise Error('unknown: %s' % (op))
                 if r:
                     r.write({'processed': count})
     finally:
         util.close(r)
 
+def cmd_upsert():
+    _mutation(
+        config.args.dataset,
+        config.args.namespace,
+        config.args.file,
+        config.args.file_gz,
+        config.args.resume,
+        'upsert',
+        lambda x: x.get('entity')
+    )
+
 def cmd_rm():
-    skip = dsutil.resolve_mutation_skip(config.args.resume)
-    log.info('Already processed: %s', skip)
-    count = 0
-    r = io.jwriter(config.args.resume, append=True) if config.args.resume else None
-    try:
-        with io.jreader(config.args.file, config.args.file_gz) as f:
-            for block in blockify(f, 500, lambda x: x.get('entity', {}).get('key'), skip):
-                count = count + len(block)
-                log.info('Processing: %s', count)
-                mutation(config.args.dataset, config.args.namespace, removes=block)
-                if r:
-                    r.write({'processed': count})
-    finally:
-        util.close(r)
+    _mutation(
+        config.args.dataset,
+        config.args.namespace,
+        config.args.file,
+        config.args.file_gz,
+        config.args.resume,
+        'remove',
+        lambda x: x.get('entity', {}).get('key')
+    )
 
 subparser = config.add_parser('download', cmd_download)
 subparser.add_argument('-d', '--dataset', help='dataset. Required for gql or query')
