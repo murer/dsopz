@@ -2,7 +2,7 @@ from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
 from dsopz.datastore import stream_block, mutation, stream_entity
-from dsopz.processor import blockify, merge_gens, AsyncGen
+from dsopz.processor import blockify, merge_gens, AsyncGen, dispatch
 from dsopz import util
 from os import devnull
 import logging as log
@@ -65,6 +65,47 @@ def cmd_namespace():
         kind=[ '__namespace__' ]
     )
 
+def _resume(file, file_gz, resume, skip, parser):
+    start = None
+    block = []
+    with io.jreader(file, file_gz) as f:
+        f = enumerate(f)
+        for i in range(skip):
+            log.info('Skipping: %s', i)
+            next(f)
+        #for line in f:
+        #    yield line
+        for idx, line in f:
+            if start == None:
+                start = idx
+            line = parser(line)
+            if line:
+                block.append(line)
+            if len(block) >= 500:
+                yield (start, idx, block)
+                block = []
+                start = None
+        if len(block) > 0:
+            yield (start, idx, block)
+
+
+def cmd_upsert():
+    skip = dsutil.resolve_mutation_skip(config.args.resume)
+    log.info('Skip: %s', skip)
+    buffer = []
+    for start, end, block in _resume(config.args.file, config.args.file_gz, config.args.resume, skip, lambda x: x.get('entity')):
+        log.info('Processing: [%s - %s], len: %s', start, end, len(block))
+        while len(buffer) >= 10:
+            p_start, p_end, p_block, p_fut = buffer.pop(0)
+            log.info('Waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
+            p_fut.result()
+        fut = dispatch(mutation, config.args.dataset, config.args.namespace, upserts=block)
+        buffer.append( (start, end, block, fut) )
+    while len(buffer) > 0:
+        p_start, p_end, p_block, p_fut = buffer.pop(0)
+        log.info('Last waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
+        p_fut.result()
+
 def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
     skip = dsutil.resolve_mutation_skip(resume)
     log.info('Already processed: %s', skip)
@@ -86,7 +127,7 @@ def _mutation(dataset, namespace, file, file_gz, resume, op, parser):
     finally:
         util.close(r)
 
-def cmd_upsert():
+def cmd_upsertx():
     _mutation(
         config.args.dataset,
         config.args.namespace,
