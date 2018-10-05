@@ -92,7 +92,8 @@ def cmd_rm():
                 count = count + len(block)
                 log.info('Processing: %s', count)
                 mutation(config.args.dataset, config.args.namespace, removes=block)
-                r.write({'processed': count})
+                if r:
+                    r.write({'processed': count})
     finally:
         util.close(r)
 
