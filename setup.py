@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '2.0.beta11'
+version = '2.0.beta12'
 
 setup(
   name = 'dsopz',
