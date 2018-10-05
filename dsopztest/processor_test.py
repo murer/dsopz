@@ -61,8 +61,6 @@ class ProcessorTest(unittest.TestCase):
             f.result()
         self.assertEqual(1, data['c'])
 
-
-
     def test_merge_gens(self):
         self.assertEqual([
             (0, 'a'),
@@ -81,10 +79,14 @@ class ProcessorTest(unittest.TestCase):
         ]) ])
 
     def test_async_gen(self):
-        self.assertEqual(
-            [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ],
-            [x for x in processor.async_gen(iter('abcdefg'), maxsize=3)]
-        )
+        with processor.AsyncGen(iter('abcdefg'), maxsize=3) as f:
+            self.assertEqual(
+                [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ],
+                [x for x in f]
+            )
+
+        with processor.AsyncGen(iter('abcdefg'), maxsize=3) as f:
+            self.assertEqual('a', next(f))
 
 if __name__ == '__main__':
     unittest.main()

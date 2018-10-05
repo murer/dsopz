@@ -148,17 +148,39 @@ def merge_gens(arrays):
         if stop:
             return
 
-def _async_gen_work(gen, q):
-    for i in gen:
-        q.put((False, i), timeout=60)
-    q.put((True, None), timeout=60)
 
-def async_gen(gen, maxsize=10):
-    q = Queue(maxsize=maxsize)
-    fut = dispatch(_async_gen_work, gen, q)
-    while True:
-        done, ret = q.get()
+class AsyncGen(object):
+
+    def __init__(self, gen, maxsize=10):
+        self._queue = Queue(maxsize=maxsize)
+        self._future = dispatchf(self._async_gen_work, gen, self._queue)
+
+    def _async_gen_work(self, future, gen, q):
+        for i in gen:
+            if future.cancel_requested():
+                print('REQUESTED')
+                return
+            q.put((False, i), timeout=60)
+        q.put((True, None), timeout=60)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    def close(self):
+        self._future.cancel()
+        while not self._queue.empty():
+            print('sss')
+            self._queue.get_nowait()
+        self._future.close()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        done, ret = self._queue.get()
         if done:
-            fut.result()
-            return
-        yield ret
+            raise StopIteration
+        return ret
