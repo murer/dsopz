@@ -73,8 +73,6 @@ def _resume(file, file_gz, resume, skip, parser):
         for i in range(skip):
             log.info('Skipping: %s', i)
             next(f)
-        #for line in f:
-        #    yield line
         for idx, line in f:
             if start == None:
                 start = idx
@@ -95,7 +93,7 @@ def cmd_upsert():
     buffer = []
     for start, end, block in _resume(config.args.file, config.args.file_gz, config.args.resume, skip, lambda x: x.get('entity')):
         log.info('Processing: [%s - %s], len: %s', start, end, len(block))
-        while len(buffer) >= 10:
+        while len(buffer) >= 50:
             p_start, p_end, p_block, p_fut = buffer.pop(0)
             log.info('Waiting for: [%s - %s], len: %s', p_start, p_end, len(p_block))
             p_fut.result()
