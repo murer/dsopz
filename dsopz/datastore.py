@@ -84,7 +84,16 @@ def lookup(dataset, namespace, keys):
         _set_partition(entity['entity']['key'], None, None)
     return ret
 
-def commit(dataset, mutations):
+def commit(dataset, namespace, mutations):
+    for m in mutations['mutations']:
+        if m.get('insert'):
+            _set_partition(m['insert']['key'], dataset, namespace)
+        if m.get('update'):
+            _set_partition(m['update']['key'], dataset, namespace)
+        if m.get('upsert'):
+            _set_partition(m['upsert']['key'], dataset, namespace)
+        if m.get('delete'):
+            _set_partition(m['delete'], dataset, namespace)
     url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
     resp = req_json('POST', url, mutations, {
         'Authorization': 'Bearer %s' % (oauth.access_token())
@@ -96,13 +105,11 @@ def mutation(dataset, namespace, upserts=None, removes=None):
     body = { 'mode': 'NON_TRANSACTIONAL', 'mutations': [] }
     if upserts:
         for entity in upserts:
-            _set_partition(entity['key'], dataset, namespace)
             body['mutations'].append({ 'upsert': entity })
     if removes:
         for k in removes:
-            _set_partition(k, dataset, namespace)
             body['mutations'].append({ 'delete': k })
-    return commit(dataset, body)
+    return commit(dataset, namespace, body)
 
 def stream_block(dataset, namespace, query):
     first = True

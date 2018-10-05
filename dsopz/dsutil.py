@@ -32,3 +32,8 @@ def resolve_mutation_skip(resume):
             return ret['processed']
     except FileNotFoundError:
         return 0
+
+
+def mutation(dataset, namespace, gen, parser):
+    for line in gen:
+        op, element = parser(line)
