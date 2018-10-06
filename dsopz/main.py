@@ -1,6 +1,7 @@
 
 from dsopz import oauth
 from dsopz import cmdbasic
+from dsopz import cmdscatter
 
 from dsopz.config import config
 
