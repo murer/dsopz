@@ -2,14 +2,14 @@ from dsopz.config import config
 from dsopz import io
 from dsopz import util
 import json as JSON
-from dsopz.processor import blockify, dispatch
-from dsopz.datastore import mutation
+from dsopz.processor import blockify, dispatch, AsyncGen, merge_gens
+from dsopz.datastore import mutation, stream_block
 import logging as log
 
 class Error(Exception):
     """Exceptions"""
 
-def resolve_query(dataset, namespace, gql=None, query=None, kind=None, plain=None, gz=None):
+def _resolve_query(dataset, namespace, gql=None, query=None, kind=None, plain=None, gz=None):
     query = [JSON.loads(q) if isinstance(q, str) else q for q in (query or [])]
     if kind:
         query = [{'kind': [{'name': k}]} for k in kind]
@@ -26,6 +26,27 @@ def resolve_query(dataset, namespace, gql=None, query=None, kind=None, plain=Non
                 queries[queryidx]['startCursor'] = cursor
             return header
     raise Error('error')
+
+def download(dataset=None, namespace=None, file=None, file_gz=None, gql=None, query=None, kind=None, resume=None, resume_gz=None, append=None):
+    if (gql or query or kind) and not dataset:
+            raise Error('dataset is required for query, gql or kind')
+    if (resume or resume_gz) and (dataset or namespace):
+        raise Error('dataset/namespace is not allowed for resume or resume_gz')
+    header = _resolve_query(dataset, namespace, gql, query, kind, resume, resume_gz)
+    count = [0] * len(header['queries'])
+    with io.jwriter(file, file_gz, append=append) as f:
+        results = [stream_block(header['dataset'], header['namespace'], q) for q in header['queries']]
+        queries = [next(h) for h in results]
+        log.info('queries: %s', JSON.dumps(queries))
+        if not append:
+            f.write({'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries})
+        with AsyncGen(merge_gens(results)) as r:
+            for queryidx, result in r:
+                count[queryidx] = count[queryidx] + len(result['batch']['entityResults'])
+                for entity in result['batch']['entityResults']:
+                    entity['queryIndex'] = queryidx
+                    f.write(entity)
+                log.info('Downloaded: %s', count)
 
 def resolve_mutation_skip(resume):
     if not resume:
