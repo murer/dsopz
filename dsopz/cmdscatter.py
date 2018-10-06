@@ -31,10 +31,45 @@ class Scatter(object):
                 empty = False
         yield (self._parse_col(prev), None)
 
+    def _prepare_block_query(self, s, e):
+        print('header', self._header)
+        ret = { "kind" : [{ "name" : "company" }],
+                "filter" : { "compositeFilter" : { "op" : "AND", "filters" : [{
+                    "propertyFilter" : {
+                        "value" : {
+                            "keyValue" : {
+                                "partitionId" : {
+                                    "namespaceId" : "murer", "projectId" : "frotanetappdevel"
+                                },
+                                "path" : [{ "name" : "AA", "kind" : "company" }]
+                            }
+                        },
+                        "property" : { "name" : "__key__" },
+                        "op" : "GREATER_THAN_OR_EQUAL"
+                    }
+                }, {
+                    "propertyFilter" : {
+                        "op" : "LESS_THAN",
+                        "property" : { "name" : "__key__"  },
+                        "value" : {
+                            "keyValue" : {
+                                "partitionId" : {
+                                    "projectId" : "frotanetappdevel", "namespaceId" : "murer"
+                                },
+                                "path" : [{"name" : "BB", "kind" : "company" }]
+
+                        }}}
+                }]}}}
+
+        return True
+
     def execute(self):
         with io.jreader(self.block_file, self.block_file_gz) as f:
+            self._header = next(f)
             for s, e in self._produce_blocks(f):
                 print('xxxx', s, e)
+                query = self._prepare_block_query(s, e)
+                print('q', query)
 
 def cmd_scatter():
     Scatter(config.args.block_file, config.args.block_file_gz).execute()
