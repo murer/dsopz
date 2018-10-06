@@ -32,42 +32,45 @@ class Scatter(object):
         yield (self._parse_col(prev), None)
 
     def _prepare_block_query(self, s, e):
-        print('header', self._header)
-        ret = { "kind" : [{ "name" : "company" }],
-                "filter" : { "compositeFilter" : { "op" : "AND", "filters" : [{
-                    "propertyFilter" : {
-                        "value" : {
-                            "keyValue" : {
-                                "partitionId" : {
-                                    "namespaceId" : "murer", "projectId" : "frotanetappdevel"
-                                },
-                                "path" : [{ "name" : "AA", "kind" : "company" }]
-                            }
-                        },
-                        "property" : { "name" : "__key__" },
-                        "op" : "GREATER_THAN_OR_EQUAL"
+        filters = []
+        ret = { "kind" : self._kind, "filter" : { "compositeFilter" : { "op" : "AND", "filters" : filters } } }
+        if s:
+            filters.append({
+                "propertyFilter" : {
+                    "value" : {
+                        "keyValue" : {
+                            "partitionId" : {
+                                "namespaceId" : "murer", "projectId" : "frotanetappdevel"
+                            },
+                            "path" : s['path']
+                        }
+                    },
+                    "property" : { "name" : "__key__" },
+                    "op" : "GREATER_THAN_OR_EQUAL"
+                }
+            })
+        if e:
+            filters.append({
+                "propertyFilter" : {
+                    "op" : "LESS_THAN",
+                    "property" : { "name" : "__key__"  },
+                    "value" : {
+                        "keyValue" : {
+                            "partitionId" : {
+                                "projectId" : "frotanetappdevel", "namespaceId" : "murer"
+                            },
+                            "path" : e['path']
+                        }
                     }
-                }, {
-                    "propertyFilter" : {
-                        "op" : "LESS_THAN",
-                        "property" : { "name" : "__key__"  },
-                        "value" : {
-                            "keyValue" : {
-                                "partitionId" : {
-                                    "projectId" : "frotanetappdevel", "namespaceId" : "murer"
-                                },
-                                "path" : [{"name" : "BB", "kind" : "company" }]
-
-                        }}}
-                }]}}}
-
-        return True
+                }
+            })
+        return ret
 
     def execute(self):
         with io.jreader(self.block_file, self.block_file_gz) as f:
             self._header = next(f)
+            self._kind = self._header['queries'][0]['kind']
             for s, e in self._produce_blocks(f):
-                print('xxxx', s, e)
                 query = self._prepare_block_query(s, e)
                 print('q', query)
 
