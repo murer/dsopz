@@ -5,6 +5,7 @@ from dsopz.datastore import stream_block, mutation, stream_entity
 from dsopz.processor import blockify, merge_gens, AsyncGen, dispatch
 from dsopz import util
 import logging as log
+import os
 import json as JSON
 
 class Error(Exception):
@@ -12,26 +13,27 @@ class Error(Exception):
 
 class Scatter(object):
 
-    def __init__(self, block_file, block_file_gz):
-        self.block_file = block_file
-        self.block_file_gz = block_file_gz
+    def __init__(self, range_file, range_file_gz, output):
+        self._range_file = range_file
+        self._range_file_gz = range_file_gz
+        self._output = output
 
     def _parse_col(self, line):
         if not line:
             return None
         return line['entity']['key']
 
-    def _produce_blocks(self, blocks):
+    def _produce_ranges(self, ranges):
         prev = None
         empty = True
-        for block in blocks:
-            if block.get('entity'):
-                yield (self._parse_col(prev), self._parse_col(block))
-                prev = block
+        for range in ranges:
+            if range.get('entity'):
+                yield (self._parse_col(prev), self._parse_col(range))
+                prev = range
                 empty = False
         yield (self._parse_col(prev), None)
 
-    def _prepare_block_query(self, s, e):
+    def _prepare_range_query(self, s, e):
         filters = []
         ret = { "kind" : self._kind, "filter" : { "compositeFilter" : { "op" : "AND", "filters" : filters } } }
         if s:
@@ -67,21 +69,40 @@ class Scatter(object):
         return ret
 
     def execute(self):
-        with io.jreader(self.block_file, self.block_file_gz) as f:
+        with io.jreader(self._range_file, self._range_file_gz) as f:
             self._header = next(f)
             self._kind = self._header['queries'][0]['kind']
-            for s, e in self._produce_blocks(f):
-                query = self._prepare_block_query(s, e)
-                print('q', query)
+            queries = []
+            for idx, ses in enumerate(blockify(self._produce_ranges(f), 3)):
+                queries = [self._prepare_range_query(s, e) for s, e in ses]
+                print('q', len(queries))
+                output_file = os.path.join(self._output, 'part-%s' % (idx))
+                print(output_file, self._kind[0]['name'], self._header['dataset'], self._header['namespace'])
+                dsutil.download(
+                    dataset=self._header['dataset'],
+                    namespace=self._header['namespace'],
+                    file=output_file,
+                    file_gz=None,
+                    gql=None,
+                    query=queries,
+                    kind=None,
+                    resume=None,
+                    resume_gz=None,
+                    append=True
+                )
 
 def cmd_scatter():
-    Scatter(config.args.block_file, config.args.block_file_gz).execute()
+    Scatter(
+        config.args.range_file,
+        config.args.range_file_gz,
+        config.args.output
+    ).execute()
 
 subparser = config.add_parser('scatter', cmd_scatter)
 group = subparser.add_mutually_exclusive_group(required=True)
-group.add_argument('-b', '--block-file', help='input file or - for stdin')
-group.add_argument('-bgz', '--block-file-gz', help='input gzip file')
+group.add_argument('-b', '--range-file', help='input file or - for stdin')
+group.add_argument('-bgz', '--range-file-gz', help='input gzip file')
 subparser.add_argument('-c', '--col', default='__key__', help='column')
 group = subparser.add_mutually_exclusive_group(required=True)
-group.add_argument('-d', '--dir', help='output directory')
-group.add_argument('-dgz', '--dir-gz', help='output gzip directory')
+group.add_argument('-d', '--output', help='output directory')
+group.add_argument('-dgz', '--output-gz', help='output gzip directory')
