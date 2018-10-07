@@ -78,17 +78,27 @@ class Scatter(object):
                 print('q', len(queries))
                 output_file = os.path.join(self._output, 'part-%s' % (idx))
                 print(output_file, self._kind[0]['name'], self._header['dataset'], self._header['namespace'])
+                dataset=self._header['dataset']
+                namespace=self._header['namespace']
+                resume = None
+                append = False
+                if os.path.isfile(output_file):
+                    resume = output_file
+                    dataset = None
+                    namespace = None
+                    queries = None
+                    append = True
                 dsutil.download(
-                    dataset=self._header['dataset'],
-                    namespace=self._header['namespace'],
+                    dataset=dataset,
+                    namespace=namespace,
                     file=output_file,
                     file_gz=None,
                     gql=None,
                     query=queries,
                     kind=None,
-                    resume=None,
+                    resume=resume,
                     resume_gz=None,
-                    append=True
+                    append=append
                 )
 
 def cmd_scatter():
