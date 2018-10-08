@@ -73,7 +73,7 @@ class Scatter(object):
             self._header = next(f)
             self._kind = self._header['queries'][0]['kind']
             queries = []
-            for idx, ses in enumerate(blockify(self._produce_ranges(f), 3)):
+            for idx, ses in enumerate(blockify(self._produce_ranges(f), config.args.queries_per_file)):
                 queries = [self._prepare_range_query(s, e) for s, e in ses]
                 print('q', len(queries))
                 output_file = os.path.join(self._output, 'part-%s' % (idx))
@@ -109,6 +109,7 @@ def cmd_scatter():
     ).execute()
 
 subparser = config.add_parser('scatter', cmd_scatter)
+subparser.add_argument('-qpf', '--queries-per-file', type=int, default=10, help='queries per file')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-b', '--range-file', help='input file or - for stdin')
 group.add_argument('-bgz', '--range-file-gz', help='input gzip file')
