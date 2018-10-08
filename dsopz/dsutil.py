@@ -51,7 +51,7 @@ def download(dataset=None, namespace=None, gql=None, query=None, kind=None, resu
     count = [0] * len(header['queries'])
     results = [stream_block(header['dataset'], header['namespace'], q) for q in header['queries']]
     queries = [next(h) for h in results]
-    log.info('queries: %s', JSON.dumps(queries))
+    log.info('Queries: %s', len(queries))
     yield {'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries}
     if limit == 0:
         return
