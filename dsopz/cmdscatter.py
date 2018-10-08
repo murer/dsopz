@@ -78,16 +78,9 @@ class Scatter(object):
 
     def execute(self):
         self._read_keys()
-        for k in self._keys:
-            print('k', JSON.dumps(k))
         self._produce_ranges()
-        for k in self._ranges:
-            print('r', JSON.dumps(k))
         self._prepare_range_queries()
-        for k in self._queries:
-            print('q', JSON.dumps(k))
         resume = os.path.isfile(self._file or self._file_gz)
-        print('RESUME', resume)
         dsutil.download_to_file(
             dataset=None if resume else self._dataset,
             namespace=None if resume else self._namespace,
