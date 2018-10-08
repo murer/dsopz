@@ -22,7 +22,8 @@ def cmd_download():
         kind=config.args.kind,
         resume=config.args.resume,
         resume_gz=config.args.resume_gz,
-        append=config.args.append
+        append=config.args.append,
+        limit=config.args.limit
     )
 
 def cmd_kind():
@@ -96,6 +97,7 @@ group.add_argument('-rgz', '--resume-gz', help='json query and cursor from gzip 
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='output file or - for stdout')
 group.add_argument('-fgz', '--file-gz', help='output gzip file or - for stdout')
+subparser.add_argument('-l', '--limit', type=int, help="max entity to download. -1 for unlimited")
 subparser.add_argument('-a', '--append', action='store_true', help='append into file and do not write header')
 
 subparser = config.add_parser('kind', cmd_kind)

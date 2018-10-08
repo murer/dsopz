@@ -27,12 +27,13 @@ def _resolve_query(dataset, namespace, gql=None, query=None, kind=None, plain=No
             return header
     raise Error('error')
 
-def download_to_file(dataset=None, namespace=None, file=None, file_gz=None, gql=None, query=None, kind=None, resume=None, resume_gz=None, append=None):
+def download_to_file(dataset=None, namespace=None, file=None, file_gz=None, gql=None, query=None, kind=None, resume=None, resume_gz=None, append=None, limit=None):
     result = download(
         dataset,
         namespace,
         gql, query, kind,
-        resume, resume_gz
+        resume, resume_gz,
+        limit
     )
     with io.jwriter(file, file_gz, append=append) as f:
         header = next(result)
@@ -41,7 +42,7 @@ def download_to_file(dataset=None, namespace=None, file=None, file_gz=None, gql=
         for line in result:
             f.write(line)
 
-def download(dataset=None, namespace=None, gql=None, query=None, kind=None, resume=None, resume_gz=None):
+def download(dataset=None, namespace=None, gql=None, query=None, kind=None, resume=None, resume_gz=None, limit=None):
     if (gql or query or kind) and not dataset:
             raise Error('dataset is required for query, gql or kind')
     if (resume or resume_gz) and (dataset or namespace):
@@ -52,12 +53,17 @@ def download(dataset=None, namespace=None, gql=None, query=None, kind=None, resu
     queries = [next(h) for h in results]
     log.info('queries: %s', JSON.dumps(queries))
     yield {'dataset': header['dataset'], 'namespace': header['namespace'], 'queries': queries}
+    if limit == 0:
+        return
     with AsyncGen(merge_gens(results)) as r:
         for queryidx, result in r:
-            count[queryidx] = count[queryidx] + len(result['batch']['entityResults'])
             for entity in result['batch']['entityResults']:
                 entity['queryIndex'] = queryidx
                 yield entity
+                count[queryidx] = count[queryidx] + 1
+                if limit != None and limit <= sum(count):
+                    log.info('Downloaded: %s', count)
+                    return
             log.info('Downloaded: %s', count)
 
 def resolve_mutation_skip(resume):

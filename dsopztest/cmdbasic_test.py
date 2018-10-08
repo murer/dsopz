@@ -49,6 +49,21 @@ class CmdbasicTest(abstract_test_case.TestCase):
         self.assertEqual(['tassy', 'nova'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
 
 
+    def test_query_limit(self):
+        ds.mutation('any', self.id(), upserts=[
+            ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT')),
+            ds.centity(ds.ckey(('hero', 'nova')), ds.cprop('role', 'string', 'STRIKER'))
+        ])
+        self.xedn('download', ['-l', '1', '-q', '{"kind": [{"name": "hero"}]}', '-fgz', self.sb('n1.json.gz')])
+        result = io.read_all(gz=self.sb('n1.json.gz'))
+        self.assertEqual({
+            'dataset': 'any',
+            'namespace': self.id(),
+            'queries': [{'kind': [{'name': 'hero'}]}]
+        }, result.pop(0))
+        self.assertEqual(['ana'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+
+
     def test_query(self):
         ds.mutation('any', self.id(), upserts=[
             ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT')),
