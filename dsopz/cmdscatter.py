@@ -41,9 +41,7 @@ class Scatter(object):
                 "propertyFilter" : {
                     "value" : {
                         "keyValue" : {
-                            "partitionId" : {
-                                "namespaceId" : "murer", "projectId" : "frotanetappdevel"
-                            },
+                            "partitionId": {"projectId": self._header['dataset'], "namespaceId": self._header['namespace']},
                             "path" : s['path']
                         }
                     },
@@ -58,9 +56,7 @@ class Scatter(object):
                     "property" : { "name" : "__key__"  },
                     "value" : {
                         "keyValue" : {
-                            "partitionId" : {
-                                "projectId" : "frotanetappdevel", "namespaceId" : "murer"
-                            },
+                            "partitionId": {"projectId": self._header['dataset'], "namespaceId": self._header['namespace']},
                             "path" : e['path']
                         }
                     }
@@ -72,6 +68,7 @@ class Scatter(object):
         with io.jreader(self._range_file, self._range_file_gz) as f:
             self._header = next(f)
             self._kind = self._header['queries'][0]['kind']
+            util.makedirs(self._output)
             queries = []
             futs = []
             for idx, ses in enumerate(blockify(self._produce_ranges(f), config.args.queries_per_file)):

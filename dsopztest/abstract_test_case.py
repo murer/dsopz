@@ -6,6 +6,7 @@ import json as JSON
 from dsopztest.datastore_emulator import dsemulator
 from dsopz.oauth import oauth
 from dsopz import cmdbasic
+from dsopz import cmdscatter
 from dsopz import util
 
 class Error(Exception):
