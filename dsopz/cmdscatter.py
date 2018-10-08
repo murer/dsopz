@@ -80,18 +80,17 @@ class Scatter(object):
         self._read_keys()
         self._produce_ranges()
         self._prepare_range_queries()
-        resume = os.path.isfile(self._file or self._file_gz)
         dsutil.download_to_file(
-            dataset=None if resume else self._dataset,
-            namespace=None if resume else self._namespace,
+            dataset=self._dataset,
+            namespace=self._namespace,
             file=self._file,
             file_gz=self._file_gz,
             gql=None,
-            query=None if resume else self._queries,
+            query=self._queries,
             kind=None,
-            resume=self._file if resume else None,
-            resume_gz=self._file_gz if resume else None,
-            append=resume
+            resume=None,
+            resume_gz=None,
+            append=False
         )
         log.info('Done')
 
