@@ -93,6 +93,7 @@ class Scatter(object):
             resume_gz=self._file_gz if resume else None,
             append=resume
         )
+        log.info('Done')
 
         """
         with io.jreader(self._range_file, self._range_file_gz) as f:
