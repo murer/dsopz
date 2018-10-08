@@ -21,21 +21,15 @@ class CmdscatterTest(abstract_test_case.TestCase):
                         f.write({'entity':entity})
                         gz.write({'entity':entity})
 
-        self.xe(['scatter', '-b', self.sb('scatter.json'), '-qpf', '3', '-d', self.sb('out')])
-        result = io.read_all(plain=self.sb('out/part-0'))
+        self.xedn('scatter', ['-k', 'hero', '-r', self.sb('scatter.json'), '-f', self.sb('out')])
+        result = io.read_all(plain=self.sb('out'))
         result.pop(0)
-        self.assertEqual(['a0', 'a1', 'a2', 'a3', 'a4'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
-        result = io.read_all(plain=self.sb('out/part-1'))
-        result.pop(0)
-        self.assertEqual(['a5', 'a6', 'a7', 'a8'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+        self.assertEqual(['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
 
-        self.xe(['scatter', '-bgz', self.sb('scatter.json.gz'), '-qpf', '3', '-dgz', self.sb('outgz')])
-        result = io.read_all(plain=self.sb('out/part-0'))
+        self.xedn('scatter', ['-k', 'hero', '-rgz', self.sb('scatter.json.gz'), '-fgz', self.sb('outgz')])
+        result = io.read_all(gz=self.sb('outgz'))
         result.pop(0)
-        self.assertEqual(['a0', 'a1', 'a2', 'a3', 'a4'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
-        result = io.read_all(plain=self.sb('out/part-1'))
-        result.pop(0)
-        self.assertEqual(['a5', 'a6', 'a7', 'a8'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+        self.assertEqual(['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
 
 if __name__ == '__main__':
     unittest.main()

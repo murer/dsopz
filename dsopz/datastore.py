@@ -6,7 +6,7 @@ import json as JSON
 class Error(Exception):
     """Exceptions"""
 
-def _set_partition(k, dataset, namespace):
+def set_partition(k, dataset, namespace):
     if not dataset:
         k.pop('partitionId')
         return k
@@ -66,12 +66,12 @@ def run_query(
     ret['batch']['entityResults'] = ret['batch'].get('entityResults', [])
     ret['query'] = ret.get('query', query)
     for entity in ret['batch']['entityResults']:
-        _set_partition(entity['entity']['key'], None, None)
+        set_partition(entity['entity']['key'], None, None)
     return ret
 
 def lookup(dataset, namespace, keys):
     url = '%s/v1/projects/%s:lookup' % (config.args.url, dataset)
-    keys = [ _set_partition({ 'path': k['path'] }, dataset, namespace) for k in keys ]
+    keys = [ set_partition({ 'path': k['path'] }, dataset, namespace) for k in keys ]
     body = { 'keys': keys }
     resp = req_json('POST', url, body, {
         'Authorization': 'Bearer %s' % (oauth.access_token())
@@ -81,19 +81,19 @@ def lookup(dataset, namespace, keys):
         raise Error('idk what is deferred')
     ret = ret.get('found', [])
     for entity in ret:
-        _set_partition(entity['entity']['key'], None, None)
+        set_partition(entity['entity']['key'], None, None)
     return ret
 
 def commit(dataset, namespace, mutations):
     for m in mutations['mutations']:
         if m.get('insert'):
-            _set_partition(m['insert']['key'], dataset, namespace)
+            set_partition(m['insert']['key'], dataset, namespace)
         if m.get('update'):
-            _set_partition(m['update']['key'], dataset, namespace)
+            set_partition(m['update']['key'], dataset, namespace)
         if m.get('upsert'):
-            _set_partition(m['upsert']['key'], dataset, namespace)
+            set_partition(m['upsert']['key'], dataset, namespace)
         if m.get('delete'):
-            _set_partition(m['delete'], dataset, namespace)
+            set_partition(m['delete'], dataset, namespace)
     url = '%s/v1/projects/%s:commit' % (config.args.url, dataset)
     resp = req_json('POST', url, mutations, {
         'Authorization': 'Bearer %s' % (oauth.access_token())

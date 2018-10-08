@@ -1,7 +1,7 @@
 from dsopz.config import config
 from dsopz import io
 from dsopz import dsutil
-from dsopz.datastore import stream_block, mutation, stream_entity
+from dsopz.datastore import stream_block, mutation, stream_entity, set_partition
 from dsopz.processor import blockify, merge_gens, AsyncGen, dispatch
 from dsopz import util
 import logging as log
@@ -13,38 +13,36 @@ class Error(Exception):
 
 class Scatter(object):
 
-    def __init__(self, range_file, range_file_gz, output, output_gz):
+    def __init__(self, dataset, namespace, kind, range_file, range_file_gz, file, file_gz):
+        self._dataset = dataset
+        self._namespace = namespace
+        self._kind = kind
         self._range_file = range_file
         self._range_file_gz = range_file_gz
-        self._output = output
-        self._output_gz = output_gz
+        self._file = file
+        self._file_gz = file_gz
 
     def _parse_col(self, line):
         if not line:
             return None
         return line['entity']['key']
 
-    def _produce_ranges(self, ranges):
+    def _produce_ranges(self):
+        self._ranges = []
         prev = None
-        empty = True
-        for range in ranges:
-            if range.get('entity'):
-                yield (self._parse_col(prev), self._parse_col(range))
-                prev = range
-                empty = False
-        yield (self._parse_col(prev), None)
+        for range in self._keys:
+            self._ranges.append((prev, range))
+            prev = range
+        self._ranges.append((prev, None))
 
     def _prepare_range_query(self, s, e):
         filters = []
-        ret = { "kind" : self._kind, "filter" : { "compositeFilter" : { "op" : "AND", "filters" : filters } } }
+        ret = { "kind" : [{"name": self._kind}], "filter" : { "compositeFilter" : { "op" : "AND", "filters" : filters } } }
         if s:
             filters.append({
                 "propertyFilter" : {
                     "value" : {
-                        "keyValue" : {
-                            "partitionId": {"projectId": self._header['dataset'], "namespaceId": self._header['namespace']},
-                            "path" : s['path']
-                        }
+                        "keyValue" : s
                     },
                     "property" : { "name" : "__key__" },
                     "op" : "GREATER_THAN_OR_EQUAL"
@@ -56,16 +54,54 @@ class Scatter(object):
                     "op" : "LESS_THAN",
                     "property" : { "name" : "__key__"  },
                     "value" : {
-                        "keyValue" : {
-                            "partitionId": {"projectId": self._header['dataset'], "namespaceId": self._header['namespace']},
-                            "path" : e['path']
-                        }
+                        "keyValue" : e
                     }
                 }
             })
         return ret
 
+    def _prepare_range_queries(self):
+        self._queries = []
+        for s, e in self._ranges:
+            self._queries.append(self._prepare_range_query(s, e))
+
+    def _read_keys(self):
+        ret = []
+        with io.jreader(self._range_file, self._range_file_gz) as f:
+            for line in f:
+                if line.get('entity'):
+                    k = line['entity']['key']
+                    set_partition(k, self._dataset, self._namespace)
+                    ret.append(k)
+        ret = sorted(ret, key=lambda i: [[p['kind'], p.get('name', p.get('id'))] for p in i['path']])
+        self._keys = ret
+
     def execute(self):
+        self._read_keys()
+        for k in self._keys:
+            print('k', JSON.dumps(k))
+        self._produce_ranges()
+        for k in self._ranges:
+            print('r', JSON.dumps(k))
+        self._prepare_range_queries()
+        for k in self._queries:
+            print('q', JSON.dumps(k))
+        resume = os.path.isfile(self._file or self._file_gz)
+        print('RESUME', resume)
+        dsutil.download_to_file(
+            dataset=None if resume else self._dataset,
+            namespace=None if resume else self._namespace,
+            file=self._file,
+            file_gz=self._file_gz,
+            gql=None,
+            query=None if resume else self._queries,
+            kind=None,
+            resume=self._file if resume else None,
+            resume_gz=self._file_gz if resume else None,
+            append=resume
+        )
+
+        """
         with io.jreader(self._range_file, self._range_file_gz) as f:
             self._header = next(f)
             print('xxx', self._header)
@@ -111,21 +147,27 @@ class Scatter(object):
                 ))
             while len(futs) > 0:
                 futs.pop(0).result()
+        """
 
 
 def cmd_scatter():
     Scatter(
+        config.args.dataset,
+        config.args.namespace,
+        config.args.kind,
         config.args.range_file,
         config.args.range_file_gz,
-        config.args.output,
-        config.args.output_gz
+        config.args.file,
+        config.args.file_gz
     ).execute()
 
 subparser = config.add_parser('scatter', cmd_scatter)
-subparser.add_argument('-qpf', '--queries-per-file', type=int, default=10, help='queries per file')
+subparser.add_argument('-d', '--dataset', required=True, help='dataset')
+subparser.add_argument('-n', '--namespace', required=True, help='Namespace')
+subparser.add_argument('-k', '--kind', required=True, help='kind')
 group = subparser.add_mutually_exclusive_group(required=True)
-group.add_argument('-b', '--range-file', help='input file or - for stdin')
-group.add_argument('-bgz', '--range-file-gz', help='input gzip file')
+group.add_argument('-r', '--range-file', help='input file or - for stdin')
+group.add_argument('-rgz', '--range-file-gz', help='input gzip file')
 group = subparser.add_mutually_exclusive_group(required=True)
-group.add_argument('-d', '--output', help='output directory')
-group.add_argument('-dgz', '--output-gz', help='output gzip directory')
+group.add_argument('-f', '--file', help='output directory')
+group.add_argument('-fgz', '--file-gz', help='output gzip directory')
