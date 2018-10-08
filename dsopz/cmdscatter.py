@@ -73,6 +73,7 @@ class Scatter(object):
             self._header = next(f)
             self._kind = self._header['queries'][0]['kind']
             queries = []
+            futs = []
             for idx, ses in enumerate(blockify(self._produce_ranges(f), config.args.queries_per_file)):
                 queries = [self._prepare_range_query(s, e) for s, e in ses]
                 print('q', len(queries))
@@ -88,7 +89,9 @@ class Scatter(object):
                     namespace = None
                     queries = None
                     append = True
-                dsutil.download(
+                while len(futs) >= 3:
+                    futs.pop(0).result()
+                futs.append(dispatch(dsutil.download,
                     dataset=dataset,
                     namespace=namespace,
                     file=output_file,
@@ -99,7 +102,10 @@ class Scatter(object):
                     resume=resume,
                     resume_gz=None,
                     append=append
-                )
+                ))
+            while len(futs) > 0:
+                futs.pop(0).result()
+
 
 def cmd_scatter():
     Scatter(
