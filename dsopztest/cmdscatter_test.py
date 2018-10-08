@@ -12,13 +12,20 @@ class CmdscatterTest(abstract_test_case.TestCase):
         ]
         ds.mutation('any', self.id(), upserts=entities)
         with io.jwriter(self.sb('scatter.json')) as f:
-            f.write({'dataset': 'any', 'namespace': self.id(), 'queries': [{"kind": [{"name": "user"}]}]})
+            f.write({'dataset': 'any', 'namespace': self.id(), 'queries': [{"kind": [{"name": "hero"}]}]})
             for idx, entity in enumerate(entities):
                 if idx % 2 != 0:
                     f.write({'entity':entity})
 
-
         self.xe(['scatter', '-b', self.sb('scatter.json'), '-qpf', '3', '-d', self.sb('out')])
+
+        result = io.read_all(plain=self.sb('out/part-0'))
+        result.pop(0)
+        self.assertEqual(['a0', 'a1', 'a2', 'a3', 'a4'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
+
+        result = io.read_all(plain=self.sb('out/part-1'))
+        result.pop(0)
+        self.assertEqual(['a5', 'a6', 'a7', 'a8'], [ent['entity']['key']['path'][0]['name'] for ent in result] )
 
 if __name__ == '__main__':
     unittest.main()
