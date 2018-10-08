@@ -13,10 +13,11 @@ class Error(Exception):
 
 class Scatter(object):
 
-    def __init__(self, range_file, range_file_gz, output):
+    def __init__(self, range_file, range_file_gz, output, output_gz):
         self._range_file = range_file
         self._range_file_gz = range_file_gz
         self._output = output
+        self._output_gz = output_gz
 
     def _parse_col(self, line):
         if not line:
@@ -67,21 +68,29 @@ class Scatter(object):
     def execute(self):
         with io.jreader(self._range_file, self._range_file_gz) as f:
             self._header = next(f)
+            print('xxx', self._header)
             self._kind = self._header['queries'][0]['kind']
-            util.makedirs(self._output)
+            output_dir = self._output or self._output_gz
+            util.makedirs(output_dir)
             queries = []
             futs = []
             for idx, ses in enumerate(blockify(self._produce_ranges(f), config.args.queries_per_file)):
                 queries = [self._prepare_range_query(s, e) for s, e in ses]
                 print('q', len(queries))
-                output_file = os.path.join(self._output, 'part-%s' % (idx))
+                output_file = os.path.join(output_dir, 'part-%s' % (idx))
                 print(output_file, self._kind[0]['name'], self._header['dataset'], self._header['namespace'])
                 dataset=self._header['dataset']
                 namespace=self._header['namespace']
                 resume = None
                 append = False
-                if os.path.isfile(output_file):
+                output_file_gz = None
+                resume_gz = None
+                if self._output_gz:
+                    output_file_gz = output_file
+                    output_file = None
+                if os.path.isfile(output_file or output_file_gz):
                     resume = output_file
+                    resume_gz = output_file_gz
                     dataset = None
                     namespace = None
                     queries = None
@@ -92,12 +101,12 @@ class Scatter(object):
                     dataset=dataset,
                     namespace=namespace,
                     file=output_file,
-                    file_gz=None,
+                    file_gz=output_file_gz,
                     gql=None,
                     query=queries,
                     kind=None,
                     resume=resume,
-                    resume_gz=None,
+                    resume_gz=resume_gz,
                     append=append
                 ))
             while len(futs) > 0:
@@ -108,7 +117,8 @@ def cmd_scatter():
     Scatter(
         config.args.range_file,
         config.args.range_file_gz,
-        config.args.output
+        config.args.output,
+        config.args.output_gz
     ).execute()
 
 subparser = config.add_parser('scatter', cmd_scatter)
