@@ -13,12 +13,13 @@ class Error(Exception):
 
 class Scatter(object):
 
-    def __init__(self, dataset, namespace, kind, range_file, range_file_gz, file, file_gz):
+    def __init__(self, dataset, namespace, kind, range_file, range_file_gz, scatter, file, file_gz):
         self._dataset = dataset
         self._namespace = namespace
         self._kind = kind
         self._range_file = range_file
         self._range_file_gz = range_file_gz
+        self._scatter = scatter
         self._file = file
         self._file_gz = file_gz
 
@@ -65,14 +66,29 @@ class Scatter(object):
         for s, e in self._ranges:
             self._queries.append(self._prepare_range_query(s, e))
 
-    def _read_keys(self):
+    def _query_scatters(self):
+        return [i for i in dsutil.download(
+            dataset=self._dataset, namespace=self._namespace,
+            gql=None, query=[{"kind": [{"name": self._kind}], "order": [{"property": {"name": "__scatter__"}, "direction": "ASCENDING"}]}], kind=None,
+            resume=None, resume_gz=None,
+            limit=self._scatter
+        )]
+
+    def _read_scatters(self):
         ret = []
         with io.jreader(self._range_file, self._range_file_gz) as f:
             for line in f:
-                if line.get('entity'):
-                    k = line['entity']['key']
-                    set_partition(k, self._dataset, self._namespace)
-                    ret.append(k)
+                ret.append(line)
+        return ret
+
+    def _read_keys(self):
+        entities = self._query_scatters() if self._scatter else self._read_scatters()
+        ret = []
+        for entity in entities:
+            if entity.get('entity'):
+                k = entity['entity']['key']
+                set_partition(k, self._dataset, self._namespace)
+                ret.append(k)
         ret = sorted(ret, key=lambda i: [[p['kind'], p.get('name', p.get('id'))] for p in i['path']])
         self._keys = ret
 
@@ -101,6 +117,7 @@ def cmd_scatter():
         config.args.kind,
         config.args.range_file,
         config.args.range_file_gz,
+        config.args.scatter,
         config.args.file,
         config.args.file_gz
     ).execute()
@@ -112,6 +129,7 @@ subparser.add_argument('-k', '--kind', required=True, help='kind')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-r', '--range-file', help='input file key ranges or - for stdin')
 group.add_argument('-rgz', '--range-file-gz', help='input gzip file key ranges')
+group.add_argument('-s', '--scatter', type=int, help='number of scatter to use')
 group = subparser.add_mutually_exclusive_group(required=True)
 group.add_argument('-f', '--file', help='output directory')
 group.add_argument('-fgz', '--file-gz', help='output gzip directory')
