@@ -97,7 +97,7 @@ class Scatter(object):
                     append = True
                 while len(futs) >= 3:
                     futs.pop(0).result()
-                futs.append(dispatch(dsutil.download,
+                futs.append(dispatch(dsutil.download_to_file,
                     dataset=dataset,
                     namespace=namespace,
                     file=output_file,

@@ -16,7 +16,7 @@ class CmdscatterTest(abstract_test_case.TestCase):
                 header = {'dataset': 'any', 'namespace': self.id(), 'queries': [{"kind": [{"name": "hero"}]}]}
                 f.write(header)
                 gz.write(header)
-                for idx, entity in enumerate(reversed(entities)):
+                for idx, entity in enumerate(entities):
                     if idx % 2 != 0:
                         f.write({'entity':entity})
                         gz.write({'entity':entity})

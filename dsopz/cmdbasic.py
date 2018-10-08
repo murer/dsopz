@@ -12,7 +12,7 @@ class Error(Exception):
     """Exceptions"""
 
 def cmd_download():
-    dsutil.download(
+    dsutil.download_to_file(
         dataset=config.args.dataset,
         namespace=config.args.namespace,
         file=config.args.file,
@@ -26,7 +26,7 @@ def cmd_download():
     )
 
 def cmd_kind():
-    dsutil.download(
+    dsutil.download_to_file(
         dataset=config.args.dataset,
         namespace=config.args.namespace,
         file=config.args.file,
@@ -37,7 +37,7 @@ def cmd_kind():
     )
 
 def cmd_namespace():
-    dsutil.download(
+    dsutil.download_to_file(
         dataset=config.args.dataset,
         file=config.args.file,
         file_gz=config.args.file_gz,
