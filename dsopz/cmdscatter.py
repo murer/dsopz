@@ -95,55 +95,6 @@ class Scatter(object):
         )
         log.info('Done')
 
-        """
-        with io.jreader(self._range_file, self._range_file_gz) as f:
-            self._header = next(f)
-            print('xxx', self._header)
-            self._kind = self._header['queries'][0]['kind']
-            output_dir = self._output or self._output_gz
-            util.makedirs(output_dir)
-            queries = []
-            futs = []
-            for idx, ses in enumerate(blockify(self._produce_ranges(f), config.args.queries_per_file)):
-                queries = [self._prepare_range_query(s, e) for s, e in ses]
-                print('q', len(queries))
-                output_file = os.path.join(output_dir, 'part-%s' % (idx))
-                print(output_file, self._kind[0]['name'], self._header['dataset'], self._header['namespace'])
-                dataset=self._header['dataset']
-                namespace=self._header['namespace']
-                resume = None
-                append = False
-                output_file_gz = None
-                resume_gz = None
-                if self._output_gz:
-                    output_file_gz = output_file
-                    output_file = None
-                if os.path.isfile(output_file or output_file_gz):
-                    resume = output_file
-                    resume_gz = output_file_gz
-                    dataset = None
-                    namespace = None
-                    queries = None
-                    append = True
-                while len(futs) >= 3:
-                    futs.pop(0).result()
-                futs.append(dispatch(dsutil.download_to_file,
-                    dataset=dataset,
-                    namespace=namespace,
-                    file=output_file,
-                    file_gz=output_file_gz,
-                    gql=None,
-                    query=queries,
-                    kind=None,
-                    resume=resume,
-                    resume_gz=resume_gz,
-                    append=append
-                ))
-            while len(futs) > 0:
-                futs.pop(0).result()
-        """
-
-
 def cmd_scatter():
     Scatter(
         config.args.dataset,
