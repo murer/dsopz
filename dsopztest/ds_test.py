@@ -1,6 +1,6 @@
 import unittest
 from dsopztest import abstract_test_case
-from dsopz.ds import Entity, Key, StringProp, format
+from dsopz.ds import Entity, Key, StringProp, format, Datastore
 import json as JSON
 
 class DSTest(abstract_test_case.TestCase):
@@ -9,8 +9,11 @@ class DSTest(abstract_test_case.TestCase):
 
         entity = Entity(Key('hero', 'ana'), {'role' : StringProp('SUPPORT')})
         self.assertEqual(
-            {"properties": {"role": {"stringValue": "SUPPORT", "excludeFromIndex": False}}, "key": {"path": [{"kind": "hero", "name": "ana"}]}},
+            {"properties": {"role": {"stringValue": "SUPPORT", "excludeFromIndexes": False}}, "key": {"path": [{"kind": "hero", "name": "ana"}]}},
             format(entity))
+
+        ds = Datastore('any', self.id())
+        print('resut', ds.put([entity]))
 
         """
         entity = ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT'))

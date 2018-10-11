@@ -4,9 +4,15 @@ class Error(Exception):
 
 class Partition(object):
 
-    def __init__(self, dataset=None, namespace=None):
+    def __init__(self, dataset, namespace=None):
         self.dataset = dataset
         self.namespace = namespace
+
+    def format(self):
+        ret = {'projectId': self.dataset}
+        if self.namespace:
+            ret['namespaceId'] = self.namespace
+        return ret
 
 class Header(object):
 
@@ -42,11 +48,11 @@ class Prop(object):
 
     def __init__(self, value):
         self.value = value
-        self.excludeFromIndex = False
+        self.excludeFromIndexes = False
 
     def format(self):
         ret = self.format_value()
-        ret['excludeFromIndex'] = self.excludeFromIndex
+        ret['excludeFromIndexes'] = self.excludeFromIndexes
         return ret
 
 class StringProp(Prop):
@@ -77,6 +83,8 @@ def format_dict(obj):
 def format(obj):
     if isinstance(obj, dict):
         return format_dict(obj)
+    if isinstance(obj, list):
+        return [format(k) for k in obj]
     return obj.format()
 
 def parse(line):
@@ -88,16 +96,23 @@ class Datastore(object):
         self.dataset = dataset
         self.namespace = namespace
 
+    def _set_partition(self, target):
+        key = target.get('key', target)
+        key['partitionId'] = Partition(self.dataset, self.namespace).format()
+        return target
+
     def put(self, entities):
         entities = format(entities)
         mutations = {
+            'mode': 'NON_TRANSACTIONAL',
             'mutations': [
-                { 'upsert': entity } for entity in entities
+                { 'upsert': self._set_partition(entity) } for entity in entities
             ]
         }
         print('mutations', mutations)
-        #api.commit(self.dataset, self.namespace, mutations)
-        #return
+        result = api.commit(self.dataset, self.namespace, mutations)
+        print('result', result)
+        return result
 
     def get(keys):
         return
