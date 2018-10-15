@@ -224,7 +224,20 @@ class Datastore(object):
         return result
 
     def delete(self, keys):
-        return
+        akeys = format(keys)
+        if isinstance(keys, Key):
+            akeys = [ akeys ]
+        print('keys', akeys)
+        mutations = {
+            'mode': 'NON_TRANSACTIONAL',
+            'mutations': [
+                { 'delete': self._set_partition(key) } for key in akeys
+            ]
+        }
+        print('mutations', mutations)
+        result = api.commit(self.dataset, self.namespace, mutations)
+        print('result', result)
+        return result
 
     def query(self, query):
         return

@@ -15,9 +15,9 @@ class DSTest(abstract_test_case.TestCase):
         ds = Datastore('any', self.id())
         print('resut', ds.put([entity]))
 
-        print('get', ds.get(Key('hero', 'ana')))
+        print('get', ds.get([Key('hero', 'ana')]))
 
-        ds.remove(Key('hero', 'ana'))
+        ds.delete(Key('hero', 'ana'))
 
         print('get', ds.get(Key('hero', 'ana')))
 
