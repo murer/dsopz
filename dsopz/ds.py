@@ -219,7 +219,9 @@ class Datastore(object):
         result = parse(aresult)
         print ('result', result)
         print ('xresult', format(result))
-        return
+        if isinstance(keys, Key):
+            return None if len(result) == 0 else result[0]
+        return result
 
     def delete(self, keys):
         return
