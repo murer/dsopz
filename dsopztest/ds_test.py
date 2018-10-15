@@ -15,6 +15,8 @@ class DSTest(abstract_test_case.TestCase):
         ds = Datastore('any', self.id())
         print('resut', ds.put([entity]))
 
+        print('get', ds.get(Key('hero', 'ana')))
+
         """
         entity = ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT'))
 

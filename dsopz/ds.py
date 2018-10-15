@@ -1,3 +1,4 @@
+from sys import modules as _modules
 from dsopz import datastore as api
 class Error(Exception):
     """Exceptions"""
@@ -13,6 +14,12 @@ class Partition(object):
         if self.namespace:
             ret['namespaceId'] = self.namespace
         return ret
+
+    @staticmethod
+    def parse(obj):
+        if not obj:
+            return None
+        return Partition(obj['projectId'], obj.get('namespaceId'))
 
 class Header(object):
 
@@ -41,29 +48,83 @@ class Key(object):
             'id' if k.name == None or isinstance(k.name, int) else 'name': k.name
         } for k in keys] }
         if self.partition:
-            ret['partition'] = self.partition.format()
+            ret['partitionId'] = self.partition.format()
         return ret
+
+    @staticmethod
+    def parse(obj):
+        if not obj:
+            return None
+        partition = Partition.parse(obj.get('partition'))
+        key = None
+        for path in obj['path']:
+            key = Key(
+                path['kind'],
+                path.get('id') if isinstance(path.get('id'), int) else path.get('name'),
+                parent=key
+            )
+        if partition:
+            key.partition = partition
+        print('xxxx', key)
+        return key
 
 class Prop(object):
 
-    def __init__(self, value):
+    def __init__(self, value, excludeFromIndexes=False):
         self.value = value
-        self.excludeFromIndexes = False
+        self.excludeFromIndexes = excludeFromIndexes
 
     def format(self):
         ret = self.format_value()
         ret['excludeFromIndexes'] = self.excludeFromIndexes
         return ret
 
+    @staticmethod
+    def can_parse(obj):
+        return ("nullValue" in obj or
+            "booleanValue" in obj or
+            "integerValue" in obj or
+            "doubleValue" in obj or
+            "timestampValue" in obj or
+            "keyValue" in obj or
+            "stringValue" in obj or
+            "blobValue" in obj or
+            "geoPointValue" in obj or
+            "entityValue" in obj or
+            "arrayValue" in obj)
+
+    @staticmethod
+    def parse(obj):
+        for p in obj:
+            if p.endswith('Value'):
+                name = p[0:-5].title() + 'Prop'
+                print('name', name, __name__)
+                current_module = _modules[__name__]
+                print('mmm', current_module)
+                clazz = getattr(current_module, name)
+                print('clazz', clazz)
+                value = clazz.parse_value(obj)
+                print('value', value)
+                excludeFromIndexes = obj.get('excludeFromIndexes', False)
+                print('excludeFromIndexes', excludeFromIndexes)
+                return clazz(value, excludeFromIndexes)
+
 class StringProp(Prop):
 
     def format_value(self):
         return { 'stringValue': self.value }
 
+    @staticmethod
+    def parse_value(obj):
+        return obj['stringValue']
+
 class Entity(object):
 
     def __init__(self, key, props):
         self.key = key
+        for p, v in props.items():
+            if not isinstance(v, Prop):
+                raise Error('wrong %s=%s' % (p, type(v)))
         self.properties = props
 
     def format(self):
@@ -71,6 +132,32 @@ class Entity(object):
             'key': self.key.format(),
             'properties': format(self.properties)
         }
+
+    @staticmethod
+    def parse(obj):
+        key = Key.parse(obj['key'])
+        props = {}
+        print('UUU2', key)
+        for p, v in obj.get('properties', {}).items():
+            print('p,v', p, v)
+            props[p] = parse(v)
+        return Entity(key, props)
+
+class EntityResult(object):
+
+    def __init__(self, entity):
+        self.entity = entity
+
+    def format(self):
+        ret = {}
+        if self.entity:
+            ret['entity'] = format(self.entity)
+        return ret
+
+    @staticmethod
+    def parse(obj):
+        entity = Entity.parse(obj.get('entity'))
+        return EntityResult(entity)
 
 def format_dict(obj):
     ret = {}
@@ -81,14 +168,24 @@ def format_dict(obj):
     return ret
 
 def format(obj):
+    if obj == None:
+        return None
     if isinstance(obj, dict):
         return format_dict(obj)
     if isinstance(obj, list):
         return [format(k) for k in obj]
     return obj.format()
 
-def parse(line):
-    return
+def parse(obj):
+    if isinstance(obj, list):
+        return [parse(k) for k in obj]
+    if not isinstance(obj, dict):
+        raise Error('unknown: %s' % (type(obj)))
+    if obj.get('entity'):
+        return EntityResult.parse(obj)
+    if Prop.can_parse(obj):
+        return Prop.parse(obj)
+    raise Error('unknown: %s' % obj)
 
 class Datastore(object):
 
@@ -114,13 +211,22 @@ class Datastore(object):
         print('result', result)
         return result
 
-    def get(keys):
+    def get(self, keys):
+        akeys = format(keys)
+        if isinstance(keys, Key):
+            akeys = [ akeys ]
+        print('akeys', akeys)
+        aresult = api.lookup(self.dataset, self.namespace, akeys)
+        print ('aresult', aresult)
+        result = parse(aresult)
+        print ('result', result)
+        print ('xresult', format(result))
         return
 
-    def delete(keys):
+    def delete(self, keys):
         return
 
-    def query(query):
+    def query(self, query):
         return
 
 def __main():
