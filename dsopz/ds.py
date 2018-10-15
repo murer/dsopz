@@ -81,17 +81,10 @@ class Prop(object):
 
     @staticmethod
     def can_parse(obj):
-        return ("nullValue" in obj or
-            "booleanValue" in obj or
-            "integerValue" in obj or
-            "doubleValue" in obj or
-            "timestampValue" in obj or
-            "keyValue" in obj or
-            "stringValue" in obj or
-            "blobValue" in obj or
-            "geoPointValue" in obj or
-            "entityValue" in obj or
-            "arrayValue" in obj)
+        for p in obj:
+            if p.endswith('Value'):
+                return True
+        return False
 
     @staticmethod
     def parse(obj):
