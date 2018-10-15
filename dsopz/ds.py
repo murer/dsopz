@@ -75,9 +75,14 @@ class Prop(object):
         self.excludeFromIndexes = excludeFromIndexes
 
     def format(self):
-        ret = self.format_value()
-        ret['excludeFromIndexes'] = self.excludeFromIndexes
-        return ret
+        name = self.__class__.__name__
+        print('PPPPPP', name)
+        name = '%s%s%s' % (name[0].lower(), name[1:-4], 'Value')
+        print('PPPPPP2', name)
+        return {
+            name: self.format_value(),
+            'excludeFromIndexes': self.excludeFromIndexes
+        }
 
     @staticmethod
     def can_parse(obj):
@@ -90,13 +95,13 @@ class Prop(object):
     def parse(obj):
         for p in obj:
             if p.endswith('Value'):
-                name = p[0:-5].title() + 'Prop'
+                name = '%s%s' %(p[0:-5].title(), 'Prop')
                 print('name', name, __name__)
                 current_module = _modules[__name__]
                 print('mmm', current_module)
                 clazz = getattr(current_module, name)
                 print('clazz', clazz)
-                value = clazz.parse_value(obj)
+                value = clazz.parse_value(obj[p])
                 print('value', value)
                 excludeFromIndexes = obj.get('excludeFromIndexes', False)
                 print('excludeFromIndexes', excludeFromIndexes)
@@ -105,11 +110,11 @@ class Prop(object):
 class StringProp(Prop):
 
     def format_value(self):
-        return { 'stringValue': self.value }
+        return self.value
 
     @staticmethod
     def parse_value(obj):
-        return obj['stringValue']
+        return obj
 
 class Entity(object):
 
