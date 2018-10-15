@@ -17,6 +17,10 @@ class DSTest(abstract_test_case.TestCase):
 
         print('get', ds.get(Key('hero', 'ana')))
 
+        ds.remove(Key('hero', 'ana'))
+
+        print('get', ds.get(Key('hero', 'ana')))
+
         """
         entity = ds.centity(ds.ckey(('hero', 'ana')), ds.cprop('role', 'string', 'SUPPORT'))
 
