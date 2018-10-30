@@ -97,7 +97,7 @@ You can import entities to another project or namespace.
 
 You need just a keys-only file to delete, and you can extract it using `-o true` while exporting
 
-    cat entities.bak | dsopz import -d gae-project -n namespace -o delete
+    cat entities.bak | dsopz import -d gae-project -n namespace -o remove
 
 ### Set indexed true or false
 
