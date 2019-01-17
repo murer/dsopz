@@ -31,6 +31,9 @@ class CSVProcessor(processor.Processor):
 					value = last.get('name') or last.get('id')
 				if type(value) == bool:
 					value = str(value)
+				elif type(value) == dict and column != '__key__':
+					last = value['path'][len(value['path']) - 1]
+					value = "%s,%s" % (last.get('kind'), (last.get('name') or last.get('id')))
 				elif value:
 					value = value.encode('UTF-8')
 				line[name] = value
