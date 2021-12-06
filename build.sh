@@ -24,4 +24,8 @@ cmd_docker_login() {
     cmd_docker_run python -m dsopz.dsopz login-text
 }
 
+cmd_docker_test() {
+    cmd_docker_run ./test/test.sh "$@"
+}
+
 cd "$(dirname "$0")"; _cmd="${1?"cmd is required"}"; shift; "cmd_${_cmd}" "$@"
