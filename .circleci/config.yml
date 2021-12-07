@@ -11,6 +11,7 @@ jobs:
       - run: ./build.sh docker_serviceaccount
       #- run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
       - run: ./build.sh docker_package
+      - run: ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -delete "${VERSION}" ./dist/
 
   deploy_pip:
     machine:
