@@ -7,6 +7,15 @@ cmd_clean() {
 
 cmd_docker_build() {
     docker build -t dsopz/dsopz:dev .
+    docker build -f Dockerfile.go -t dsopz/dsopz-go:dev . 
+}
+
+cmd_docker_go() {
+    docker run -i --rm --label dsopz_dev \
+        -v "$(pwd):/opt/dsopz" \
+        -w "/opt/dsopz" \
+        -e "GITHUB_TOKEN=$GITHUB_TOKEN" \
+        dsopz/dsopz-go:dev "$@"
 }
 
 cmd_docker_run() {
@@ -69,6 +78,23 @@ cmd_release() {
 
 cmd_docker_package() {
     cmd_docker_run python setup.py bdist_egg
+}
+
+cmd_docker_gh_release() {
+    DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete'}"
+    cmd_docker_go github-release release --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz"
+    cd dist
+    ls | while read k; do
+        cmd_docker_go github-release upload --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "$k" --file "$k"
+    done
+    cd -
+}
+
+cmd_docker_gh_delete() {
+    DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete'}"
+    DSOPZ_VERSION_TWICE="${2?'DSOPZ_VERSION_TWICE to delete'}"
+    [[ "$DSOPZ_VERSION_TWICE" == "$DSOPZ_VERSION" ]]
+    cmd_docker_go github-release delete --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION"
 }
 
 cd "$(dirname "$0")"; _cmd="${1?"cmd is required"}"; shift; "cmd_${_cmd}" "$@"

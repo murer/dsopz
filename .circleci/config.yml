@@ -12,14 +12,15 @@ jobs:
       #- run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
       #- run: ./build.sh docker_package
       - run: mkdir - dist; echo x > dist/README
-      - run: ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -delete "${VERSION}" ./dist/
+      - run: ./build.sh docker_gh_release edge
 
   deploy_pip:
     machine:
       image: ubuntu-1604:202104-01
     steps:
       - checkout
-      - run: echo b
+      - run: [[ "$CIRCLE_TAG" != "x" ]]
+      - run: ./build.sh docker_gh_release "$CIRCLE_TAG"
 
 workflows:
   version: 2
