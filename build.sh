@@ -85,7 +85,8 @@ cmd_docker_package() {
 
 cmd_docker_gh_release() {
     DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete'}"
-    cmd_docker_go github-release release --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz"
+    cmd_docker_go github-release release --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz" || true
+    cmd_docker_go github-release edit --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz"
     cd dist
     ls | while read k; do
         cmd_docker_go github-release upload --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "$k" --file "$k"
