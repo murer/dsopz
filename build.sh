@@ -67,4 +67,12 @@ cmd_release() {
     git push
 }
 
+cmd_pip_deploy_test() {
+    cmd_docker_run python setup.py sdist upload -r pypitest
+}
+
+cmd_pip_deploy_prod() {
+    cmd_docker_run python setup.py sdist upload -r pypi
+}
+
 cd "$(dirname "$0")"; _cmd="${1?"cmd is required"}"; shift; "cmd_${_cmd}" "$@"
