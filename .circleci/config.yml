@@ -6,7 +6,7 @@ jobs:
       image: ubuntu-1604:202104-01
     steps:
       - checkout
-      - run: ./ci/before_script.sh
+      - run: ./build.sh decrypt
 
   deploy_pip:
     machine:
