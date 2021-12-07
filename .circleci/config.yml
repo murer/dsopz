@@ -38,7 +38,7 @@ jobs:
           at: target/wp-iso
       - run: du -hs dist/*
       - run: ./build.sh docker_build_go
-      - run: echo ./build.sh docker_gh_release "$CIRCLE_TAG"
+      - run: ./build.sh docker_gh_release "$CIRCLE_TAG"
 
 workflows:
   version: 2
