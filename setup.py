@@ -1,5 +1,6 @@
-from distutils.core import setup
+#from distutils.core import setup
 import dsopz.config as config
+from setuptools import setup, find_packages
 
 setup(
   name = 'dsopz',

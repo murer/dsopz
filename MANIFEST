@@ -8,8 +8,10 @@ dsopz/console.py
 dsopz/dsopz.py
 dsopz/dsutil.py
 dsopz/exporter.py
+dsopz/gql.py
 dsopz/http.py
 dsopz/importer.py
+dsopz/kind_loader.py
 dsopz/mapper.py
 dsopz/oauth.py
 dsopz/oauth_base.py

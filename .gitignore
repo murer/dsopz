@@ -5,5 +5,7 @@ dist
 *.class
 dsopz.egg-info
 *.secret.json
+*.secret.txt
 _site
 myblog
+build
