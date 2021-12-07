@@ -7,19 +7,38 @@ jobs:
     steps:
       - checkout
       - run: ./build.sh decrypt
-      # - run: ./build.sh docker_build_python
-      # - run: ./build.sh docker_build_go
-      # - run: ./build.sh docker_serviceaccount
-      #- run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
-      # - run: ./build.sh docker_package
-      # - run: ./build.sh docker_gh_release edge
+      - run: ./build.sh docker_build_python
+      - run: ./build.sh docker_build_go
+      - run: ./build.sh docker_serviceaccount
+      - run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
+      - run: ./build.sh docker_package
+      - persist_to_workspace:
+          root: dist
+          paths: 
+            - ./*
 
-  deploy_pip:
+
+  gh-release-master:
     machine:
       image: ubuntu-1604:202104-01
     steps:
       - checkout
+      - attach_workspace:
+          at: dist
+      - run: ./build.sh docker_build_go
+      - run: echo ./build.sh docker_gh_release edge
+      - run: ls dist
+
+  gh-release-tag:
+    machine:
+      image: ubuntu-1604:202104-01
+    steps:
+      - checkout
+      - attach_workspace:
+          at: target/wp-iso
+      - run: ./build.sh docker_build_go
       - run: echo ./build.sh docker_gh_release "$CIRCLE_TAG"
+      - run: ls dist
 
 workflows:
   version: 2
@@ -29,9 +48,16 @@ workflows:
           filters:
             tags:
               only:
-                - /^dsopz\-.*/
-      
-      - deploy_pip:
+                - /^.*/
+
+      - gh-release-master:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^master$/
+
+      - gh-release-tag:
           requires:
             - test
           filters:
