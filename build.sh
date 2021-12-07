@@ -10,7 +10,6 @@ cmd_docker_build() {
 }
 
 cmd_docker_run() {
-    cmd_docker_build
     docker volume create --label dsopz_dev dsopz_config || true
     docker run -it --rm --label dsopz_dev \
         -v "$(pwd):/opt/dsopz" \

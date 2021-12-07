@@ -7,8 +7,9 @@ jobs:
     steps:
       - checkout
       - run: ./build.sh decrypt
-      - run: ./build.sh docker_serviceaccount
-      - run: ./build.sh docker_test dsopzproj
+      #- run: ./build.sh cmd_docker_build
+      #- run: ./build.sh docker_serviceaccount
+      #- run: ./build.sh docker_test dsopzproj
 
   deploy_pip:
     machine:
