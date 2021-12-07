@@ -28,4 +28,19 @@ cmd_docker_test() {
     cmd_docker_run ./test/test.sh "$@"
 }
 
+cmd_encrypt() {
+    [[ "x$DSOPZ_SECRET" != "x" ]]
+    dsopz_file="${1?'dsopz_file is required'}"
+    [[ -f "$dsopz_file" ]]
+    gpg --symmetric --cipher-algo AES256 --batch --passphrase "$DSOPZ_SECRET" "$dsopz_file"
+}
+
+cmd_decrypt() {
+    [[ "x$DSOPZ_SECRET" != "x" ]]
+    find  . -name "*.gpg" | while read k; do
+        echo "decrypt: $k";
+        gpg --symmetric --decrypt --cipher-algo AES256 --batch --passphrase "$DSOPZ_SECRET" "$k"
+    done
+}
+
 cd "$(dirname "$0")"; _cmd="${1?"cmd is required"}"; shift; "cmd_${_cmd}" "$@"

@@ -6,7 +6,7 @@ jobs:
       image: ubuntu-1604:202104-01
     steps:
       - checkout
-      - run: echo a
+      - run: ./ci/before_script.sh
 
   deploy_pip:
     machine:
