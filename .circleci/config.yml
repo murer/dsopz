@@ -19,7 +19,6 @@ jobs:
       image: ubuntu-1604:202104-01
     steps:
       - checkout
-      - run: [[ "$CIRCLE_TAG" != "x" ]]
       - run: ./build.sh docker_gh_release "$CIRCLE_TAG"
 
 workflows:
