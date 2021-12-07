@@ -1,0 +1,40 @@
+version: 2.1
+jobs:
+
+  test:
+    machine:
+      image: ubuntu-1604:202104-01
+    steps:
+      - checkout
+      - run: echo a
+
+  deploy_pip:
+    machine:
+      image: ubuntu-1604:202104-01
+    steps:
+      - checkout
+      - run: echo b
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only:
+                - /^dsopz\-.*/
+      
+      - deploy_pip:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only:
+                - /^dsopz\-.*/
+
+          
