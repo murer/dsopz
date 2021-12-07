@@ -5,8 +5,11 @@ cmd_clean() {
     docker system prune --volumes --filter label=dsopz_dev -f || true
 }
 
-cmd_docker_build() {
+cmd_docker_build_python() {
     docker build -t dsopz/dsopz:dev .
+}
+
+cmd_docker_build_go() {
     docker build -f Dockerfile.go -t dsopz/dsopz-go:dev . 
 }
 
