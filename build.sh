@@ -32,6 +32,7 @@ cmd_encrypt() {
     [[ "x$DSOPZ_SECRET" != "x" ]]
     dsopz_file="${1?'dsopz_file is required'}"
     [[ -f "$dsopz_file" ]]
+    rm "$dsopz_file.gpg" || true
     gpg --symmetric --cipher-algo AES256 --batch --passphrase "$DSOPZ_SECRET" "$dsopz_file"
 }
 
