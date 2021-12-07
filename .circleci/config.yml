@@ -25,9 +25,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: dist
+      - run: du -hs dist/*
       - run: ./build.sh docker_build_go
-      - run: echo ./build.sh docker_gh_release edge
-      - run: ls dist
+      - run: ./build.sh docker_gh_release edge
 
   gh-release-tag:
     machine:
@@ -36,9 +36,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: target/wp-iso
+      - run: du -hs dist/*
       - run: ./build.sh docker_build_go
       - run: echo ./build.sh docker_gh_release "$CIRCLE_TAG"
-      - run: ls dist
 
 workflows:
   version: 2
