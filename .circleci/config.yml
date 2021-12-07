@@ -26,7 +26,7 @@ jobs:
           at: dist
       - run: du -hs dist/*
       - run: ./build.sh docker_build_go
-      - run: ./build.sh docker_gh_delete edge edge
+      - run: ./build.sh docker_gh_delete edge edge || true
       - run: ./build.sh docker_gh_release edge
 
   gh-release-tag:
