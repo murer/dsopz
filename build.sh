@@ -48,4 +48,23 @@ cmd_decrypt() {
     done
 }
 
+cmd_release() {
+    CLOSE_VERSION="${1?'CLOSE_VERSION is required: 0.0.0'}"
+
+    if git status -s | grep ".\\+"; then
+        exit 1
+    fi
+
+    python -m dsopz.dsopz version
+
+    echo "version=\"$CLOSE_VERSION\"" > dsopz/config.py
+    git commit -am "releasing $CLOSE_VERSION"
+    git tag "dsopz-$CLOSE_VERSION"
+    git push origin "dsopz-$CLOSE_VERSION"
+
+    python -m dsopz.dsopz version
+
+    git push
+}
+
 cd "$(dirname "$0")"; _cmd="${1?"cmd is required"}"; shift; "cmd_${_cmd}" "$@"
