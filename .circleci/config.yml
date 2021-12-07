@@ -26,8 +26,8 @@ jobs:
           at: dist
       - run: du -hs dist/*
       - run: ./build.sh docker_build_go
-      - run: ./build.sh docker_gh_delete edge edge || true
-      - run: ./build.sh docker_gh_release edge
+      - run: ./build.sh docker_gh_delete dsopz-edge dsopz-edge || true
+      - run: ./build.sh docker_gh_release dsopz-edge
 
   gh-release-tag:
     machine:

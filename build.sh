@@ -84,21 +84,21 @@ cmd_docker_package() {
 }
 
 cmd_docker_gh_release() {
-    DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete'}"
-    cmd_docker_go github-release release --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz" || true
-    cmd_docker_go github-release edit --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz"
+    DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete, like: dsopz-0.0.0'}"
+    cmd_docker_go github-release release --user murer --repo dsopz --tag "$DSOPZ_VERSION" --name "$DSOPZ_VERSION" --description "dsopz" || true
+    cmd_docker_go github-release edit --user murer --repo dsopz --tag "$DSOPZ_VERSION" --name "$DSOPZ_VERSION" --description "dsopz"
     cd dist
     ls | while read k; do
-        cmd_docker_go github-release upload --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "$k" --replace --file "$k"
+        cmd_docker_go github-release upload --user murer --repo dsopz --tag "$DSOPZ_VERSION" --name "$k" --replace --file "$k"
     done
     cd -
 }
 
 cmd_docker_gh_delete() {
-    DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete'}"
-    DSOPZ_VERSION_TWICE="${2?'DSOPZ_VERSION_TWICE to delete'}"
+    DSOPZ_VERSION="${1?'DSOPZ_VERSION to delete, like: dsopz-0.0.0'}"
+    DSOPZ_VERSION_TWICE="${2?'DSOPZ_VERSION_TWICE to delete, like: dsopz-0.0.0'}"
     [[ "$DSOPZ_VERSION_TWICE" == "$DSOPZ_VERSION" ]]
-    cmd_docker_go github-release delete --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION"
+    cmd_docker_go github-release delete --user murer --repo dsopz --tag "$DSOPZ_VERSION"
 }
 
 cd "$(dirname "$0")"; _cmd="${1?"cmd is required"}"; shift; "cmd_${_cmd}" "$@"
