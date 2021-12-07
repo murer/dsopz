@@ -7,9 +7,10 @@ jobs:
     steps:
       - checkout
       - run: ./build.sh decrypt
-      #- run: ./build.sh cmd_docker_build
-      #- run: ./build.sh docker_serviceaccount
+      - run: ./build.sh cmd_docker_build
+      - run: ./build.sh docker_serviceaccount
       #- run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
+      - run: ./build.sh docker_package
 
   deploy_pip:
     machine:
