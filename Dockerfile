@@ -1,4 +1,6 @@
 FROM ubuntu:16.04
 
 RUN apt-get -y update && \
-    apt-get -y install openssl curl python
+    apt-get -y install openssl curl python python-pip
+
+RUN pip install pycrypto

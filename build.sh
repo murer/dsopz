@@ -24,6 +24,10 @@ cmd_docker_login() {
     cmd_docker_run python -m dsopz.dsopz login-text
 }
 
+cmd_docker_serviceaccount() {
+    cmd_docker_run python -m dsopz.dsopz login-serviceaccount -f test/dsopzit.secret.json
+}
+
 cmd_docker_test() {
     cmd_docker_run ./test/test.sh "$@"
 }
