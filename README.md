@@ -2,7 +2,7 @@
 
 DSOpz (Datastore Operationz) lets you manage your Google Cloud Datastore from command line.
 
-[![Build Status](https://travis-ci.org/murer/dsopz.svg?branch=master)](https://travis-ci.org/murer/dsopz)
+[![CircleCI](https://circleci.com/gh/murer/dsopz/tree/master.svg?style=svg)](https://circleci.com/gh/murer/dsopz/tree/master)
 
 ## Dsopz 2 Beta
 
@@ -31,25 +31,16 @@ This documentation is all about dsopz-1.x.x. I'm woking on dspoz2 :)
 
 ### Install
 
-    pip install dsopz
-    dsopz version
-
-or download [here](https://pypi.python.org/pypi/dsopz)
-
 ```shell
-tar xzf dsopz.tar.gz
-
-# simple method
-python dsopz/dsopz/dsopz.py version
+    # download from https://github.com/murer/dsopz/releases
+    easy_install dsopz.egg
+    dsopz version
+```
 
 # module method
-cd dsopz
-python -m dsopz.dsopz version
 
-# runnable zip
-zip -r dsopz.zip dsopz
-python dsopz.zip version
-```
+    cd dsopz
+    python -m dsopz.dsopz version
 
 ### Login
 
