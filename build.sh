@@ -39,7 +39,8 @@ cmd_decrypt() {
     [[ "x$DSOPZ_SECRET" != "x" ]]
     find  . -name "*.gpg" | while read k; do
         echo "decrypt: $k";
-        echo gpg --decrypt -o "$(echo "$k" | sed "s/\.gpg$//g")" "$DSOPZ_SECRET" 
+        rm "$(echo "$k" | sed "s/\.gpg$//g")" || true
+        gpg --decrypt --batch --passphrase "$DSOPZ_SECRET" -o "$(echo "$k" | sed "s/\.gpg$//g")" "$k" 
     done
 }
 
