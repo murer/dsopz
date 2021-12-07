@@ -7,19 +7,19 @@ jobs:
     steps:
       - checkout
       - run: ./build.sh decrypt
-      - run: ./build.sh docker_build_python
-      - run: ./build.sh docker_build_go
-      - run: ./build.sh docker_serviceaccount
+      # - run: ./build.sh docker_build_python
+      # - run: ./build.sh docker_build_go
+      # - run: ./build.sh docker_serviceaccount
       #- run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
-      - run: ./build.sh docker_package
-      - run: ./build.sh docker_gh_release edge
+      # - run: ./build.sh docker_package
+      # - run: ./build.sh docker_gh_release edge
 
   deploy_pip:
     machine:
       image: ubuntu-1604:202104-01
     steps:
       - checkout
-      - run: ./build.sh docker_gh_release "$CIRCLE_TAG"
+      - run: echo ./build.sh docker_gh_release "$CIRCLE_TAG"
 
 workflows:
   version: 2
