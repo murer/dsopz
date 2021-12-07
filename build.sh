@@ -89,7 +89,7 @@ cmd_docker_gh_release() {
     cmd_docker_go github-release edit --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "dsopz-$DSOPZ_VERSION" --description "dsopz"
     cd dist
     ls | while read k; do
-        cmd_docker_go github-release upload --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "$k" --file "$k"
+        cmd_docker_go github-release upload --user murer --repo dsopz --tag "dsopz-$DSOPZ_VERSION" --name "$k" --replace --file "$k"
     done
     cd -
 }
