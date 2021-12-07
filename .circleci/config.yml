@@ -7,10 +7,11 @@ jobs:
     steps:
       - checkout
       - run: ./build.sh decrypt
-      - run: ./build.sh docker_build
-      - run: ./build.sh docker_serviceaccount
+      #- run: ./build.sh docker_build
+      #- run: ./build.sh docker_serviceaccount
       #- run: ./build.sh docker_test dsopzproj "dsopz-it-$(($RANDOM % 100))-"
-      - run: ./build.sh docker_package
+      #- run: ./build.sh docker_package
+      - run: mkdir - dist; echo x > dist/README
       - run: ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -delete "${VERSION}" ./dist/
 
   deploy_pip:
