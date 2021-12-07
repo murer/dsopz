@@ -31,11 +31,9 @@ This documentation is all about dsopz-1.x.x. I'm woking on dspoz2 :)
 
 ### Install
 
-```shell
     # download from https://github.com/murer/dsopz/releases
     easy_install dsopz.egg
     dsopz version
-```
 
 # module method
 
