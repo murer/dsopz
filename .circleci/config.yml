@@ -21,8 +21,6 @@ workflows:
     jobs:
       - test:
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only:
                 - /^dsopz\-.*/
